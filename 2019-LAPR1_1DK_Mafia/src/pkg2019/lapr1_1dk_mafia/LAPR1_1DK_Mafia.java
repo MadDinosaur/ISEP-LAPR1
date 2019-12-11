@@ -19,7 +19,10 @@ public class LAPR1_1DK_Mafia {
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
 
         int size = readFile(consumptionMW, dateTime);
-        definePeriod(consumptionMW, dateTime, size);
+
+        int[] auxConsumptionMW = definePeriod(consumptionMW, dateTime, size);
+        AverageConsumption(auxConsumptionMW, size);
+        
     }
 
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime) throws FileNotFoundException {
@@ -40,7 +43,11 @@ public class LAPR1_1DK_Mafia {
         return numLines;
     }
 
-    public static void definePeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+    public static int[] definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+        int[] auxConsumptionMW = new int[MAX_OBSERVATIONS];
+        for (int i = 0; i < size; i++) {
+            auxConsumptionMW[i] = consumptionMW[i];
+        }
         System.out.printf("Que resolução temporal deseja? %n"
                 + "1. Períodos do dia; %n"
                 + "2. Diário; %n"
@@ -49,20 +56,21 @@ public class LAPR1_1DK_Mafia {
         int resolution = sc.nextInt();
         switch (resolution) {
             case 1:
-                dayPeriod(consuptionMW, dateTime, size);
+                dayPeriod(consumptionMW, dateTime, size);
                 break;
             case 2:
-                daily(consuptionMW, dateTime, size);
+                daily(consumptionMW, dateTime, size);
                 break;
             case 3:
-                monthlyPeriod(consuptionMW, dateTime, size);
+                monthlyPeriod(consumptionMW, dateTime, size);
                 break;
             case 4:
-                annualPeriod(consuptionMW, dateTime, size);
+                annualPeriod(consumptionMW, dateTime, size);
                 break;
             default:
                 System.out.println("Opção inválida. ");
         }
+        return auxConsumptionMW;
     }
 
     public static void dayPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
@@ -138,5 +146,73 @@ public class LAPR1_1DK_Mafia {
     //troca a informação dos meses ou dos anos
     public static void exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int index) {
         
+        System.out.println(dateTime[size - 2]);
     }
+
+    private static void AverageConsumption(int[] auxConsumptionMW, int size) {
+        int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
+        for (int i = 0; i < size; i++) {
+            consumptionSum += auxConsumptionMW[i];
+        }
+        double averageConsumption = consumptionSum / size;
+        double upperLimit = averageConsumption + (averageConsumption * 0.2);
+        double lowerLimit = averageConsumption - (averageConsumption * 0.2);
+        for (int i = 0; i < size; i++) {
+            if (auxConsumptionMW[i] >= lowerLimit && auxConsumptionMW[i] < upperLimit) {
+                averageValues++;
+            }
+            if (auxConsumptionMW[i] < lowerLimit) {
+                belowAverageValues++;
+            }
+            if (auxConsumptionMW[i] >= upperLimit) {
+                aboveAverageValues++;
+            }
+        }
+        System.out.println("Quantidade de valores dentro da média: " + averageValues);
+        System.out.println("Quantidade de valores acima da média: "+ aboveAverageValues);
+        System.out.println("Quantidade de valores abaixo da média: "+belowAverageValues);
+    }
+    
+    private static void MediaMovelSimples(int[] auxConsumptionMW) throws FileNotFoundException{
+        System.out.println("Insira a ordem da média móvel(n): ");
+        int n = sc.nextInt();
+        
+        while( n <= 0 || n > auxConsumptionMW.length )
+        {
+            System.out.println("Valor está errado: n > 0 e <= "+ auxConsumptionMW.length);
+            n = sc.nextInt();
+        }
+        
+        double somatorio = 0;
+        for (int i = 0; i < n; i++)
+        {
+            somatorio = auxConsumptionMW[i] + somatorio;
+        }
+        
+        double media = 0;
+        media = somatorio / n;
+        
+        System.out.println(media);
+    }
+    
+    private static void MediaMovelPesada(int[] auxConsumptionMW) throws FileNotFoundException{
+        
+        // criar o gráfico base 
+        
+        
+        
+        System.out.println("Insira o valor de α: [0:1]");
+        double alpha = sc.nextDouble();
+        
+        while(alpha<=0 || alpha>1)
+        {
+            System.out.println("Valor errado α[0:1]");
+            alpha = sc.nextDouble();
+        }
+        
+        // criar o gráfico com o alpha implementado
+    }
+            
+
 }
+
