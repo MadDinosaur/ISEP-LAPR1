@@ -8,12 +8,10 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class LAPR1_1DK_Mafia {
-
-    /**
-     * @param args the command line arguments
-     */
     static Scanner sc = new Scanner(System.in);
     static final int MAX_OBSERVATIONS = 26280;
+    static final int NUM_DAY_STAGES=6;
+    static final int NUM_HOURS=24;
 
     public static void main(String[] args) throws FileNotFoundException {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
@@ -50,16 +48,16 @@ public class LAPR1_1DK_Mafia {
         int resolution = sc.nextInt();
         switch (resolution) {
             case 1:
-                dayPeriod(consuptionMW, dateTime, MAX_OBSERVATIONS);
+                dayPeriod(consuptionMW, dateTime, size);
                 break;
             case 2:
-                daily(consuptionMW, dateTime, MAX_OBSERVATIONS);
+                daily(consuptionMW, dateTime, size);
                 break;
             case 3:
-                monthlyPeriod(consuptionMW, dateTime, MAX_OBSERVATIONS);
+                monthlyPeriod(consuptionMW, dateTime, size);
                 break;
             case 4:
-                //metodo anual
+                annualPeriod(consuptionMW, dateTime, size);
                 break;
             default:
                 System.out.println("Opção inválida. ");
@@ -76,7 +74,7 @@ public class LAPR1_1DK_Mafia {
             endPeriod = endPeriod + 6;
         }
         System.out.println(consuptionMW[0]);
-        exchangeInfo(consuptionMW, dateTime, size);
+        exchangeInfo(consuptionMW, dateTime, size, NUM_DAY_STAGES);
     }
 
     public static void daily(int[] consuptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
@@ -85,9 +83,10 @@ public class LAPR1_1DK_Mafia {
             for (int i = startPeriod + 1; i < endPeriod; i++) {
                 consuptionMW[startPeriod] += consuptionMW[i];
             }
-        }
         startPeriod = endPeriod;
         endPeriod = endPeriod + 24;
+        }
+        exchangeInfo(consuptionMW, dateTime, size, NUM_HOURS);
     }
 
     public static void monthlyPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size) {
@@ -102,28 +101,28 @@ public class LAPR1_1DK_Mafia {
         System.out.println(consuptionMW[0]);
     }
 
-    public static void annualPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size) {
+    public static void annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0, year = dateTime[0].getYear();
         while (startPeriod < size) {
             while (dateTime[startPeriod].getYear() == year) {
-                consuptionMW[startPeriod] += consuptionMW[startPeriod + 1];
+                consumptionMW[startPeriod] += consumptionMW[startPeriod + 1];
                 startPeriod++;
             }
             year++;
         }
-
     }
 
-    public static void exchangeInfo(int[] consuptionMW, LocalDateTime[] dateTime, int size) {
-        for (int i=1; i<size/6;i++){ 
-            int idx2 = i*6;
+    public static void exchangeInfo(int[] consumptionMW, LocalDateTime[] dateTime, int size, int period) {
+        int i;
+        for (i=1; i<size/period;i++){ 
+            int idx2 = i*period;
             //trocar datas
             dateTime[i] = dateTime[idx2];
             //trocar consumos
-            consuptionMW[i] = consuptionMW[idx2];
+            consumptionMW[i] = consumptionMW[idx2];
         }
-        for(int j=size-10; j<size; j++){
-        System.out.println(consuptionMW[j]);
-    }
+        size=i;
+        System.out.println(size);
+        System.out.println(dateTime[size-2]);
     }
 }
