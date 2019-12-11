@@ -1,29 +1,26 @@
-package Java_project;
+package pkg2019.lapr1_1dk_mafia;
 
-import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
-import javax.print.attribute.ResolutionSyntax;
-import javax.xml.transform.Source;
 
-public class Java_project {
+public class LAPR1_1DK_Mafia {
 
+    /**
+     * @param args the command line arguments
+     */
     static Scanner sc = new Scanner(System.in);
     static final int MAX_OBSERVATIONS = 26280;
-
     public static void main(String[] args) throws FileNotFoundException {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
+        
         int size = readFile(consumptionMW, dateTime);
     }
-
-    //método para ler ficheiro
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime) throws FileNotFoundException {
-        Scanner fileScan = new Scanner(new File("DAYTON.csv"));
+        Scanner fileScan = new Scanner (new File("DAYTON.csv"));
         fileScan.nextLine(); //descarta a linha do cabeçalho
         int numLines = 0; //conta as linhas do documento
         while (fileScan.hasNextLine()) {
@@ -37,10 +34,8 @@ public class Java_project {
         }
         fileScan.close();
         //retorna para entrar como comprimento do array
-        return numLines;
+        return numLines; 
     }
-
-    //escolha do periodo
     public static void definePeriod(int[] consuptionMW, LocalDateTime[] dateTime) throws FileNotFoundException {
         System.out.printf("Que resolução temporal deseja?/n"
                 + "1. Períodos do dia;/n"
@@ -77,5 +72,4 @@ public class Java_project {
    }
        System.out.println(consuptionMW[0]);
    }
-
 }
