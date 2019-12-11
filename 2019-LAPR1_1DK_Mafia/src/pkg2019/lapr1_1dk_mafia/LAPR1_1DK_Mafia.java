@@ -8,10 +8,11 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class LAPR1_1DK_Mafia {
+
     static Scanner sc = new Scanner(System.in);
     static final int MAX_OBSERVATIONS = 26280;
-    static final int NUM_DAY_STAGES=6;
-    static final int NUM_HOURS=24;
+    static final int NUM_DAY_STAGES = 6;
+    static final int NUM_HOURS = 24;
 
     public static void main(String[] args) throws FileNotFoundException {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
@@ -74,7 +75,7 @@ public class LAPR1_1DK_Mafia {
             endPeriod = endPeriod + 6;
         }
         System.out.println(consuptionMW[0]);
-        exchangeInfo(consuptionMW, dateTime, size, NUM_DAY_STAGES);
+        exchangeInfoDays(consuptionMW, dateTime, size, NUM_DAY_STAGES);
     }
 
     public static void daily(int[] consuptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
@@ -83,22 +84,27 @@ public class LAPR1_1DK_Mafia {
             for (int i = startPeriod + 1; i < endPeriod; i++) {
                 consuptionMW[startPeriod] += consuptionMW[i];
             }
-        startPeriod = endPeriod;
-        endPeriod = endPeriod + 24;
+            startPeriod = endPeriod;
+            endPeriod = endPeriod + 24;
         }
-        exchangeInfo(consuptionMW, dateTime, size, NUM_HOURS);
+        exchangeInfoDays(consuptionMW, dateTime, size, NUM_HOURS);
     }
 
-    public static void monthlyPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size) {
-        int startPeriod = 0, month = 1;
-        while (month < 13) {
-            while (dateTime[startPeriod].getMonthValue() == month) {
-                consuptionMW[startPeriod] += consuptionMW[startPeriod + 1];
-                startPeriod++;
+    public static void monthlyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
+        int startPeriod = 0;
+        int numYears = Math.abs(dateTime[0].getYear() - dateTime[size - 1].getYear());
+        for (int years = 0; years <= numYears; years++) {
+            int month = 1;
+            while (month < 13) {
+                while (dateTime[startPeriod].getMonthValue() == month) {
+                    consumptionMW[startPeriod] += consumptionMW[startPeriod + 1];
+                    startPeriod++; 
+                    month++;
+                }
+                //exchangeInfoMonthsYears(consumptionMW, dateTime, size, startPeriod);
             }
-            month++;
         }
-        System.out.println(consuptionMW[0]);
+        System.out.println(consumptionMW[size-1]);
     }
 
     public static void annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
@@ -108,21 +114,28 @@ public class LAPR1_1DK_Mafia {
                 consumptionMW[startPeriod] += consumptionMW[startPeriod + 1];
                 startPeriod++;
             }
+            exchangeInfoDays(consumptionMW, dateTime, size, year);
             year++;
         }
     }
 
-    public static void exchangeInfo(int[] consumptionMW, LocalDateTime[] dateTime, int size, int period) {
+    //troca informação das partes do dia ou dos dias
+    public static void exchangeInfoDays(int[] consumptionMW, LocalDateTime[] dateTime, int size, int period) {
         int i;
-        for (i=1; i<size/period;i++){ 
-            int idx2 = i*period;
+        for (i = 1; i < size / period; i++) {
+            int idx2 = i * period;
             //trocar datas
             dateTime[i] = dateTime[idx2];
             //trocar consumos
             consumptionMW[i] = consumptionMW[idx2];
         }
-        size=i;
+        size = i;
         System.out.println(size);
-        System.out.println(dateTime[size-2]);
+        System.out.println(dateTime[size - 1]);
+    }
+
+    //troca a informação dos meses ou dos anos
+    public static void exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int index) {
+        
     }
 }
