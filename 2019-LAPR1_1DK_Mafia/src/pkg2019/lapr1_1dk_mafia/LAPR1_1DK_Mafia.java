@@ -22,7 +22,7 @@ public class LAPR1_1DK_Mafia {
 
         int[] auxConsumptionMW = definePeriod(consumptionMW, dateTime, size);
         AverageConsumption(auxConsumptionMW, size);
-        
+
     }
 
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime) throws FileNotFoundException {
@@ -101,20 +101,20 @@ public class LAPR1_1DK_Mafia {
     public static void monthlyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0;
         int numYears = Math.abs(dateTime[0].getYear() - dateTime[size - 1].getYear());
-        for (int years = 0; years<numYears+1; years++) {
+        for (int years = 0; years < numYears + 1; years++) {
             int month = 1;
             while (month < 13) {
                 while (dateTime[startPeriod].getMonthValue() == month) {
                     consumptionMW[startPeriod] += consumptionMW[startPeriod + 1];
-                    startPeriod++; 
+                    startPeriod++;
                     month++;
                 }
                 //exchangeInfoMonthsYears(consumptionMW, dateTime, size, startPeriod);
             }
         }
-        System.out.println(consumptionMW[size-1]);
+        System.out.println(consumptionMW[size - 1]);
     }
-    
+
     public static void annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0, year = dateTime[0].getYear();
         while (startPeriod < size) {
@@ -125,7 +125,7 @@ public class LAPR1_1DK_Mafia {
             //exchangeInfoMonthsYears(consumptionMW, dateTime, size, size);
             year++;
         }
-        System.out.println(consumptionMW[size-1]);
+        System.out.println(consumptionMW[size - 1]);
     }
 
     //troca informação das partes do dia ou dos dias
@@ -145,7 +145,7 @@ public class LAPR1_1DK_Mafia {
 
     //troca a informação dos meses ou dos anos
     public static void exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int index) {
-        
+
         System.out.println(dateTime[size - 2]);
     }
 
@@ -169,50 +169,86 @@ public class LAPR1_1DK_Mafia {
             }
         }
         System.out.println("Quantidade de valores dentro da média: " + averageValues);
-        System.out.println("Quantidade de valores acima da média: "+ aboveAverageValues);
-        System.out.println("Quantidade de valores abaixo da média: "+belowAverageValues);
+        System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
+        System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
     }
-    
-    private static void MediaMovelSimples(int[] auxConsumptionMW) throws FileNotFoundException{
+
+    //metodo de ordenação- merge sort
+    public static void merge(int[] consumptionMW, LocalDateTime[] dateTime, int size, int index) {
+        int midle = size / 2;
+        int end=consumptionMW[0], start=consumptionMW[size-1]; //não tenho a certeza disto
+        int i = start, j = midle + 1, k = 0;
+        int temp[] = new int[end - start + 1];
+        while (i <= midle && j <= end) {
+            //pôr os menores dos 2 arrays no array temp
+            if (consumptionMW[i] <= consumptionMW[j]) {
+                temp[k] = consumptionMW[i];
+                k++;
+                i++;
+            } else {
+                temp[k] = consumptionMW[j];
+                k++;
+                j++;
+            }
+        }
+        //separar em duas metades
+        //primeiro ordenar metade 1 (inicio a meio)
+        while (i <= midle) {
+            temp[k] = consumptionMW[i];
+            k++;
+            i++;
+        }
+        //ordenar metade 2 (meio a fim)
+        while (j <= end) {
+            temp[k] = consumptionMW[j];
+            k++;
+            i++;
+        }
+        for (i = start; i <= end; i++) {
+            consumptionMW[i] = temp[i - start];
+        }
+    }
+    //incomlet- falta classe mergesort
+    public static void mergeSort(int consumptionMW[], LocalDateTime[] dateTime, int start, int end) {
+        if (start < end) {
+            int midle = (start + end) / 2;
+            //falta procurar a classe sortmerge no java, classe já existente
+            mergeSort()
+        }
+    }
+
+    private static void MediaMovelSimples(int[] auxConsumptionMW) throws FileNotFoundException {
         System.out.println("Insira a ordem da média móvel(n): ");
         int n = sc.nextInt();
-        
-        while( n <= 0 || n > auxConsumptionMW.length )
-        {
-            System.out.println("Valor está errado: n > 0 e <= "+ auxConsumptionMW.length);
+
+        while (n <= 0 || n > auxConsumptionMW.length) {
+            System.out.println("Valor está errado: n > 0 e <= " + auxConsumptionMW.length);
             n = sc.nextInt();
         }
-        
+
         double somatorio = 0;
-        for (int i = 0; i < n; i++)
-        {
+        for (int i = 0; i < n; i++) {
             somatorio = auxConsumptionMW[i] + somatorio;
         }
-        
+
         double media = 0;
         media = somatorio / n;
-        
+
         System.out.println(media);
     }
-    
-    private static void MediaMovelPesada(int[] auxConsumptionMW) throws FileNotFoundException{
-        
+
+    private static void MediaMovelPesada(int[] auxConsumptionMW) throws FileNotFoundException {
+
         // criar o gráfico base 
-        
-        
-        
         System.out.println("Insira o valor de α: [0:1]");
         double alpha = sc.nextDouble();
-        
-        while(alpha<=0 || alpha>1)
-        {
+
+        while (alpha <= 0 || alpha > 1) {
             System.out.println("Valor errado α[0:1]");
             alpha = sc.nextDouble();
         }
-        
+
         // criar o gráfico com o alpha implementado
     }
-            
 
 }
-
