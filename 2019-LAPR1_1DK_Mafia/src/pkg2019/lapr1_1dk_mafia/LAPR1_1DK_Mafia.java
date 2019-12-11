@@ -93,7 +93,7 @@ public class LAPR1_1DK_Mafia {
     public static void monthlyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0;
         int numYears = Math.abs(dateTime[0].getYear() - dateTime[size - 1].getYear());
-        for (int years = 0; years <= numYears; years++) {
+        for (int years = 0; years<numYears+1; years++) {
             int month = 1;
             while (month < 13) {
                 while (dateTime[startPeriod].getMonthValue() == month) {
@@ -106,7 +106,7 @@ public class LAPR1_1DK_Mafia {
         }
         System.out.println(consumptionMW[size-1]);
     }
-
+    
     public static void annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0, year = dateTime[0].getYear();
         while (startPeriod < size) {
@@ -114,9 +114,10 @@ public class LAPR1_1DK_Mafia {
                 consumptionMW[startPeriod] += consumptionMW[startPeriod + 1];
                 startPeriod++;
             }
-            exchangeInfoDays(consumptionMW, dateTime, size, year);
+            //exchangeInfoMonthsYears(consumptionMW, dateTime, size, size);
             year++;
         }
+        System.out.println(consumptionMW[size-1]);
     }
 
     //troca informação das partes do dia ou dos dias
