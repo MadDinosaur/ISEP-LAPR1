@@ -1,23 +1,26 @@
 package Java_project;
 
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import javax.print.attribute.ResolutionSyntax;
+import javax.xml.transform.Source;
 
 public class Java_project {
 
+    static Scanner sc = new Scanner(System.in);
     static final int MAX_OBSERVATIONS = 26280;
 
-    static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
         int size = readFile(consumptionMW, dateTime);
-    } 
-    
-    
+    }
+
     //método para ler ficheiro
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime) throws FileNotFoundException {
         Scanner fileScan = new Scanner(new File("DAYTON.csv"));
@@ -36,32 +39,43 @@ public class Java_project {
         //retorna para entrar como comprimento do array
         return numLines;
     }
-    
-    //escolha do periodo do dia
-    //temporário, ver amanhã com o professor
-    public static void getHour (int []consuptionMW, LocalDateTime[] dateTime) throws FileNotFoundException{
-        double [] Morning = new double [MAX_OBSERVATIONS];
-        
-        for (int i=0;i<dateTime.length;i++){
-            if (dateTime[i].getHour()>=6 && dateTime[i].getHour()<12){
-                    //passar informação toda da linha para array morning
-                
-            }else{
-                 if (dateTime[i].getHour()>=12 && dateTime[i].getHour()<18){
-                    //passar informação toda da linha para array afternoon
-                 
-                 } else {
-                      if (dateTime[i].getHour()>=18&&dateTime[i].getHour()<24){
-                    //passar informação toda da linha para array night
-                
-                 }else{
-                         if (dateTime[i].getHour()>=0&& dateTime[i].getHour()<6){
-                    //passar informação toda da linha para array dawn
-                }
-                         }
-                      }
-            }
-        }
-    }
-}
 
+    //escolha do periodo
+    public static void definePeriod(int[] consuptionMW, LocalDateTime[] dateTime) throws FileNotFoundException {
+        System.out.printf("Que resolução temporal deseja?/n"
+                + "1. Períodos do dia;/n"
+                + "2. Diário;/n"
+                + "3. Mensal;/n"
+                + "4. Anual./n");
+            int resolution = sc.nextInt();
+            switch (resolution){
+                case 1:
+                    dayPeriod(consuptionMW, dateTime, MAX_OBSERVATIONS);
+                    break;
+                case 2:
+                    //metodo day
+                    break;
+                case 3:
+                    //metodo mensal
+                    break;
+                case 4:
+                    //metodo anual
+                    break;
+                    default:
+                        System.out.println("Opção inválida. ");
+            }           
+    }
+    
+   public static void dayPeriod (int[] consuptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+       int startPeriod=0, endPeriod=6;
+       while (endPeriod<size){
+       for (int i =startPeriod+1; i<endPeriod; i++){
+          consuptionMW[startPeriod]+=consuptionMW[i];
+       }
+       startPeriod=endPeriod;
+       endPeriod=endPeriod+6;
+   }
+       System.out.println(consuptionMW[0]);
+   }
+
+}
