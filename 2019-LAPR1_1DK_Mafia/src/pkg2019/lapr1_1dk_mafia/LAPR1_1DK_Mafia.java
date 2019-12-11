@@ -22,6 +22,7 @@ public class LAPR1_1DK_Mafia {
 
         int[] auxConsumptionMW = definePeriod(consumptionMW, dateTime, size);
         AverageConsumption(auxConsumptionMW, size);
+        
     }
 
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime) throws FileNotFoundException {
@@ -155,4 +156,47 @@ public class LAPR1_1DK_Mafia {
         }
         System.out.println(averageValues);
     }
+    
+    private static void MediaMovelSimples(int[] auxConsumptionMW) throws FileNotFoundException{
+        System.out.println("Insira a ordem da média móvel(n): ");
+        int n = sc.nextInt();
+        
+        while( n <= 0 || n > auxConsumptionMW.length )
+        {
+            System.out.println("Valor está errado: n > 0 e <= "+ auxConsumptionMW.length);
+            n = sc.nextInt();
+        }
+        
+        double somatorio = 0;
+        for (int i = 0; i < n; i++)
+        {
+            somatorio = auxConsumptionMW[i] + somatorio;
+        }
+        
+        double media = 0;
+        media = somatorio / n;
+        
+        System.out.println(media);
+    }
+    
+    private static void MediaMovelPesada(int[] auxConsumptionMW) throws FileNotFoundException{
+        
+        // criar o gráfico base 
+        
+        
+        
+        System.out.println("Insira o valor de α: [0:1]");
+        double alpha = sc.nextDouble();
+        
+        while(alpha<=0 || alpha>1)
+        {
+            System.out.println("Valor errado α[0:1]");
+            alpha = sc.nextDouble();
+        }
+        
+        // criar o gráfico com o alpha implementado
+    }
+            
+
 }
+
