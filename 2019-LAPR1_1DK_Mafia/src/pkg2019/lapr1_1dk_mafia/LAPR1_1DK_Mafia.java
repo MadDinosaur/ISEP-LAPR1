@@ -80,7 +80,7 @@ public class LAPR1_1DK_Mafia {
         switch (resolution) {
             case 1:
                 dayPeriod(consumptionMW, dateTime, size);
-                merge(consumptionMW, size, start, middle);
+                mergeSort(consumptionMW, start, size);
                 break;
             case 2:
                 daily(consumptionMW, dateTime, size);
