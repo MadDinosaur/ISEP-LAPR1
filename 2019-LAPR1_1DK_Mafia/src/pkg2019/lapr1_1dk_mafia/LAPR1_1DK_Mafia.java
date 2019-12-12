@@ -154,16 +154,24 @@ public class LAPR1_1DK_Mafia {
     }
 
     //calcula consumos diários
-    public static int dailyPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+    public static int dailyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         int startPeriod = 0, endPeriod = NUM_HOURS;
         while (endPeriod < size) {
             for (int i = startPeriod + 1; i < endPeriod; i++) {
-                consuptionMW[startPeriod] += consuptionMW[i];
+                consumptionMW[startPeriod] += consumptionMW[i];
             }
             startPeriod = endPeriod;
             endPeriod = endPeriod + NUM_HOURS;
         }
-        return size = exchangeInfoDays(consuptionMW, dateTime, size, NUM_HOURS);
+       int leftoverHours = endPeriod - size;
+        if (leftoverHours < NUM_HOURS) {
+            for (int i = startPeriod; i < size; i++) {
+               consumptionMW[startPeriod] += consumptionMW[i];
+            }
+            return size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS) + 1;
+        }
+        
+        return size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS);
     }
 
     //calcula consumos mensais
@@ -218,7 +226,7 @@ public class LAPR1_1DK_Mafia {
             //trocar consumos
             consumptionMW[i] = consumptionMW[idx2];
         }
-        //size = i;
+        size = i;
         //System.out.println(size);
         //System.out.println(dateTime[size - 2]);
         return size;
@@ -241,7 +249,7 @@ public class LAPR1_1DK_Mafia {
             consumptionMW[i] = consumptionMW[idx2];
         }
         size = i;
-        System.out.println(size);
+        //System.out.println(size);
         //System.out.println(dateTime[size - 1]);
         //System.out.println(Arrays.toString(consumptionMW));
         return size;
