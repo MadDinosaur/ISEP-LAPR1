@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class LAPR1_1DK_Mafia {
@@ -41,6 +42,26 @@ public class LAPR1_1DK_Mafia {
         fileScan.close();
         //retorna para entrar como comprimento do array
         return numLines;
+    }
+    
+    public static void higherConsumption (int [] auxConsumptionMW, int size)throws FileNotFoundException {
+        int higher=auxConsumptionMW[0];
+        for (int i=1;i<size; i++){
+            if (auxConsumptionMW[i]>higher){
+                higher=auxConsumptionMW[i];
+            }
+        }
+        System.out.println("O maior valor de consumo registado foi: " + higher);
+    }
+    
+    public static void lowerConsumption (int [] auxConsumptionMW, int size)throws FileNotFoundException {
+        int lower=auxConsumptionMW[0];
+        for (int i=1;i<size; i++){
+            if (auxConsumptionMW[i]<lower){
+                lower=auxConsumptionMW[i];
+            }
+        }
+        System.out.println("O menor valor de consumo registado foi: " + lower);
     }
 
     public static int[] definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
@@ -149,7 +170,7 @@ public class LAPR1_1DK_Mafia {
         System.out.println(dateTime[size - 2]);
     }
 
-    private static void AverageConsumption(int[] auxConsumptionMW, int size) {
+    private static void AverageConsumption(int[] auxConsumptionMW, int size) throws FileNotFoundException {
         int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
         for (int i = 0; i < size; i++) {
             consumptionSum += auxConsumptionMW[i];
@@ -171,12 +192,14 @@ public class LAPR1_1DK_Mafia {
         System.out.println("Quantidade de valores dentro da média: " + averageValues);
         System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
         System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+        lowerConsumption(auxConsumptionMW, size);
+        higherConsumption(auxConsumptionMW, size);
     }
 
     //metodo de ordenação- merge sort
     public static void merge(int[] consumptionMW, LocalDateTime[] dateTime, int size, int index) {
         int midle = size / 2;
-        int end=consumptionMW[0], start=consumptionMW[size-1]; //não tenho a certeza disto
+        int end = consumptionMW[0], start = consumptionMW[size - 1]; //não tenho a certeza disto
         int i = start, j = midle + 1, k = 0;
         int temp[] = new int[end - start + 1];
         while (i <= midle && j <= end) {
@@ -207,13 +230,16 @@ public class LAPR1_1DK_Mafia {
         for (i = start; i <= end; i++) {
             consumptionMW[i] = temp[i - start];
         }
+        System.out.println(consumptionMW[i]);
+        System.out.println(consumptionMW[j]);
     }
+
     //incomlet- falta classe mergesort
     public static void mergeSort(int consumptionMW[], LocalDateTime[] dateTime, int start, int end) {
         if (start < end) {
             int midle = (start + end) / 2;
             //falta procurar a classe sortmerge no java, classe já existente
-            mergeSort()
+            Arrays.sort(consumptionMW);
         }
     }
 
