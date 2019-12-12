@@ -107,6 +107,21 @@ public class LAPR1_1DK_Mafia {
                         System.out.println("Opção inválida.");
                         break;
                 }
+                System.out.println("De que forma pretende ordenar? %n"
+                                        + "1. Crescente; %n"
+                                        + "2. Decrescente. %n");
+                int order=sc.nextInt();
+                switch (order) {
+                    case 1:
+                        mergeSort(consumptionMW, start, order);
+                        break;
+                    case 2: 
+                        //mergeSortInverse
+                        break;
+                        default:
+                            System.out.println("Opção inválida.");
+                            break;
+                }
                 break;
             case 2:
                 size = dailyPeriod(consumptionMW, dateTime, size);
@@ -114,16 +129,62 @@ public class LAPR1_1DK_Mafia {
                         //for(int i=0;i<size;i++){
                            // System.out.println(consumptionMW[i]);
                        // }
+                 System.out.println("De que forma pretende ordenar? %n"
+                                        + "1. Crescente; %n"
+                                        + "2. Decrescente. %n");
+                int ordernation=sc.nextInt();
+                switch (ordernation) {
+                    case 1:
+                        mergeSort(consumptionMW, start, ordernation);
+                        break;
+                    case 2: 
+                        //mergeSortInverse
+                        break;
+                        default:
+                            System.out.println("Opção inválida.");
+                            break;
+                }
                 periodAverages(consumptionMW, dateTime, size);
                 break;
             case 3:
                 size = monthlyPeriod(consumptionMW, dateTime, size);
+                 System.out.println("De que forma pretende ordenar? %n"
+                                        + "1. Crescente; %n"
+                                        + "2. Decrescente. %n");
+                int ordern=sc.nextInt();
+                switch (ordern) {
+                    case 1:
+                        mergeSort(consumptionMW, start, ordern);
+                        break;
+                    case 2: 
+                        //mergeSortInverse
+                        break;
+                        default:
+                            System.out.println("Opção inválida.");
+                            break;
+                }
                 break;
             case 4:
                 size = annualPeriod(consumptionMW, dateTime, size);
+                 System.out.println("De que forma pretende ordenar? %n"
+                                        + "1. Crescente; %n"
+                                        + "2. Decrescente. %n");
+                int orderna=sc.nextInt();
+                switch (orderna) {
+                    case 1:
+                        mergeSort(consumptionMW, start, orderna);
+                        break;
+                    case 2: 
+                        //mergeSortInverse
+                        break;
+                        default:
+                            System.out.println("Opção inválida.");
+                            break;
+                }
                 break;
             default:
                 System.out.println("Opção inválida. ");
+                break;
         }
         return size;
     }
