@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
+import oracle.jrockit.jfr.parser.ChunkParser;
 
 public class LAPR1_1DK_Mafia {
 
@@ -51,7 +52,7 @@ public class LAPR1_1DK_Mafia {
                 higher=auxConsumptionMW[i];
             }
         }
-        System.out.println("O maior valor de consumo registado foi: " + higher);
+        System.out.println("O maior valor de consumo registado foi: " + higher + " " + "MW");
     }
     
     public static void lowerConsumption (int [] auxConsumptionMW, int size)throws FileNotFoundException {
@@ -61,7 +62,7 @@ public class LAPR1_1DK_Mafia {
                 lower=auxConsumptionMW[i];
             }
         }
-        System.out.println("O menor valor de consumo registado foi: " + lower);
+        System.out.println("O menor valor de consumo registado foi: " + lower + " "+ "MW");
     }
 
     public static int[] definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
@@ -103,8 +104,46 @@ public class LAPR1_1DK_Mafia {
             startPeriod = endPeriod;
             endPeriod = endPeriod + 6;
         }
-        System.out.println(consuptionMW[0]);
+        averageDayPeriod(consuptionMW, dateTime, size);
         exchangeInfoDays(consuptionMW, dateTime, size, NUM_DAY_STAGES);
+    }
+    
+    public static void averageDayPeriod (int [] consumptionMW, LocalDateTime [] dateTime, int size){
+         int consumptionDawnSum = 0, consumptionMorningSum=0, consumptionAfternoonSum=0, consumptionNightSum=0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
+         //madrugada
+         for (int i = 0; i < size; i=i+4) {
+            consumptionDawnSum += consumptionMW[i];
+        }
+         //manhã
+          for (int i = 1; i < size; i=i+4) {
+            consumptionMorningSum += consumptionMW[i];
+        }
+          //tarde
+           for (int i = 0; i < size; i=i+4) {
+            consumptionAfternoonSum += consumptionMW[i];
+        }
+           //noite
+            for (int i = 0; i < size; i=i+4) {
+            consumptionNightSum += consumptionMW[i];
+        }     
+        System.out.println("Média das madrugadas: " + (consumptionDawnSum / (size/4)) + " "+"MW");
+        System.out.println("Média das manhãs: " + (consumptionMorningSum/(size/4)) + " "+ "MW");
+        System.out.println("Média das tardes: " + (consumptionAfternoonSum/(size/4)) + " " + "MW");
+        System.out.println("Média das noites: " + (consumptionNightSum/(size/4)) + " " + "MW");
+        
+        /*double upperLimit = averageConsumption + (averageConsumption * 0.2);
+        double lowerLimit = averageConsumption - (averageConsumption * 0.2);
+        for (int i = 0; i < size; i++) {
+            if (auxConsumptionMW[i] >= lowerLimit && auxConsumptionMW[i] < upperLimit) {
+                averageValues++;
+            }
+            if (auxConsumptionMW[i] < lowerLimit) {
+                belowAverageValues++;
+            }
+            if (auxConsumptionMW[i] >= upperLimit) {
+                aboveAverageValues++;
+            }
+        }*/
     }
 
     public static void daily(int[] consuptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
@@ -117,6 +156,11 @@ public class LAPR1_1DK_Mafia {
             endPeriod = endPeriod + 24;
         }
         exchangeInfoDays(consuptionMW, dateTime, size, NUM_HOURS);
+        dailyAverage(consuptionMW, dateTime, size);
+    }
+    
+    public static void dailyAverage(int [] consumptionMW, LocalDateTime [] dateTime, int size){
+        
     }
 
     public static void monthlyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
@@ -230,8 +274,12 @@ public class LAPR1_1DK_Mafia {
         for (i = start; i <= end; i++) {
             consumptionMW[i] = temp[i - start];
         }
-        System.out.println(consumptionMW[i]);
+        for (int l=0; l<500; l++){
+        System.out.println(consumptionMW[l]);
+        }
+        for (int m=0; m<500; m++){
         System.out.println(consumptionMW[j]);
+        }
     }
 
     //incomlet- falta classe mergesort
@@ -277,4 +325,5 @@ public class LAPR1_1DK_Mafia {
         // criar o gráfico com o alpha implementado
     }
 
+  
 }
