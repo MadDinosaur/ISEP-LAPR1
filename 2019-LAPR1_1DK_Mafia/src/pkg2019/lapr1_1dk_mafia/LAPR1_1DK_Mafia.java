@@ -25,14 +25,16 @@ public class LAPR1_1DK_Mafia {
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
 
         int size = readFile(consumptionMW, dateTime);
-        int middle=size/2;
-        int start=0;
+        int middle = size / 2;
+        int start = 0;
         int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
         int auxSize = definePeriod(auxConsumptionMW, dateTime, size, middle, start);
-        AverageConsumption(auxConsumptionMW, auxSize);
+        defineOrder(auxConsumptionMW, start);
+        averageConsumption(auxConsumptionMW, auxSize);
 
     }
 
+    //lê ficheiro .csv
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime) throws FileNotFoundException {
         Scanner fileScan = new Scanner(new File("DAYTON.csv"));
         fileScan.nextLine(); //descarta a linha do cabeçalho
@@ -51,26 +53,7 @@ public class LAPR1_1DK_Mafia {
         return numLines;
     }
 
-    public static void higherConsumption(int[] auxConsumptionMW, int size) throws FileNotFoundException {
-        int higher = auxConsumptionMW[0];
-        for (int i = 1; i < size; i++) {
-            if (auxConsumptionMW[i] > higher) {
-                higher = auxConsumptionMW[i];
-            }
-        }
-        System.out.println("O maior valor de consumo registado foi: " + higher);
-    }
-
-    public static void lowerConsumption(int[] auxConsumptionMW, int size) throws FileNotFoundException {
-        int lower = auxConsumptionMW[0];
-        for (int i = 1; i < size; i++) {
-            if (auxConsumptionMW[i] < lower) {
-                lower = auxConsumptionMW[i];
-            }
-        }
-        System.out.println("O menor valor de consumo registado foi: " + lower);
-    }
-
+    //menu interativo para escolher a resolução temporal
     public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size, int middle, int start) throws FileNotFoundException {
         System.out.printf("Que resolução temporal deseja? %n"
                 + "1. Períodos do dia; %n"
@@ -89,7 +72,7 @@ public class LAPR1_1DK_Mafia {
                 switch (period) {
                     case 1:
                         size = dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
-                        mergeSort(consumptionMW,0, size);
+                        //mergeSort(consumptionMW, 0, size);
                         break;
                     case 2:
                         size = dayPeriod(consumptionMW, dateTime, size, 6);
@@ -101,86 +84,26 @@ public class LAPR1_1DK_Mafia {
                         break;
                     case 4:
                         size = dayPeriod(consumptionMW, dateTime, size, 18);
-                       // mergeSort(consumptionMW, start, size);
+                        // mergeSort(consumptionMW, start, size);
                         break;
                     default:
                         System.out.println("Opção inválida.");
                         break;
                 }
-                System.out.println("De que forma pretende ordenar? %n"
-                                        + "1. Crescente; %n"
-                                        + "2. Decrescente. %n");
-                int order=sc.nextInt();
-                switch (order) {
-                    case 1:
-                        mergeSort(consumptionMW, start, order);
-                        break;
-                    case 2: 
-                        //mergeSortInverse
-                        break;
-                        default:
-                            System.out.println("Opção inválida.");
-                            break;
-                }
                 break;
             case 2:
                 size = dailyPeriod(consumptionMW, dateTime, size);
-                mergeSort(consumptionMW,0, size-1);
-                        //for(int i=0;i<size;i++){
-                           // System.out.println(consumptionMW[i]);
-                       // }
-                 System.out.println("De que forma pretende ordenar? %n"
-                                        + "1. Crescente; %n"
-                                        + "2. Decrescente. %n");
-                int ordernation=sc.nextInt();
-                switch (ordernation) {
-                    case 1:
-                        mergeSort(consumptionMW, start, ordernation);
-                        break;
-                    case 2: 
-                        //mergeSortInverse
-                        break;
-                        default:
-                            System.out.println("Opção inválida.");
-                            break;
-                }
+                //mergeSort(consumptionMW, 0, size - 1);
+                //for(int i=0;i<size;i++){
+                // System.out.println(consumptionMW[i]);
+                // }
                 periodAverages(consumptionMW, dateTime, size);
                 break;
             case 3:
                 size = monthlyPeriod(consumptionMW, dateTime, size);
-                 System.out.println("De que forma pretende ordenar? %n"
-                                        + "1. Crescente; %n"
-                                        + "2. Decrescente. %n");
-                int ordern=sc.nextInt();
-                switch (ordern) {
-                    case 1:
-                        mergeSort(consumptionMW, start, ordern);
-                        break;
-                    case 2: 
-                        //mergeSortInverse
-                        break;
-                        default:
-                            System.out.println("Opção inválida.");
-                            break;
-                }
                 break;
             case 4:
                 size = annualPeriod(consumptionMW, dateTime, size);
-                 System.out.println("De que forma pretende ordenar? %n"
-                                        + "1. Crescente; %n"
-                                        + "2. Decrescente. %n");
-                int orderna=sc.nextInt();
-                switch (orderna) {
-                    case 1:
-                        mergeSort(consumptionMW, start, orderna);
-                        break;
-                    case 2: 
-                        //mergeSortInverse
-                        break;
-                        default:
-                            System.out.println("Opção inválida.");
-                            break;
-                }
                 break;
             default:
                 System.out.println("Opção inválida. ");
@@ -189,6 +112,26 @@ public class LAPR1_1DK_Mafia {
         return size;
     }
 
+    //ordena de forma crescente ou decrescente conforme escolha do utilizador
+    public static void defineOrder(int[] consumptionMW, int start) {
+        System.out.printf("De que forma pretende ordenar? %n"
+                + "1. Crescente; %n"
+                + "2. Decrescente. %n");
+        int order = sc.nextInt();
+        switch (order) {
+            case 1:
+                mergeSort(consumptionMW, start, order);
+                break;
+            case 2:
+                //mergeSortInverse
+                break;
+            default:
+                System.out.println("Opção inválida.");
+                break;
+        }
+    }
+
+    //calcula consumos de um dado periodo do dia - manhã, tarde, noite ou madrugada
     public static int dayPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size, int startPeriod) throws FileNotFoundException {
         int endPeriod = startPeriod + NUM_HOURS_IN_STAGE;
         while (endPeriod < size) {
@@ -210,6 +153,7 @@ public class LAPR1_1DK_Mafia {
         System.out.println("Média : " + (consumptionSum / (size / 4)) + " " + "MW");
     }
 
+    //calcula consumos diários
     public static int dailyPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         int startPeriod = 0, endPeriod = NUM_HOURS;
         while (endPeriod < size) {
@@ -221,9 +165,10 @@ public class LAPR1_1DK_Mafia {
         }
         return size = exchangeInfoDays(consuptionMW, dateTime, size, NUM_HOURS);
     }
-  
+
+    //calcula consumos mensais
     public static int monthlyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
-         int startPeriod = 0, endPeriod = getMonthLength(dateTime, startPeriod) * NUM_HOURS, numMonths = 0;
+        int startPeriod = 0, endPeriod = getMonthLength(dateTime, startPeriod) * NUM_HOURS, numMonths = 0;
         while (endPeriod < size) {
             for (int i = startPeriod + 1; i < endPeriod; i++) {
                 consumptionMW[startPeriod] += consumptionMW[i];
@@ -233,22 +178,24 @@ public class LAPR1_1DK_Mafia {
             endPeriod += getMonthLength(dateTime, startPeriod) * NUM_HOURS;
         }
         int leftoverDays = endPeriod - size;
-        if (leftoverDays < getMonthLength(dateTime, startPeriod) * NUM_HOURS){
-            for (int i = startPeriod; i < size; i++){
-            consumptionMW[startPeriod] += consumptionMW[i];
-        }
+        if (leftoverDays < getMonthLength(dateTime, startPeriod) * NUM_HOURS) {
+            for (int i = startPeriod; i < size; i++) {
+                consumptionMW[startPeriod] += consumptionMW[i];
+            }
             numMonths++;
         }
         return size = exchangeInfoMonthsYears(consumptionMW, dateTime, size, numMonths, true);
     }
-    
+
+    //retorna o nº de dias de um dado mês
     public static int getMonthLength(LocalDateTime[] dateTime, int index) {
         int length = YearMonth.of(dateTime[index].getYear(), dateTime[index].getMonthValue()).lengthOfMonth();
         return length;
     }
 
+    //calcula consumos anuais
     public static int annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
-       int startPeriod = 0, i = 0, numYears = 0, year = dateTime[0].getYear();
+        int startPeriod = 0, i = 0, numYears = 0, year = dateTime[0].getYear();
         while (startPeriod < size) {
             while (i < size && dateTime[i].getYear() == year) {
                 consumptionMW[startPeriod] += consumptionMW[i];
@@ -278,13 +225,13 @@ public class LAPR1_1DK_Mafia {
     }
 
     //troca a informação dos meses ou dos anos
-   public static int exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int numOccorrences, boolean isMonth) {
+    public static int exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int numOccorrences, boolean isMonth) {
         int i, idx2 = 0;
         for (i = 1; i < numOccorrences; i++) {
             if (isMonth) {
-            idx2 += getMonthLength(dateTime, idx2) * NUM_HOURS;
+                idx2 += getMonthLength(dateTime, idx2) * NUM_HOURS;
             } else {
-                if (Year.isLeap(dateTime[idx2].getYear())){
+                if (Year.isLeap(dateTime[idx2].getYear())) {
                     idx2 += (NUM_DAYS_IN_YEAR + 1) * NUM_HOURS;
                 } else {
                     idx2 += NUM_DAYS_IN_YEAR * NUM_HOURS;
@@ -300,80 +247,80 @@ public class LAPR1_1DK_Mafia {
         return size;
     }
 
- private static void AverageConsumption(int[] auxConsumptionMW, int size) throws FileNotFoundException {
-         int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
-         for (int i = 0; i < size; i++) {
-             consumptionSum += auxConsumptionMW[i];
-         }
-         double averageConsumption = consumptionSum / size;
-         double upperLimit = averageConsumption + (averageConsumption * 0.2);
-         double lowerLimit = averageConsumption - (averageConsumption * 0.2);
-         for (int i = 0; i < size; i++) {
-             if (auxConsumptionMW[i] >= lowerLimit && auxConsumptionMW[i] < upperLimit) {
-                 averageValues++;
-             }
-             if (auxConsumptionMW[i] < lowerLimit) {
-                 belowAverageValues++;
-             }
-             if (auxConsumptionMW[i] >= upperLimit) {
-                 aboveAverageValues++;
-             }
-         }
-         System.out.println("Quantidade de valores dentro da média: " + averageValues);
-         System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
-         System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
-         lowerConsumption(auxConsumptionMW, size);
-         higherConsumption(auxConsumptionMW, size);
-     }
+    private static void averageConsumption(int[] auxConsumptionMW, int size) throws FileNotFoundException {
+        int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
+        for (int i = 0; i < size; i++) {
+            consumptionSum += auxConsumptionMW[i];
+        }
+        double averageConsumption = consumptionSum / size;
+        double upperLimit = averageConsumption + (averageConsumption * 0.2);
+        double lowerLimit = averageConsumption - (averageConsumption * 0.2);
+        for (int i = 0; i < size; i++) {
+            if (auxConsumptionMW[i] >= lowerLimit && auxConsumptionMW[i] < upperLimit) {
+                averageValues++;
+            }
+            if (auxConsumptionMW[i] < lowerLimit) {
+                belowAverageValues++;
+            }
+            if (auxConsumptionMW[i] >= upperLimit) {
+                aboveAverageValues++;
+            }
+        }
+        System.out.println("Quantidade de valores dentro da média: " + averageValues);
+        System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
+        System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+    }
 
     public static void merge(int consumption[], int start, int middle, int end) {
 
-	// create a temp array
-	int temp[] = new int[end - start + 1];
+        // create a temp array
+        int temp[] = new int[end - start + 1];
 
-	// crawlers for both intervals and for temp
-	int i = start, j = middle+1, k = 0;
+        // crawlers for both intervals and for temp
+        int i = start, j = middle + 1, k = 0;
 
-	// traverse both arrays and in each iteration add smaller of both elements in temp 
-	while(i <= middle && j <= end) {
-		if(consumption[i] <=consumption[j]) {                           //trocar o sinal para decrescente
-			temp[k] = consumption[i];
-			k += 1; i += 1;
-		}
-		else {
-			temp[k] = consumption[j];
-			k += 1; j += 1;
-		}
-	}
-
-	// add elements left in the first interval 
-	while(i <= middle) {
-		temp[k] = consumption[i];
-		k += 1; i += 1;
-	}
-
-	// add elements left in the second interval 
-	while(j <= end) {
-		temp[k] = consumption[j];
-		k += 1; j += 1;
-	}
-
-	// copy temp to original interval
-	for(i = start; i <= end; i += 1) {
-		consumption[i] = temp[i - start];
-	}
-}
-
-
-public static void mergeSort(int consumption[], int start, int end) {
-
-	if(start < end) {
-		int mid = (start + end) / 2;
-		mergeSort(consumption, start, mid);
-		mergeSort(consumption, mid+1, end);
-		merge(consumption, start, mid, end);
+        // traverse both arrays and in each iteration add smaller of both elements in temp 
+        while (i <= middle && j <= end) {
+            if (consumption[i] <= consumption[j]) {                           //trocar o sinal para decrescente
+                temp[k] = consumption[i];
+                k += 1;
+                i += 1;
+            } else {
+                temp[k] = consumption[j];
+                k += 1;
+                j += 1;
+            }
         }
-}
+
+        // add elements left in the first interval 
+        while (i <= middle) {
+            temp[k] = consumption[i];
+            k += 1;
+            i += 1;
+        }
+
+        // add elements left in the second interval 
+        while (j <= end) {
+            temp[k] = consumption[j];
+            k += 1;
+            j += 1;
+        }
+
+        // copy temp to original interval
+        for (i = start; i <= end; i += 1) {
+            consumption[i] = temp[i - start];
+        }
+    }
+
+    public static void mergeSort(int consumption[], int start, int end) {
+
+        if (start < end) {
+            int mid = (start + end) / 2;
+            mergeSort(consumption, start, mid);
+            mergeSort(consumption, mid + 1, end);
+            merge(consumption, start, mid, end);
+        }
+    }
 
     private static void MediaMovelSimples(int[] auxConsumptionMW) throws FileNotFoundException {
         System.out.println("Insira a ordem da média móvel(n): ");
