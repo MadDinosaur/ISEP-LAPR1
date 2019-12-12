@@ -106,6 +106,43 @@ public class LAPR1_1DK_Mafia {
         System.out.println(consuptionMW[0]);
         exchangeInfoDays(consuptionMW, dateTime, size, NUM_DAY_STAGES);
     }
+    public static void dayPeriodAverages (int[] consumptionMW, LocalDateTime[] dateTime, int size){
+                     int consumptionDawnSum = 0, consumptionMorningSum=0, consumptionAfternoonSum=0, consumptionNightSum=0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
+         //madrugada
+         for (int i = 0; i < size; i=i+4) {
+            consumptionDawnSum += consumptionMW[i];
+        }
+         //manhã
+          for (int i = 1; i < size; i=i+4) {
+            consumptionMorningSum +=consumptionMW[i];
+        }
+          //tarde
+           for (int i = 0; i < size; i=i+4) {
+            consumptionAfternoonSum += consumptionMW[i];
+        }
+           //noite
+            for (int i = 0; i < size; i=i+4) {
+            consumptionNightSum += consumptionMW[i];
+        }     
+        System.out.println("Média das madrugadas: " + (consumptionDawnSum / (size/4)) + " "+"MW");
+        System.out.println("Média das manhãs: " + (consumptionMorningSum/(size/4)) + " "+ "MW");
+        System.out.println("Média das tardes: " + (consumptionAfternoonSum/(size/4)) + " " + "MW");
+        System.out.println("Média das noites: " + (consumptionNightSum/(size/4)) + " " + "MW");
+        
+        /*double upperLimit = averageConsumption + (averageConsumption * 0.2);
+        double lowerLimit = averageConsumption - (averageConsumption * 0.2);
+        for (int i = 0; i < size; i++) {
+            if (auxConsumptionMW[i] >= lowerLimit && auxConsumptionMW[i] < upperLimit) {
+                averageValues++;
+            }
+            if (auxConsumptionMW[i] < lowerLimit) {
+                belowAverageValues++;
+            }
+            if (auxConsumptionMW[i] >= upperLimit) {
+                aboveAverageValues++;
+            }
+        }*/
+    }
 
     public static void daily(int[] consuptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         int startPeriod = 0, endPeriod = 24;
