@@ -29,7 +29,7 @@ public class LAPR1_1DK_Mafia {
         int start=0;
         int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
         int auxSize = definePeriod(auxConsumptionMW, dateTime, size, middle, start);
-        AverageConsumption(auxConsumptionMW, size);
+        AverageConsumption(auxConsumptionMW, auxSize);
 
     }
 
@@ -89,19 +89,19 @@ public class LAPR1_1DK_Mafia {
                 switch (period) {
                     case 1:
                         size = dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
-                        mergeSort(consumptionMW, start, size);
+                        mergeSort(consumptionMW,0, size);
                         break;
                     case 2:
                         size = dayPeriod(consumptionMW, dateTime, size, 6);
-                        mergeSort(consumptionMW, start, size);
+                        //mergeSort(consumptionMW, start, size);
                         break;
                     case 3:
                         size = dayPeriod(consumptionMW, dateTime, size, 12);
-                        mergeSort(consumptionMW, start, size);
+                        //mergeSort(consumptionMW, start, size);
                         break;
                     case 4:
                         size = dayPeriod(consumptionMW, dateTime, size, 18);
-                        mergeSort(consumptionMW, start, size);
+                       // mergeSort(consumptionMW, start, size);
                         break;
                     default:
                         System.out.println("Opção inválida.");
@@ -110,6 +110,10 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 2:
                 size = dailyPeriod(consumptionMW, dateTime, size);
+                mergeSort(consumptionMW,0, size-1);
+                        //for(int i=0;i<size;i++){
+                           // System.out.println(consumptionMW[i]);
+                       // }
                 periodAverages(consumptionMW, dateTime, size);
                 break;
             case 3:
@@ -206,7 +210,7 @@ public class LAPR1_1DK_Mafia {
             //trocar consumos
             consumptionMW[i] = consumptionMW[idx2];
         }
-        size = i;
+        //size = i;
         //System.out.println(size);
         //System.out.println(dateTime[size - 2]);
         return size;
@@ -229,39 +233,39 @@ public class LAPR1_1DK_Mafia {
             consumptionMW[i] = consumptionMW[idx2];
         }
         size = i;
-        //System.out.println(size);
+        System.out.println(size);
         //System.out.println(dateTime[size - 1]);
         //System.out.println(Arrays.toString(consumptionMW));
         return size;
     }
 
-    private static void AverageConsumption(int[] auxConsumptionMW, int size) throws FileNotFoundException {
-        int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
-        for (int i = 0; i < size; i++) {
-            consumptionSum += auxConsumptionMW[i];
-        }
-        double averageConsumption = consumptionSum / size;
-        double upperLimit = averageConsumption + (averageConsumption * 0.2);
-        double lowerLimit = averageConsumption - (averageConsumption * 0.2);
-        for (int i = 0; i < size; i++) {
-            if (auxConsumptionMW[i] >= lowerLimit && auxConsumptionMW[i] < upperLimit) {
-                averageValues++;
-            }
-            if (auxConsumptionMW[i] < lowerLimit) {
-                belowAverageValues++;
-            }
-            if (auxConsumptionMW[i] >= upperLimit) {
-                aboveAverageValues++;
-            }
-        }
-        System.out.println("Quantidade de valores dentro da média: " + averageValues);
-        System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
-        System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
-        lowerConsumption(auxConsumptionMW, size);
-        higherConsumption(auxConsumptionMW, size);
-    }
+ private static void AverageConsumption(int[] auxConsumptionMW, int size) throws FileNotFoundException {
+         int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
+         for (int i = 0; i < size; i++) {
+             consumptionSum += auxConsumptionMW[i];
+         }
+         double averageConsumption = consumptionSum / size;
+         double upperLimit = averageConsumption + (averageConsumption * 0.2);
+         double lowerLimit = averageConsumption - (averageConsumption * 0.2);
+         for (int i = 0; i < size; i++) {
+             if (auxConsumptionMW[i] >= lowerLimit && auxConsumptionMW[i] < upperLimit) {
+                 averageValues++;
+             }
+             if (auxConsumptionMW[i] < lowerLimit) {
+                 belowAverageValues++;
+             }
+             if (auxConsumptionMW[i] >= upperLimit) {
+                 aboveAverageValues++;
+             }
+         }
+         System.out.println("Quantidade de valores dentro da média: " + averageValues);
+         System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
+         System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+         lowerConsumption(auxConsumptionMW, size);
+         higherConsumption(auxConsumptionMW, size);
+     }
 
-    public static void merge(int consumption[], int end, int start, int middle) {
+    public static void merge(int consumption[], int start, int middle, int end) {
 
 	// create a temp array
 	int temp[] = new int[end - start + 1];
@@ -271,7 +275,7 @@ public class LAPR1_1DK_Mafia {
 
 	// traverse both arrays and in each iteration add smaller of both elements in temp 
 	while(i <= middle && j <= end) {
-		if(consumption[i] <=consumption[j]) {
+		if(consumption[i] <=consumption[j]) {                           //trocar o sinal para decrescente
 			temp[k] = consumption[i];
 			k += 1; i += 1;
 		}
@@ -307,9 +311,6 @@ public static void mergeSort(int consumption[], int start, int end) {
 		mergeSort(consumption, start, mid);
 		mergeSort(consumption, mid+1, end);
 		merge(consumption, start, mid, end);
-	}
-        for (int m=0; m<500; m++){
-            System.out.println(consumption[m]);
         }
 }
 
