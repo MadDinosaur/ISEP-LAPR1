@@ -288,6 +288,7 @@ public class LAPR1_1DK_Mafia {
         System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
     }
 
+
     public static void merge(int consumption[], int start, int middle, int end) {
 
         // create a temp array
@@ -326,6 +327,55 @@ public class LAPR1_1DK_Mafia {
         // copy temp to original interval
         for (i = start; i <= end; i += 1) {
             consumption[i] = temp[i - start];
+        }
+    }
+
+    public static void inverseMerge(int consumption[], int start, int middle, int end) {
+        // create a temp array
+        int temp[] = new int[end - start + 1];
+
+        // crawlers for both intervals and for temp
+        int i = start, j = middle + 1, k = 0;
+
+        // traverse both arrays and in each iteration add smaller of both elements in temp 
+        while (i <= middle && j <= end) {
+            if (consumption[i] >= consumption[j]) {                           //trocar o sinal para decrescente
+                temp[k] = consumption[i];
+                k += 1;
+                i += 1;
+            } else {
+                temp[k] = consumption[j];
+                k += 1;
+                j += 1;
+            }
+        }
+
+        // add elements left in the first interval 
+        while (i <= middle) {
+            temp[k] = consumption[i];
+            k += 1;
+            i += 1;
+        }
+
+        // add elements left in the second interval 
+        while (j <= end) {
+            temp[k] = consumption[j];
+            k += 1;
+            j += 1;
+        }
+
+        // copy temp to original interval
+        for (i = start; i <= end; i += 1) {
+            consumption[i] = temp[i - start];
+        }
+    }
+
+    public static void inverseMergeSort(int consumption[], int start, int end) {
+        if (start < end) {
+            int mid = (start + end) / 2;
+            inverseMergeSort(consumption, start, mid);
+            inverseMergeSort(consumption, mid + 1, end);
+            inverseMerge(consumption, start, mid, end);
         }
     }
 
