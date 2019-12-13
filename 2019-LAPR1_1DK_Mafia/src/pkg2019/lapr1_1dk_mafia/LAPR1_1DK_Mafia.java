@@ -28,15 +28,12 @@ public class LAPR1_1DK_Mafia {
     public static void main(String[] args) throws FileNotFoundException {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
-
         int size = readFile(consumptionMW, dateTime);
         int middle = size / 2;
         int start = 0;
         int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
         int auxSize = definePeriod(auxConsumptionMW, dateTime, size, middle, start);
-        defineOrder(auxConsumptionMW, start);
         averageConsumption(auxConsumptionMW, auxSize);
-
     }
 
     //lê ficheiro .csv
@@ -59,80 +56,84 @@ public class LAPR1_1DK_Mafia {
     }
 
     //menu interativo para escolher a resolução temporal
-    public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size, int middle, int start) throws FileNotFoundException {
+    public static int definePeriod(int[] auxConsumptionMW, LocalDateTime[] dateTime, int size, int middle, int start) throws FileNotFoundException {
+        int resolution=0;
+        while (resolution != 5) {
         System.out.printf("Que resolução temporal deseja? %n"
                 + "1. Períodos do dia; %n"
                 + "2. Diário; %n"
                 + "3. Mensal; %n"
-                + "4. Anual. %n");
-        int resolution = sc.nextInt();
-        switch (resolution) {
-            case 1:
-                System.out.printf("Que periodo do dia deseja? %n"
-                        + "1. Manhã; %n"
-                        + "2. Tarde; %n"
-                        + "3. Noite; %n"
-                        + "4. Madrugada. %n");
-                int period = sc.nextInt();
-                switch (period) {
-                    case 1:
-                        size = dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
-                        //mergeSort(consumptionMW, 0, size);
-                        break;
-                    case 2:
-                        size = dayPeriod(consumptionMW, dateTime, size, 6);
-                        //mergeSort(consumptionMW, start, size);
-                        break;
-                    case 3:
-                        size = dayPeriod(consumptionMW, dateTime, size, 12);
-                        //mergeSort(consumptionMW, start, size);
-                        break;
-                    case 4:
-                        size = dayPeriod(consumptionMW, dateTime, size, 18);
-                        // mergeSort(consumptionMW, start, size);
-                        break;
-                    default:
-                        System.out.println("Opção inválida.");
-                        break;
-                }
-                break;
-            case 2:
-                size = dailyPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW,size);
-                //mergeSort(consumptionMW, 0, size - 1);
-                //for(int i=0;i<size;i++){
-                // System.out.println(consumptionMW[i]);
-                // }
-                periodAverages(consumptionMW, dateTime, size);
-                break;
-            case 3:
-                size = monthlyPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW,size);
-                break;
-            case 4:
-                size = annualPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW,size);
-                        
-                break;
-            default:
-                System.out.println("Opção inválida. ");
-                break;
+                + "4. Anual. %n"
+                + "5. Sair.");
+        resolution = sc.nextInt();     
+            switch (resolution) {
+                case 1:
+                    System.out.printf("Que periodo do dia deseja? %n"
+                            + "1. Manhã; %n"
+                            + "2. Tarde; %n"
+                            + "3. Noite; %n"
+                            + "4. Madrugada; %n");
+                    int period = sc.nextInt();
+                    switch (period) {
+                        case 1:
+                            size = dayPeriod(auxConsumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
+                            defineOrder(auxConsumptionMW, start, size);
+                            break;
+                        case 2:
+                            size = dayPeriod(auxConsumptionMW, dateTime, size, 6);
+                            defineOrder(auxConsumptionMW, start, size);
+                            break;
+                        case 3:
+                            size = dayPeriod(auxConsumptionMW, dateTime, size, 12);
+                            defineOrder(auxConsumptionMW, start, size);
+                            break;
+                        case 4:
+                            size = dayPeriod(auxConsumptionMW, dateTime, size, 18);
+                            break;
+                        default:
+                            System.out.println("Opção inválida.");
+                            break;
+                    }
+                    break;
+                case 2:
+                    size = dailyPeriod(auxConsumptionMW, dateTime, size);
+                    criarGrafico(auxConsumptionMW, size);
+                    periodAverages(auxConsumptionMW, dateTime, size);
+                    defineOrder(auxConsumptionMW, start, size);
+                    break;
+                case 3:
+                    size = monthlyPeriod(auxConsumptionMW, dateTime, size);
+                    criarGrafico(auxConsumptionMW, size);
+                    defineOrder(auxConsumptionMW, start, size);
+                    break;
+                case 4:
+                    size = annualPeriod(auxConsumptionMW, dateTime, size);
+                    criarGrafico(auxConsumptionMW, size);
+                    defineOrder(auxConsumptionMW, start, size);
+                    break;
+                case 5:
+                    System.exit(0);
+                default:
+                    System.out.println("Opção inválida. ");
+                    break;
+            }
+            resolution = sc.nextInt();
         }
         return size;
     }
 
     //ordena de forma crescente ou decrescente conforme escolha do utilizador
-    public static void defineOrder(int[] consumptionMW, int start) {
+    public static void defineOrder(int[] consumptionMW, int start, int size) {
         System.out.printf("De que forma pretende ordenar? %n"
                 + "1. Crescente; %n"
                 + "2. Decrescente. %n");
         int order = sc.nextInt();
         switch (order) {
             case 1:
-                mergeSort(consumptionMW, start, order);
+                mergeSort(consumptionMW, start, size);
                 break;
             case 2:
-                //mergeSortInverse
+                inverseMergeSort(consumptionMW, start, size);
                 break;
             default:
                 System.out.println("Opção inválida.");
@@ -172,14 +173,14 @@ public class LAPR1_1DK_Mafia {
             startPeriod = endPeriod;
             endPeriod = endPeriod + NUM_HOURS;
         }
-       int leftoverHours = endPeriod - size;
+        int leftoverHours = endPeriod - size;
         if (leftoverHours < NUM_HOURS) {
             for (int i = startPeriod; i < size; i++) {
-               consumptionMW[startPeriod] += consumptionMW[i];
+                consumptionMW[startPeriod] += consumptionMW[i];
             }
             return size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS) + 1;
         }
-        
+
         return size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS);
     }
 
@@ -329,6 +330,55 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
+    public static void inverseMerge(int consumption[], int start, int middle, int end) {
+        // create a temp array
+        int temp[] = new int[end - start + 1];
+
+        // crawlers for both intervals and for temp
+        int i = start, j = middle + 1, k = 0;
+
+        // traverse both arrays and in each iteration add smaller of both elements in temp 
+        while (i <= middle && j <= end) {
+            if (consumption[i] >= consumption[j]) {                           //trocar o sinal para decrescente
+                temp[k] = consumption[i];
+                k += 1;
+                i += 1;
+            } else {
+                temp[k] = consumption[j];
+                k += 1;
+                j += 1;
+            }
+        }
+
+        // add elements left in the first interval 
+        while (i <= middle) {
+            temp[k] = consumption[i];
+            k += 1;
+            i += 1;
+        }
+
+        // add elements left in the second interval 
+        while (j <= end) {
+            temp[k] = consumption[j];
+            k += 1;
+            j += 1;
+        }
+
+        // copy temp to original interval
+        for (i = start; i <= end; i += 1) {
+            consumption[i] = temp[i - start];
+        }
+    }
+
+    public static void inverseMergeSort(int consumption[], int start, int end) {
+        if (start < end) {
+            int mid = (start + end) / 2;
+            inverseMergeSort(consumption, start, mid);
+            inverseMergeSort(consumption, mid + 1, end);
+            inverseMerge(consumption, start, mid, end);
+        }
+    }
+
     public static void mergeSort(int consumption[], int start, int end) {
 
         if (start < end) {
@@ -372,34 +422,32 @@ public class LAPR1_1DK_Mafia {
 
         // criar o gráfico com o alpha implementado
     }
-    
-     private static void criarGrafico(int[]grafico,int size)
-    {
-       
-       JavaPlot p = new JavaPlot();
-	
-       PlotStyle myPlotStyle = new PlotStyle();
-       myPlotStyle.setStyle(Style.LINES);
-       myPlotStyle.setLineWidth(1);
-       myPlotStyle.setLineType(NamedPlotColor.BLUE);
 
-       int tab[][];
-       tab = new int[size][2];
-       for (int i=0;i<size;i++)
-       {
+    private static void criarGrafico(int[] grafico, int size) {
+
+        JavaPlot p = new JavaPlot();
+
+        PlotStyle myPlotStyle = new PlotStyle();
+        myPlotStyle.setStyle(Style.LINES);
+        myPlotStyle.setLineWidth(1);
+        myPlotStyle.setLineType(NamedPlotColor.BLUE);
+
+        int tab[][];
+        tab = new int[size][2];
+        for (int i = 0; i < size; i++) {
             tab[i][0] = i;
             tab[i][1] = grafico[i];
-       }
-       
-       DataSetPlot s = new DataSetPlot(tab);
-       s.setTitle("Teste");
-       s.setPlotStyle(myPlotStyle);
-       
-       //p.newGraph();
-       p.addPlot(s);
-      
-       p.newGraph();
-       p.plot();
+        }
+
+        DataSetPlot s = new DataSetPlot(tab);
+        s.setTitle("Teste");
+        s.setPlotStyle(myPlotStyle);
+
+        //p.newGraph();
+        p.addPlot(s);
+
+        p.newGraph();
+        p.plot();
     }
 
 }
