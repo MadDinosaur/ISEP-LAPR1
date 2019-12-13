@@ -1,5 +1,10 @@
 package pkg2019.lapr1_1dk_mafia;
 
+import com.panayotis.gnuplot.JavaPlot;
+import com.panayotis.gnuplot.plot.DataSetPlot;
+import com.panayotis.gnuplot.style.NamedPlotColor;
+import com.panayotis.gnuplot.style.PlotStyle;
+import com.panayotis.gnuplot.style.Style;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
@@ -36,7 +41,7 @@ public class LAPR1_1DK_Mafia {
 
     //lê ficheiro .csv
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime) throws FileNotFoundException {
-        Scanner fileScan = new Scanner(new File("DAYTON.csv"));
+        Scanner fileScan = new Scanner(new File("DAYTON (2).csv"));
         fileScan.nextLine(); //descarta a linha do cabeçalho
         int numLines = 0; //conta as linhas do documento
         while (fileScan.hasNextLine()) {
@@ -93,6 +98,7 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 2:
                 size = dailyPeriod(consumptionMW, dateTime, size);
+                criarGrafico(consumptionMW,size);
                 //mergeSort(consumptionMW, 0, size - 1);
                 //for(int i=0;i<size;i++){
                 // System.out.println(consumptionMW[i]);
@@ -101,9 +107,12 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 3:
                 size = monthlyPeriod(consumptionMW, dateTime, size);
+                criarGrafico(consumptionMW,size);
                 break;
             case 4:
                 size = annualPeriod(consumptionMW, dateTime, size);
+                criarGrafico(consumptionMW,size);
+                        
                 break;
             default:
                 System.out.println("Opção inválida. ");
@@ -362,6 +371,35 @@ public class LAPR1_1DK_Mafia {
         }
 
         // criar o gráfico com o alpha implementado
+    }
+    
+     private static void criarGrafico(int[]grafico,int size)
+    {
+       
+       JavaPlot p = new JavaPlot();
+	
+       PlotStyle myPlotStyle = new PlotStyle();
+       myPlotStyle.setStyle(Style.LINES);
+       myPlotStyle.setLineWidth(1);
+       myPlotStyle.setLineType(NamedPlotColor.BLUE);
+
+       int tab[][];
+       tab = new int[size][2];
+       for (int i=0;i<size;i++)
+       {
+            tab[i][0] = i;
+            tab[i][1] = grafico[i];
+       }
+       
+       DataSetPlot s = new DataSetPlot(tab);
+       s.setTitle("Teste");
+       s.setPlotStyle(myPlotStyle);
+       
+       //p.newGraph();
+       p.addPlot(s);
+      
+       p.newGraph();
+       p.plot();
     }
 
 }
