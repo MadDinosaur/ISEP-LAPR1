@@ -77,6 +77,9 @@ public class LAPR1_1DK_Mafia {
                         criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
+                        for (int i=0; i<size; i++){
+                            System.out.println(consumptionMW[i]);
+                        }
                         break;
                     case 2:
                         size = dayPeriod(consumptionMW, dateTime, size, 6);
