@@ -149,6 +149,7 @@ public class LAPR1_1DK_Mafia {
     //calcula consumos de um dado periodo do dia - manhã, tarde, noite ou madrugada
     public static int dayPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size, int startPeriod) throws FileNotFoundException {
         int endPeriod = startPeriod + NUM_HOURS_IN_STAGE;
+        boolean leftovers = false;
         while (endPeriod < size) {
             for (int i = startPeriod + 1; i < endPeriod; i++) {
                 consuptionMW[startPeriod] += consuptionMW[i];
@@ -157,7 +158,7 @@ public class LAPR1_1DK_Mafia {
             endPeriod = startPeriod + NUM_HOURS_IN_STAGE;
         }
         //System.out.println(consuptionMW[0]);
-        return size = exchangeInfoDays(consuptionMW, dateTime, size, NUM_HOURS_IN_STAGE * NUM_STAGES);
+        return size = exchangeInfoDays(consuptionMW, dateTime, size, NUM_HOURS_IN_STAGE * NUM_STAGES, leftovers);
     }
 
     public static void averages(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
@@ -169,8 +170,9 @@ public class LAPR1_1DK_Mafia {
     }
 
     //calcula consumos diários
-    public static int dailyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+   public static int dailyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         int startPeriod = 0, endPeriod = NUM_HOURS;
+        boolean leftovers = false;
         while (endPeriod < size) {
             for (int i = startPeriod + 1; i < endPeriod; i++) {
                 consumptionMW[startPeriod] += consumptionMW[i];
@@ -178,36 +180,42 @@ public class LAPR1_1DK_Mafia {
             startPeriod = endPeriod;
             endPeriod = endPeriod + NUM_HOURS;
         }
-        int leftoverHours = endPeriod - size;
+       int leftoverHours = endPeriod - size;
         if (leftoverHours < NUM_HOURS) {
-            for (int i = startPeriod; i < size; i++) {
-                consumptionMW[startPeriod] += consumptionMW[i];
+            for (int i = startPeriod + 1; i < size; i++) {
+               consumptionMW[startPeriod] += consumptionMW[i];
+               leftovers = true;
             }
-            return size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS) + 1;
         }
+<<<<<<< HEAD
 
         return size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS);
+=======
+        size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS, leftovers);
+        return size;
+>>>>>>> f341c55140411de608f8f95988cd45747e1b8d5a
     }
 
     //calcula consumos mensais
     public static int monthlyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0, endPeriod = getMonthLength(dateTime, startPeriod) * NUM_HOURS, numMonths = 0;
         while (endPeriod < size) {
-            for (int i = startPeriod + 1; i < endPeriod; i++) {
+            for (int i = startPeriod + 1; i <= endPeriod; i++) {
                 consumptionMW[startPeriod] += consumptionMW[i];
             }
             numMonths++;
-            startPeriod = endPeriod;
+            startPeriod = endPeriod + 1;
             endPeriod += getMonthLength(dateTime, startPeriod) * NUM_HOURS;
         }
         int leftoverDays = endPeriod - size;
         if (leftoverDays < getMonthLength(dateTime, startPeriod) * NUM_HOURS) {
-            for (int i = startPeriod; i < size; i++) {
+            for (int i = startPeriod + 1; i < size; i++) {
                 consumptionMW[startPeriod] += consumptionMW[i];
             }
             numMonths++;
         }
-        return size = exchangeInfoMonthsYears(consumptionMW, dateTime, size, numMonths, true);
+        size = exchangeInfoMonthsYears(consumptionMW, dateTime, size, numMonths, true);
+        return size;
     }
 
     //retorna o nº de dias de um dado mês
@@ -217,7 +225,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //calcula consumos anuais
-    public static int annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
+     public static int annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0, i = 0, numYears = 0, year = dateTime[0].getYear();
         while (startPeriod < size) {
             while (i < size && dateTime[i].getYear() == year) {
@@ -232,10 +240,10 @@ public class LAPR1_1DK_Mafia {
     }
 
     //troca informação das partes do dia ou dos dias
-    public static int exchangeInfoDays(int[] consumptionMW, LocalDateTime[] dateTime, int size, int period) {
-        int i;
+    public static int exchangeInfoDays(int[] consumptionMW, LocalDateTime[] dateTime, int size, int period, boolean leftovers) {
+        int i, idx2;
         for (i = 1; i < size / period; i++) {
-            int idx2 = i * period;
+            idx2 = i * period;
             //trocar datas
             dateTime[i] = dateTime[idx2];
             //trocar consumos
@@ -248,8 +256,8 @@ public class LAPR1_1DK_Mafia {
     }
 
     //troca a informação dos meses ou dos anos
-    public static int exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int numOccorrences, boolean isMonth) {
-        int i, idx2 = 0;
+     public static int exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int numOccorrences, boolean isMonth) {
+        int i, idx2 = 1;
         for (i = 1; i < numOccorrences; i++) {
             if (isMonth) {
                 idx2 += getMonthLength(dateTime, idx2) * NUM_HOURS;
