@@ -219,7 +219,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //calcula consumos anuais
-    public static int annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
+     public static int annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0, i = 0, numYears = 0, year = dateTime[0].getYear();
         while (startPeriod < size) {
             while (i < size && dateTime[i].getYear() == year) {
@@ -250,8 +250,8 @@ public class LAPR1_1DK_Mafia {
     }
 
     //troca a informação dos meses ou dos anos
-    public static int exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int numOccorrences, boolean isMonth) {
-        int i, idx2 = 0;
+     public static int exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int numOccorrences, boolean isMonth) {
+        int i, idx2 = 1;
         for (i = 1; i < numOccorrences; i++) {
             if (isMonth) {
                 idx2 += getMonthLength(dateTime, idx2) * NUM_HOURS;
