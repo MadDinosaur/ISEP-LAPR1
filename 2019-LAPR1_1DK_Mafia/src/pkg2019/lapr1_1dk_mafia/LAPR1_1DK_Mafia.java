@@ -73,10 +73,10 @@ public class LAPR1_1DK_Mafia {
                 int period = sc.nextInt();
                 switch (period) {
                     case 1:
-                        //size = dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
-                        //criarGrafico(consumptionMW, size);
-                        //averages(consumptionMW, dateTime, size);
-                        //defineOrder(consumptionMW, start, size);
+                        size = dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
+                        criarGrafico(consumptionMW, size);
+                        averages(consumptionMW, dateTime, size);
+                        defineOrder(consumptionMW, start, size);
                         MediaMovelSimples(consumptionMW);
                         break;
                     case 2:
