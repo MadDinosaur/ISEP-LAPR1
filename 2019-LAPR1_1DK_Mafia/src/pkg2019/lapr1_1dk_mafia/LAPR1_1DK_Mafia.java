@@ -28,25 +28,25 @@ public class LAPR1_1DK_Mafia {
     static final String OUTPUT_FILE = "Output.txt";
 
     public static void main(String[] args) throws FileNotFoundException {
-        if (args.length == 1) {
+        //if (args.length == 1) {
             int[] consumptionMW = new int[MAX_OBSERVATIONS];
             LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
             int size = readFile(consumptionMW, dateTime, args);
             int start = 0;
             int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
             int auxSize = definePeriod(auxConsumptionMW, dateTime, size, start);
-        }
-        if (args.length == 6) {
-            int[] consumptionMW = new int[MAX_OBSERVATIONS];
-            LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
-            int size = readFile(consumptionMW, dateTime, args);
-            int start = 0;
-            int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-            int auxSize = DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, start, args);
-        }
-        if (args.length != 1 && args.length != 6) {
-            System.out.println("Parâmetros inválidos");
-        }
+//        }
+//        if (args.length == 6) {
+//            int[] consumptionMW = new int[MAX_OBSERVATIONS];
+//            LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
+//            int size = readFile(consumptionMW, dateTime, args);
+//            int start = 0;
+//            int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
+//            int auxSize = DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, start, args);
+//        }
+//        if (args.length != 1 && args.length != 6) {
+//            System.out.println("Parâmetros inválidos");
+//        }
     }
 
     //lê ficheiro .csv
