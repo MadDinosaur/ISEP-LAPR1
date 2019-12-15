@@ -87,26 +87,26 @@ public class LAPR1_1DK_Mafia {
                 switch (period) {
                     case 1:
                         size = dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
-                        //criarGrafico(consumptionMW, size);
+                        criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         MediaMovelSimples(consumptionMW);
                         break;
                     case 2:
                         size = dayPeriod(consumptionMW, dateTime, size, 6);
-                        //criarGrafico(consumptionMW, size);
+                        criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         break;
                     case 3:
                         size = dayPeriod(consumptionMW, dateTime, size, 12);
-                        //criarGrafico(consumptionMW, size);
+                        criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         break;
                     case 4:
                         size = dayPeriod(consumptionMW, dateTime, size, 18);
-                        //criarGrafico(consumptionMW, size);
+                        criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         break;
@@ -117,19 +117,19 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 2:
                 size = dailyPeriod(consumptionMW, dateTime, size);
-                //criarGrafico(consumptionMW, size);
+                criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 defineOrder(consumptionMW, start, size);
                 break;
             case 3:
                 size = monthlyPeriod(consumptionMW, dateTime, size);
-                //criarGrafico(consumptionMW, size);
+                criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 defineOrder(consumptionMW, start, size);
                 break;
             case 4:
                 size = annualPeriod(consumptionMW, dateTime, size);
-                //criarGrafico(consumptionMW, size);
+                criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 defineOrder(consumptionMW, start, size);
                 break;
@@ -289,29 +289,29 @@ public class LAPR1_1DK_Mafia {
         return size;
     }
 
-    private static void averageConsumption(int[] auxConsumptionMW, int size) throws FileNotFoundException {
-        int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
-        for (int i = 0; i < size; i++) {
-            consumptionSum += auxConsumptionMW[i];
-        }
-        double averageConsumption = consumptionSum / size;
-        double upperLimit = averageConsumption + (averageConsumption * 0.2);
-        double lowerLimit = averageConsumption - (averageConsumption * 0.2);
-        for (int i = 0; i < size; i++) {
-            if (auxConsumptionMW[i] >= lowerLimit && auxConsumptionMW[i] < upperLimit) {
-                averageValues++;
-            }
-            if (auxConsumptionMW[i] < lowerLimit) {
-                belowAverageValues++;
-            }
-            if (auxConsumptionMW[i] >= upperLimit) {
-                aboveAverageValues++;
-            }
-        }
-        System.out.println("Quantidade de valores dentro da média: " + averageValues);
-        System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
-        System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
-    }
+//    private static void averageConsumption(int[] auxConsumptionMW, int size) throws FileNotFoundException {
+//        int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
+//        for (int i = 0; i < size; i++) {
+//            consumptionSum += auxConsumptionMW[i];
+//        }
+//        double averageConsumption = consumptionSum / size;
+//        double upperLimit = averageConsumption + (averageConsumption * 0.2);
+//        double lowerLimit = averageConsumption - (averageConsumption * 0.2);
+//        for (int i = 0; i < size; i++) {
+//            if (auxConsumptionMW[i] >= lowerLimit && auxConsumptionMW[i] < upperLimit) {
+//                averageValues++;
+//            }
+//            if (auxConsumptionMW[i] < lowerLimit) {
+//                belowAverageValues++;
+//            }
+//            if (auxConsumptionMW[i] >= upperLimit) {
+//                aboveAverageValues++;
+//            }
+//        }
+//        System.out.println("Quantidade de valores dentro da média: " + averageValues);
+//        System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
+//        System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+//    }
 
     public static void merge(int consumption[], int start, int middle, int end) {
 
@@ -450,33 +450,33 @@ public class LAPR1_1DK_Mafia {
         double absoluteError = sum / size;
     }
 
-//    //private static void criarGrafico(int[] grafico, int size) {
-//
-//        JavaPlot p = new JavaPlot();
-//
-//        PlotStyle myPlotStyle = new PlotStyle();
-//        myPlotStyle.setStyle(Style.LINES);
-//        myPlotStyle.setLineWidth(1);
-//        myPlotStyle.setLineType(NamedPlotColor.BLUE);
-//
-//        int tab[][];
-//        tab = new int[size][2];
-//        for (int i = 0; i < size; i++) {
-//            tab[i][0] = i;
-//            tab[i][1] = grafico[i];
-//        }
-//
-//        DataSetPlot s = new DataSetPlot(tab);
-//        s.setTitle("Teste");
-//        s.setPlotStyle(myPlotStyle);
-//
-//        //p.newGraph();
-//        p.addPlot(s);
-//
-//        p.newGraph();
-//        p.plot();
-//    }
-//
+    private static void criarGrafico(int[] grafico, int size) {
+
+        JavaPlot p = new JavaPlot();
+
+        PlotStyle myPlotStyle = new PlotStyle();
+        myPlotStyle.setStyle(Style.LINES);
+        myPlotStyle.setLineWidth(1);
+        myPlotStyle.setLineType(NamedPlotColor.BLUE);
+
+        int tab[][];
+        tab = new int[size][2];
+        for (int i = 0; i < size; i++) {
+            tab[i][0] = i;
+            tab[i][1] = grafico[i];
+        }
+
+        DataSetPlot s = new DataSetPlot(tab);
+        s.setTitle("Teste");
+        s.setPlotStyle(myPlotStyle);
+
+        //p.newGraph();
+        p.addPlot(s);
+
+        p.newGraph();
+        p.plot();
+    }
+
     private static int DefinePeriodNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start, String[] args) throws FileNotFoundException {
         switch (args[1]) {
             case "11":
@@ -490,7 +490,7 @@ public class LAPR1_1DK_Mafia {
 
             case "12":
                 size = dayPeriod(consumptionMW, dateTime, size, 6);
-                //criarGrafico(consumptionMW, size);
+                criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
@@ -498,7 +498,7 @@ public class LAPR1_1DK_Mafia {
                 break;
             case "13":
                 size = dayPeriod(consumptionMW, dateTime, size, 12);
-                //criarGrafico(consumptionMW, size);
+                criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
@@ -506,7 +506,7 @@ public class LAPR1_1DK_Mafia {
                 break;
             case "14":
                 size = dayPeriod(consumptionMW, dateTime, size, 18);
-                //criarGrafico(consumptionMW, size);
+                criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
@@ -514,7 +514,7 @@ public class LAPR1_1DK_Mafia {
                 break;
             case "2":
                 size = dailyPeriod(consumptionMW, dateTime, size);
-                //criarGrafico(consumptionMW, size);
+                criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
@@ -522,7 +522,7 @@ public class LAPR1_1DK_Mafia {
                 break;
             case "3":
                 size = monthlyPeriod(consumptionMW, dateTime, size);
-                //criarGrafico(consumptionMW, size);
+                criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
@@ -530,7 +530,7 @@ public class LAPR1_1DK_Mafia {
                 break;
             case "4":
                 size = annualPeriod(consumptionMW, dateTime, size);
-                //criarGrafico(consumptionMW, size);
+                criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
