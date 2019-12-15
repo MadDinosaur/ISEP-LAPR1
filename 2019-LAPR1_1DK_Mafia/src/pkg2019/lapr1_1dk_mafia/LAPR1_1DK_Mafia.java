@@ -19,7 +19,7 @@ import javafx.print.PaperSource;
 
 public class LAPR1_1DK_Mafia {
 
-     static Scanner sc = new Scanner(System.in);
+    static Scanner sc = new Scanner(System.in);
     static final int MAX_OBSERVATIONS = 26280;
     static final int NUM_HOURS_IN_STAGE = 6;
     static final int NUM_STAGES = 4;
@@ -74,7 +74,8 @@ public class LAPR1_1DK_Mafia {
                 + "1. Períodos do dia; %n"
                 + "2. Diário; %n"
                 + "3. Mensal; %n"
-                + "4. Anual. %n");
+                + "4. Anual. %n"
+                + "5. Média Móvel Pesada");
         int resolution = sc.nextInt();
         switch (resolution) {
             case 1:
@@ -132,6 +133,9 @@ public class LAPR1_1DK_Mafia {
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 defineOrder(consumptionMW, start, size);
+                break;
+            case 5:
+                MediaMovelPesada(consumptionMW,size);
                 break;
             default:
                 System.out.println("Opção inválida. ");
@@ -428,18 +432,30 @@ public class LAPR1_1DK_Mafia {
         System.out.print(((1 / n) * finalSum) + "MW. ");
     }
 
-    private static void MediaMovelPesada(int[] auxConsumptionMW) throws FileNotFoundException {
-
-        // criar o gráfico base 
-        System.out.println("Insira o valor de α: [0:1]");
+    private static void MediaMovelPesada(int[] consumptionMW, int size) throws FileNotFoundException {
+        
+        double[]consumptionNewMW = new double[size];
+        System.out.println("Insira o valor de α (entre 0 e 1): ");
         double alpha = sc.nextDouble();
-
-        while (alpha <= 0 || alpha > 1) {
-            System.out.println("Valor errado α[0:1]");
+        
+        if (alpha < 0 || alpha > 1)
+        {
+            do{
+            System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
             alpha = sc.nextDouble();
+            }while (alpha < 0 || alpha > 1);
         }
-
-        // criar o gráfico com o alpha implementado
+        
+        for(int i=1;i<size;i++)
+        {
+            consumptionNewMW[0]= consumptionMW[0];
+            consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1-alpha)* consumptionNewMW[i-1]);
+            consumptionNewMW[size-1] = consumptionMW[size-1];
+        }
+        
+        // criar 1 gráfico com os valores inicias e o valor de α
+        criarGraficoPesada(consumptionMW,consumptionNewMW,size);
+        
     }
 
     public static void absoluteError(int[] consumptionMW, int[] arrayY, int size) {
@@ -475,6 +491,51 @@ public class LAPR1_1DK_Mafia {
 
         p.newGraph();
         p.plot();
+    }
+    
+    private static void criarGraficoPesada(int[]grafico1,double[]grafico2, int size){
+        JavaPlot p = new JavaPlot();
+        
+        PlotStyle myPlotStyle = new PlotStyle();
+        PlotStyle myPlotStyle2 = new PlotStyle();
+        myPlotStyle.setStyle(Style.LINES);
+        myPlotStyle.setLineWidth(1);
+        myPlotStyle2.setStyle(Style.LINES);
+        myPlotStyle2.setLineWidth(1);
+        myPlotStyle.setLineType(NamedPlotColor.BLUE);
+        myPlotStyle2.setLineType(NamedPlotColor.ORANGE);
+        p.set("xrange","[0:200]");
+        
+        int tab1[][];
+        double tab2[][];
+        
+        tab1 = new int [size][2];
+        tab2 = new double [size][2];
+        
+        for (int i = 0; i<size; i++)
+        {
+            tab1[i][0]= i;
+            tab1[i][1]= grafico1[i];
+        
+            tab2[i][0]=i;
+            tab2[i][1]= grafico2[i];
+        }
+        
+        DataSetPlot s = new DataSetPlot(tab1);
+        DataSetPlot t = new DataSetPlot(tab2);
+        
+        s.setTitle("ATUAL");
+        t.setTitle("ALPHA");
+        s.setPlotStyle(myPlotStyle);
+        t.setPlotStyle(myPlotStyle2);
+
+        //p.newGraph();
+        p.addPlot(s);
+        p.addPlot(t);
+
+        p.newGraph();
+        p.plot();
+        
     }
 
     private static int DefinePeriodNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start, String[] args) throws FileNotFoundException {
