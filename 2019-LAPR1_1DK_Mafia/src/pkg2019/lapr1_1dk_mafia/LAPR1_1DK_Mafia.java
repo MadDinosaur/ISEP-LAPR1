@@ -7,6 +7,7 @@ import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
@@ -18,27 +19,39 @@ import javafx.print.PaperSource;
 
 public class LAPR1_1DK_Mafia {
 
-    static Scanner sc = new Scanner(System.in);
+     static Scanner sc = new Scanner(System.in);
     static final int MAX_OBSERVATIONS = 26280;
     static final int NUM_HOURS_IN_STAGE = 6;
     static final int NUM_STAGES = 4;
     static final int NUM_HOURS = 24;
     static final int NUM_DAYS_IN_YEAR = 365;
+    static final String OUTPUT_FILE = "Output.txt";
 
     public static void main(String[] args) throws FileNotFoundException {
-        int[] consumptionMW = new int[MAX_OBSERVATIONS];
-        LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
-
-        int size = readFile(consumptionMW, dateTime);
-        int middle = size / 2;
-        int start = 0;
-        int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-        int auxSize = definePeriod(auxConsumptionMW, dateTime, size, middle, start);
+        if (args.length == 1) {
+            int[] consumptionMW = new int[MAX_OBSERVATIONS];
+            LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
+            int size = readFile(consumptionMW, dateTime, args);
+            int start = 0;
+            int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
+            int auxSize = definePeriod(auxConsumptionMW, dateTime, size, start);
+        }
+        if (args.length == 6) {
+            int[] consumptionMW = new int[MAX_OBSERVATIONS];
+            LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
+            int size = readFile(consumptionMW, dateTime, args);
+            int start = 0;
+            int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
+            int auxSize = DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, start, args);
+        }
+        if (args.length != 1 && args.length != 6) {
+            System.out.println("Parâmetros inválidos");
+        }
     }
 
     //lê ficheiro .csv
-    public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime) throws FileNotFoundException {
-        Scanner fileScan = new Scanner(new File("DAYTON (2).csv"));
+    public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime, String[] args) throws FileNotFoundException {
+        Scanner fileScan = new Scanner(new File(args[0]));
         fileScan.nextLine(); //descarta a linha do cabeçalho
         int numLines = 0; //conta as linhas do documento
         while (fileScan.hasNextLine()) {
@@ -56,7 +69,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //menu interativo para escolher a resolução temporal
-    public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size, int middle, int start) throws FileNotFoundException {
+    public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start) throws FileNotFoundException {
         System.out.printf("Que resolução temporal deseja? %n"
                 + "1. Períodos do dia; %n"
                 + "2. Diário; %n"
@@ -74,26 +87,26 @@ public class LAPR1_1DK_Mafia {
                 switch (period) {
                     case 1:
                         size = dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
-                        criarGrafico(consumptionMW, size);
+                        //criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         MediaMovelSimples(consumptionMW);
                         break;
                     case 2:
                         size = dayPeriod(consumptionMW, dateTime, size, 6);
-                        criarGrafico(consumptionMW, size);
+                        //criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         break;
                     case 3:
                         size = dayPeriod(consumptionMW, dateTime, size, 12);
-                        criarGrafico(consumptionMW, size);
+                        //criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         break;
                     case 4:
                         size = dayPeriod(consumptionMW, dateTime, size, 18);
-                        criarGrafico(consumptionMW, size);
+                        //criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         break;
@@ -104,19 +117,19 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 2:
                 size = dailyPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW, size);
+                //criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 defineOrder(consumptionMW, start, size);
                 break;
             case 3:
                 size = monthlyPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW, size);
+                //criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 defineOrder(consumptionMW, start, size);
                 break;
             case 4:
                 size = annualPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW, size);
+                //criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 defineOrder(consumptionMW, start, size);
                 break;
@@ -170,7 +183,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //calcula consumos diários
-   public static int dailyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+    public static int dailyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         int startPeriod = 0, endPeriod = NUM_HOURS;
         boolean leftovers = false;
         while (endPeriod < size) {
@@ -180,20 +193,18 @@ public class LAPR1_1DK_Mafia {
             startPeriod = endPeriod;
             endPeriod = endPeriod + NUM_HOURS;
         }
-       int leftoverHours = endPeriod - size;
+        int leftoverHours = endPeriod - size;
         if (leftoverHours < NUM_HOURS) {
             for (int i = startPeriod + 1; i < size; i++) {
-               consumptionMW[startPeriod] += consumptionMW[i];
-               leftovers = true;
+                consumptionMW[startPeriod] += consumptionMW[i];
+                leftovers = true;
             }
         }
-<<<<<<< HEAD
 
-        return size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS);
-=======
+        //return size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS);
         size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS, leftovers);
         return size;
->>>>>>> f341c55140411de608f8f95988cd45747e1b8d5a
+
     }
 
     //calcula consumos mensais
@@ -225,7 +236,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //calcula consumos anuais
-     public static int annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
+    public static int annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0, i = 0, numYears = 0, year = dateTime[0].getYear();
         while (startPeriod < size) {
             while (i < size && dateTime[i].getYear() == year) {
@@ -256,7 +267,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //troca a informação dos meses ou dos anos
-     public static int exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int numOccorrences, boolean isMonth) {
+    public static int exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int numOccorrences, boolean isMonth) {
         int i, idx2 = 1;
         for (i = 1; i < numOccorrences; i++) {
             if (isMonth) {
@@ -439,31 +450,152 @@ public class LAPR1_1DK_Mafia {
         double absoluteError = sum / size;
     }
 
-    private static void criarGrafico(int[] grafico, int size) {
+//    //private static void criarGrafico(int[] grafico, int size) {
+//
+//        JavaPlot p = new JavaPlot();
+//
+//        PlotStyle myPlotStyle = new PlotStyle();
+//        myPlotStyle.setStyle(Style.LINES);
+//        myPlotStyle.setLineWidth(1);
+//        myPlotStyle.setLineType(NamedPlotColor.BLUE);
+//
+//        int tab[][];
+//        tab = new int[size][2];
+//        for (int i = 0; i < size; i++) {
+//            tab[i][0] = i;
+//            tab[i][1] = grafico[i];
+//        }
+//
+//        DataSetPlot s = new DataSetPlot(tab);
+//        s.setTitle("Teste");
+//        s.setPlotStyle(myPlotStyle);
+//
+//        //p.newGraph();
+//        p.addPlot(s);
+//
+//        p.newGraph();
+//        p.plot();
+//    }
+//
+    private static int DefinePeriodNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start, String[] args) throws FileNotFoundException {
+        switch (args[1]) {
+            case "11":
+                size = dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
+                //criarGrafico(consumptionMW, size);
+                averages(consumptionMW, dateTime, size);
+                DefineOrderNonInteractive(consumptionMW, start, size, args);
+                DefineModel(consumptionMW, size, args);
+                //falta previsão
+                break;
 
-        JavaPlot p = new JavaPlot();
+            case "12":
+                size = dayPeriod(consumptionMW, dateTime, size, 6);
+                //criarGrafico(consumptionMW, size);
+                averages(consumptionMW, dateTime, size);
+                DefineOrderNonInteractive(consumptionMW, start, size, args);
+                DefineModel(consumptionMW, size, args);
+                //falta previsão
+                break;
+            case "13":
+                size = dayPeriod(consumptionMW, dateTime, size, 12);
+                //criarGrafico(consumptionMW, size);
+                averages(consumptionMW, dateTime, size);
+                DefineOrderNonInteractive(consumptionMW, start, size, args);
+                DefineModel(consumptionMW, size, args);
+                //falta previsão
+                break;
+            case "14":
+                size = dayPeriod(consumptionMW, dateTime, size, 18);
+                //criarGrafico(consumptionMW, size);
+                averages(consumptionMW, dateTime, size);
+                DefineOrderNonInteractive(consumptionMW, start, size, args);
+                DefineModel(consumptionMW, size, args);
+                //falta previsão
+                break;
+            case "2":
+                size = dailyPeriod(consumptionMW, dateTime, size);
+                //criarGrafico(consumptionMW, size);
+                averages(consumptionMW, dateTime, size);
+                DefineOrderNonInteractive(consumptionMW, start, size, args);
+                DefineModel(consumptionMW, size, args);
+                //falta previsão
+                break;
+            case "3":
+                size = monthlyPeriod(consumptionMW, dateTime, size);
+                //criarGrafico(consumptionMW, size);
+                averages(consumptionMW, dateTime, size);
+                DefineOrderNonInteractive(consumptionMW, start, size, args);
+                DefineModel(consumptionMW, size, args);
+                //falta previsão
+                break;
+            case "4":
+                size = annualPeriod(consumptionMW, dateTime, size);
+                //criarGrafico(consumptionMW, size);
+                averages(consumptionMW, dateTime, size);
+                DefineOrderNonInteractive(consumptionMW, start, size, args);
+                DefineModel(consumptionMW, size, args);
+                //falta previsão
+                break;
 
-        PlotStyle myPlotStyle = new PlotStyle();
-        myPlotStyle.setStyle(Style.LINES);
-        myPlotStyle.setLineWidth(1);
-        myPlotStyle.setLineType(NamedPlotColor.BLUE);
-
-        int tab[][];
-        tab = new int[size][2];
-        for (int i = 0; i < size; i++) {
-            tab[i][0] = i;
-            tab[i][1] = grafico[i];
         }
-
-        DataSetPlot s = new DataSetPlot(tab);
-        s.setTitle("Teste");
-        s.setPlotStyle(myPlotStyle);
-
-        //p.newGraph();
-        p.addPlot(s);
-
-        p.newGraph();
-        p.plot();
+        return size;
     }
 
+    public static void DefineOrderNonInteractive(int[] consumptionMW, int start, int size, String[] args) throws FileNotFoundException {
+        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+        switch (args[3]) {
+            case "1":
+                mergeSort(consumptionMW, start, size);
+                break;
+            case "2":
+                inverseMergeSort(consumptionMW, start, size);
+                break;
+            default:
+                System.out.println("Parâmetro de ordenação inválido.");
+                out.println("Parâmetro de ordenação inválido.");
+                break;
+        }
+    }
+
+    public static void DefineModel(int[] consumptionMW, int size, String[] args) throws FileNotFoundException {
+        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+        switch (args[2]) {
+            case "1":
+                MediaMovelSimplesNonInteractive(consumptionMW, size, args);
+                break;
+            case "2":
+                //ExponecialmentePesada
+                break;
+            default:
+                System.out.println("Parâmetro de modelo inválido.");
+                out.println("Parâmetro de modelo inválido.");
+                break;
+        }
+    }
+
+    private static void MediaMovelSimplesNonInteractive(int[] consumptionMW, int size, String[] args) throws FileNotFoundException {
+        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+        int n = Integer.parseInt(args[4]);
+        if (n <= 0 || n > size) {
+            System.out.println("O parâmetro que toma o valor númerico n é inválido ");
+            out.println("O parâmetro que toma o valor númerico n é inválido ");
+        } else {
+            double sum = 0, finalSum = 0;
+            for (int k = 0; k <= n - 1; k++) { //vai até n-1, conforme o que está na fórmula
+                sum = consumptionMW[k] + sum; //está a somar bem
+                finalSum = sum - k; //é o xi-k(k é o indice)
+            }
+            System.out.print(((1 / n) * finalSum) + "MW. ");
+        }
+    }
+
+    public static void averagesNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+        int consumptionSum = 0;
+        for (int i = 0; i < size; i++) {
+            consumptionSum += consumptionMW[i];
+        }
+        System.out.println("Média : " + (consumptionSum / size) + " " + "MW");
+        out.println("Média : " + (consumptionSum / size) + " " + "MW");
+    }
 }
