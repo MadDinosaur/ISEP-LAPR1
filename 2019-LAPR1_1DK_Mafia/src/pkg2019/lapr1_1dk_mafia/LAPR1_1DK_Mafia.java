@@ -87,26 +87,30 @@ public class LAPR1_1DK_Mafia {
                 int period = sc.nextInt();
                 switch (period) {
                     case 1:
-                        size = dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
+                        dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
+                        size = exchangeInfoDayPeriods(consumptionMW,dateTime, size, 0);
                         criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         MediaMovelSimples(consumptionMW);
                         break;
                     case 2:
-                        size = dayPeriod(consumptionMW, dateTime, size, 6);
+                        dayPeriod(consumptionMW, dateTime, size, 6);
+                        size = exchangeInfoDayPeriods(consumptionMW,dateTime, size, 6);
                         criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         break;
                     case 3:
-                        size = dayPeriod(consumptionMW, dateTime, size, 12);
+                        dayPeriod(consumptionMW, dateTime, size, 12);
+                        size = exchangeInfoDayPeriods(consumptionMW,dateTime, size, 12);
                         criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
                         break;
                     case 4:
-                        size = dayPeriod(consumptionMW, dateTime, size, 18);
+                        dayPeriod(consumptionMW, dateTime, size, 18);
+                        size = exchangeInfoDayPeriods(consumptionMW,dateTime, size, 18);
                         criarGrafico(consumptionMW, size);
                         averages(consumptionMW, dateTime, size);
                         defineOrder(consumptionMW, start, size);
@@ -164,9 +168,8 @@ public class LAPR1_1DK_Mafia {
     }
 
     //calcula consumos de um dado periodo do dia - manhã, tarde, noite ou madrugada
-    public static int dayPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size, int startPeriod) throws FileNotFoundException {
+    public static void dayPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size, int startPeriod) throws FileNotFoundException {
         int endPeriod = startPeriod + NUM_HOURS_IN_STAGE;
-        boolean leftovers = false;
         while (endPeriod < size) {
             for (int i = startPeriod + 1; i < endPeriod; i++) {
                 consuptionMW[startPeriod] += consuptionMW[i];
@@ -174,8 +177,6 @@ public class LAPR1_1DK_Mafia {
             startPeriod += NUM_HOURS_IN_STAGE * NUM_STAGES;
             endPeriod = startPeriod + NUM_HOURS_IN_STAGE;
         }
-        //System.out.println(consuptionMW[0]);
-        return size = exchangeInfoDays(consuptionMW, dateTime, size, NUM_HOURS_IN_STAGE * NUM_STAGES, leftovers);
     }
 
     public static void averages(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
@@ -206,7 +207,7 @@ public class LAPR1_1DK_Mafia {
         }
 
         //return size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS);
-        size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS, leftovers);
+        size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS);
         return size;
 
     }
@@ -215,22 +216,21 @@ public class LAPR1_1DK_Mafia {
     public static int monthlyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0, endPeriod = getMonthLength(dateTime, startPeriod) * NUM_HOURS, numMonths = 0;
         while (endPeriod < size) {
-            for (int i = startPeriod + 1; i <= endPeriod; i++) {
+            for (int i = startPeriod + 1; i < endPeriod; i++) {
                 consumptionMW[startPeriod] += consumptionMW[i];
             }
             numMonths++;
-            startPeriod = endPeriod + 1;
+            startPeriod = endPeriod;
             endPeriod += getMonthLength(dateTime, startPeriod) * NUM_HOURS;
         }
         int leftoverDays = endPeriod - size;
         if (leftoverDays < getMonthLength(dateTime, startPeriod) * NUM_HOURS) {
-            for (int i = startPeriod + 1; i < size; i++) {
+            for (int i = startPeriod; i < size; i++) {
                 consumptionMW[startPeriod] += consumptionMW[i];
             }
             numMonths++;
         }
-        size = exchangeInfoMonthsYears(consumptionMW, dateTime, size, numMonths, true);
-        return size;
+        return size = exchangeInfoMonthsYears(consumptionMW, dateTime, size, numMonths, true);
     }
 
     //retorna o nº de dias de um dado mês
@@ -254,11 +254,24 @@ public class LAPR1_1DK_Mafia {
         return size = exchangeInfoMonthsYears(consumptionMW, dateTime, size, numYears, false);
     }
 
-    //troca informação das partes do dia ou dos dias
-    public static int exchangeInfoDays(int[] consumptionMW, LocalDateTime[] dateTime, int size, int period, boolean leftovers) {
-        int i, idx2;
+    public static int exchangeInfoDayPeriods(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start) {
+        int i, idx2 = start;
+        for (i = 0; i < size / NUM_HOURS; i++) {
+            //trocar datas
+            dateTime[i] = dateTime[idx2];
+            //trocar consumos
+            consumptionMW[i] = consumptionMW[idx2];
+            idx2 += NUM_HOURS;
+        }
+        size = i;
+        return size;
+    }
+    
+    //troca informação dos dias
+    public static int exchangeInfoDays(int[] consumptionMW, LocalDateTime[] dateTime, int size, int period) {
+        int i;
         for (i = 1; i < size / period; i++) {
-            idx2 = i * period;
+            int idx2 = i * period;
             //trocar datas
             dateTime[i] = dateTime[idx2];
             //trocar consumos
@@ -541,7 +554,9 @@ public class LAPR1_1DK_Mafia {
     private static int DefinePeriodNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start, String[] args) throws FileNotFoundException {
         switch (args[1]) {
             case "11":
-                size = dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
+                dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
+                size = exchangeInfoDayPeriods(consumptionMW,dateTime, size, 0);
+                size = 
                 //criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
@@ -550,7 +565,8 @@ public class LAPR1_1DK_Mafia {
                 break;
 
             case "12":
-                size = dayPeriod(consumptionMW, dateTime, size, 6);
+                dayPeriod(consumptionMW, dateTime, size, 6);
+                size = exchangeInfoDayPeriods(consumptionMW,dateTime, size, 6);
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
@@ -558,7 +574,8 @@ public class LAPR1_1DK_Mafia {
                 //falta previsão
                 break;
             case "13":
-                size = dayPeriod(consumptionMW, dateTime, size, 12);
+                dayPeriod(consumptionMW, dateTime, size, 12);
+                size = exchangeInfoDayPeriods(consumptionMW,dateTime, size, 12);
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
@@ -566,7 +583,8 @@ public class LAPR1_1DK_Mafia {
                 //falta previsão
                 break;
             case "14":
-                size = dayPeriod(consumptionMW, dateTime, size, 18);
+                dayPeriod(consumptionMW, dateTime, size, 18);
+                size = exchangeInfoDayPeriods(consumptionMW,dateTime, size, 18);
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
