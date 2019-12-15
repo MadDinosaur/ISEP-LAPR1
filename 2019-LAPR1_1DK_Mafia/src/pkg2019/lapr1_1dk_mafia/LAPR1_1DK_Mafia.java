@@ -51,7 +51,7 @@ public class LAPR1_1DK_Mafia {
 
     //lê ficheiro .csv
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime, String[] args) throws FileNotFoundException {
-        Scanner fileScan = new Scanner(new File("DAYTON(2).csv"));
+        Scanner fileScan = new Scanner(new File("DAYTON (2).csv"));
         fileScan.nextLine(); //descarta a linha do cabeçalho
         int numLines = 0; //conta as linhas do documento
         while (fileScan.hasNextLine()) {
