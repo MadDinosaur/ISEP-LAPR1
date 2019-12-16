@@ -680,18 +680,30 @@ public class LAPR1_1DK_Mafia {
         double[] consumptionNewMW = new double[size];
         int alpha = Integer.parseInt(args[4]);
         if (alpha < 0 || alpha > 1) {
-                System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
-        }else{
-        for (int i = 1; i < size; i++) {
-            consumptionNewMW[0] = consumptionMW[0];
-            consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
-            consumptionNewMW[size - 1] = consumptionMW[size - 1];
+            System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
+        } else {
+            for (int i = 1; i < size; i++) {
+                consumptionNewMW[0] = consumptionMW[0];
+                consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
+                consumptionNewMW[size - 1] = consumptionMW[size - 1];
+            }
+            // criar 1 gráfico com os valores inicias e o valor de α
+            criarGraficoPesada(consumptionMW, consumptionNewMW, size);
         }
-        // criar 1 gráfico com os valores inicias e o valor de α
-        criarGraficoPesada(consumptionMW, consumptionNewMW, size);
     }
+    //falta testar, pois ainda não estão a funcionar as médias
+    public static void previsionMediaMovelPesada(int[] consumptionMW, int size, String[] args, int alpha) {
+        double[] consumptionNewMW = new double[size];
+        double sum=0;
+        for (int i = 0; i < size; i++) {
+            consumptionMW[i]=consumptionMW[i]; //copiar array
+        }
+        for (int j=1; j<size;j++){
+           sum = sum +((consumptionMW[j-1]*alpha)+ consumptionNewMW[j-1]*(1-alpha));
+        }
+        System.out.println("Previsão: " + sum);
     }
-    
+
     public static void averagesNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
         int consumptionSum = 0;
