@@ -663,10 +663,21 @@ public class LAPR1_1DK_Mafia {
                 sum = consumptionMW[k] + sum; //está a somar bem
                 finalSum = sum - k; //é o xi-k(k é o indice)
             }
-            System.out.print(((1 / n) * finalSum) + "MW. ");
+            System.out.print(((1 / n) * finalSum) + " " + "MW. ");
         }
+        previsionMediaSimplesNonInteractive(consumptionMW, size, args, n);
     }
 
+     public static void previsionMediaSimplesNonInteractive(int[] consumptionMW, int size, String[] args, int n) throws FileNotFoundException {
+        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+        double sum=0, finalSum=0;
+            for (int k = 1; k <= n - 1; k++) { 
+            sum=consumptionMW[k-1]+sum;
+            finalSum=sum-k;
+        }
+            System.out.println("Previsão: " + ((1/n)*finalSum) + " " + "MW.");
+        }
+     
     public static void averagesNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
         int consumptionSum = 0;
