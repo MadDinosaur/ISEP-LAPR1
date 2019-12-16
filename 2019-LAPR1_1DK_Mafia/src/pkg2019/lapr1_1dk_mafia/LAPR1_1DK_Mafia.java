@@ -556,7 +556,6 @@ public class LAPR1_1DK_Mafia {
             case "11":
                 dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
                 size = exchangeInfoDayPeriods(consumptionMW,dateTime, size, 0);
-                size = 
                 //criarGrafico(consumptionMW, size);
                 averages(consumptionMW, dateTime, size);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
