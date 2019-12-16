@@ -285,7 +285,7 @@ public class LAPR1_1DK_Mafia {
 
     //troca a informação dos meses ou dos anos
     public static int exchangeInfoMonthsYears(int[] consumptionMW, LocalDateTime[] dateTime, int size, int numOccorrences, boolean isMonth) {
-        int i, idx2 = 1;
+        int i, idx2 = 0;
         for (i = 1; i < numOccorrences; i++) {
             if (isMonth) {
                 idx2 += getMonthLength(dateTime, idx2) * NUM_HOURS;
