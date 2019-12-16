@@ -5,6 +5,7 @@ import com.panayotis.gnuplot.plot.DataSetPlot;
 import com.panayotis.gnuplot.style.NamedPlotColor;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
+import com.panayotis.gnuplot.terminal.ImageTerminal;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -16,6 +17,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 import javafx.print.PaperSource;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.io.FileInputStream;
+import com.panayotis.gnuplot.GNUPlotException;
 
 public class LAPR1_1DK_Mafia {
 
@@ -74,8 +79,8 @@ public class LAPR1_1DK_Mafia {
                 + "1. Períodos do dia; %n"
                 + "2. Diário; %n"
                 + "3. Mensal; %n"
-                + "4. Anual. %n"
-                + "5. Média Móvel Pesada");
+                + "4. Anual; %n"
+                + "5. Média Móvel Pesada. %n");
         int resolution = sc.nextInt();
         switch (resolution) {
             case 1:
@@ -138,7 +143,7 @@ public class LAPR1_1DK_Mafia {
                 averages(consumptionMW, dateTime, size);
                 defineOrder(consumptionMW, start, size);
                 break;
-            case 5:
+            case 5:   
                 MediaMovelPesada(consumptionMW, size);
                 break;
             default:
@@ -501,7 +506,7 @@ public class LAPR1_1DK_Mafia {
         p.addPlot(s);
 
         p.newGraph();
-        p.plot();
+        p.plot();   
     }
 
     private static void criarGraficoPesada(int[] grafico1, double[] grafico2, int size) {
@@ -545,6 +550,92 @@ public class LAPR1_1DK_Mafia {
 
         p.newGraph();
         p.plot();
+        
+        System.out.println("Pretende gravar o gráfico? 1.Sim 2.Não");
+                int op = sc.nextInt();
+                
+                if(op != 1 && op != 2)
+                {
+                    do{
+                    System.out.println("Pretende gravar o gráfico? 1.Sim 2.Não");
+                    op = sc.nextInt();
+                    }while(op==1 || op==2);
+                }
+                
+                // ainda a desenvolver a parte de guardar em png.
+                if (op==1){
+        
+                double[][] values = new double[3][2];
+                values[0][0] = 0.1;
+                values[0][1] = 0.3;
+                values[1][0] = 0.4;
+                values[1][1] = 0.3;
+                values[2][0] = 0.5;
+                values[2][1] = 0.5;
+
+                double[][] values2 = new double[3][2];
+                values2[0][0] = 0.2;
+                values2[0][1] = 0.0;
+                values2[1][0] = 0.7;
+                values2[1][1] = 0.1;
+                values2[2][0] = 0.6;
+                values2[2][1] = 0.5;
+
+                PlotStyle styleDeleted = new PlotStyle();
+                styleDeleted.setStyle(Style.LINES);
+                styleDeleted.setLineType(NamedPlotColor.GRAY80);
+
+                PlotStyle styleExist = new PlotStyle();
+                styleExist.setStyle(Style.LINES);
+                styleExist.setLineType(NamedPlotColor.BLACK);
+
+                DataSetPlot setDeleted = new DataSetPlot(values);
+                setDeleted.setPlotStyle(styleDeleted);
+                setDeleted.setTitle("deleted EMs");
+
+                DataSetPlot setExist = new DataSetPlot(values2);
+                setExist.setPlotStyle(styleExist);
+                setExist.setTitle("remaining EMs");
+
+                // supostamente esta é a parte que interessa, daqui...
+                ImageTerminal png = new ImageTerminal();
+                File file = new File("Ambiente de trabalho");
+                try {
+                    file.createNewFile();
+                    png.processOutput(new FileInputStream(file));
+                } catch (FileNotFoundException ex) {
+                    System.err.print(ex);
+                } catch (IOException ex) {
+                    System.err.print(ex);
+                }
+
+                JavaPlot p1 = new JavaPlot();
+                p.setTerminal(png);
+
+                p1.getAxis("x").setLabel("yield");
+                p1.getAxis("y").setLabel("biomass");
+                p1.getAxis("x").setBoundaries(0.0, 1.0);
+                p1.getAxis("y").setBoundaries(0.0, 1.0);
+                p1.addPlot(setDeleted);
+                p1.addPlot(setExist);
+                p1.setTitle("remaining EMs");
+                p1.plot();
+
+                try {
+                    ImageIO.write(png.getImage(), "png", file);
+                } catch (IOException ex) {
+                    System.err.print(ex);
+                }
+                p.setPersist(false);
+                // até aqui, o resto é só esboçar o gráfico.
+                
+                System.out.println("Items guardados.");
+                }
+                
+                else
+                {
+                     System.out.println("Nenhum ficheiro guardado.");
+                }
 
     }
 
