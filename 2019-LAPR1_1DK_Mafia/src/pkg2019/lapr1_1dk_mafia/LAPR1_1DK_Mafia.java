@@ -76,7 +76,7 @@ public class LAPR1_1DK_Mafia {
 
     //menu interativo para escolher a resolução temporal
     public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start) throws FileNotFoundException {
-        System.out.printf("Que resolução temporal deseja? %n"
+        System.out.printf("Que resolução temporal deseja %n"
                 + "1. Períodos do dia; %n"
                 + "2. Diário; %n"
                 + "3. Mensal; %n"
@@ -154,6 +154,29 @@ public class LAPR1_1DK_Mafia {
         return size;
     }
 
+    public static void definePrevision (int []consumptionMW, LocalDateTime[] dateTime){
+        System.out.printf("Pretende fazer uma pevisão: %n"
+                + "1. De períodos do dia; %n"
+                + "2. Diária; %n"
+                + "3. Mensal; %n"
+                + "4. Anual. %n");
+        int option=sc.nextInt();
+        switch (option){
+            case 1:  
+                System.out.printf("Que periodo do dia deseja? %n"
+                        + "1. Madrugada; %n"
+                        + "2. Manhã; %n"
+                        + "3. Tarde; %n"
+                        + "4. Noite. %n");
+                int period = sc.nextInt();
+                switch (period) {
+                    case 1:
+        }
+            case 2: System.out.println("Qual o dia? ");
+    
+    }
+    }
+    
     //ordena de forma crescente ou decrescente conforme escolha do utilizador
     public static void defineOrder(int[] consumptionMW, int start, int size) {
         System.out.printf("De que forma pretende ordenar? %n"
