@@ -145,8 +145,7 @@ public class LAPR1_1DK_Mafia {
                 defineOrder(consumptionMW, start, size);
                 break;
             case 5:
-                MediaMovelSimples(consumptionMW);
-                //MediaMovelPesada(consumptionMW, size);
+                MediaMovelPesada(consumptionMW, size);
                 break;
             default:
                 System.out.println("Opção inválida. ");
@@ -473,7 +472,6 @@ public class LAPR1_1DK_Mafia {
     }
 
     public static void MediaMovelPesada(int[] consumptionMW, int size) throws FileNotFoundException {
-
         double[] consumptionNewMW = new double[size];
         System.out.println("Insira o valor de α (entre 0 e 1): ");
         double alpha = sc.nextDouble();
@@ -482,14 +480,13 @@ public class LAPR1_1DK_Mafia {
                 System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
                 alpha = sc.nextDouble();
         }else{
-        for (int i = 1; i < size; i++) {
+        for (int i = size-1; i>0; i--) {
             consumptionNewMW[0] = consumptionMW[0];
             consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
             consumptionNewMW[size - 1] = consumptionMW[size - 1];
         }
         }
             
-
         // criar 1 gráfico com os valores inicias e o valor de α
         criarGraficoPesada(consumptionMW, consumptionNewMW, size);
         previsionMediaMovelPesada(consumptionMW, consumptionNewMW,size, alpha);
@@ -794,7 +791,7 @@ public class LAPR1_1DK_Mafia {
         if (alpha < 0 || alpha > 1) {
             System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
         } else {
-            for (int i = 1; i < size; i++) {
+            for (int i = size-1; i > 0; i--) {
                 consumptionNewMW[0] = consumptionMW[0];
                 consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
                 consumptionNewMW[size - 1] = consumptionMW[size - 1];
@@ -805,8 +802,8 @@ public class LAPR1_1DK_Mafia {
     }
     //falta testar, pois ainda não estão a funcionar as médias
     public static void previsionMediaMovelPesada(int[] consumptionMW, double [] consumptionNewMW, int size, double alpha) {
-            for (int i=0; i<size; i++){
-                consumptionNewMW[i+1]=(alpha*consumptionMW[i])+(1-alpha)*consumptionNewMW[i];
+            for (int i=size-1; i>0; i--){
+                consumptionNewMW[i]=(alpha*consumptionMW[i-1])+(1-alpha)*consumptionNewMW[i-1];
             }
             System.out.println(consumptionNewMW[0]);
     }
