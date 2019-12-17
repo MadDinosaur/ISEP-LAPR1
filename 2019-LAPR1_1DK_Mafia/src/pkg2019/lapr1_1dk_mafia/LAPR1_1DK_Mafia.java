@@ -39,8 +39,13 @@ public class LAPR1_1DK_Mafia {
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
         int size = readFile(consumptionMW, dateTime, args);
         int start = 0;
-        int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-        int auxSize = definePeriod(auxConsumptionMW, dateTime, size, start);
+        
+        //menu interativo
+        int option;
+        do {
+            int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
+            option = menu(auxConsumptionMW, dateTime, size, start);
+        } while (option != 7);
 //        }
 //        if (args.length == 6) {
 //            int[] consumptionMW = new int[MAX_OBSERVATIONS];
@@ -73,79 +78,84 @@ public class LAPR1_1DK_Mafia {
         //retorna para entrar como comprimento do array
         return numLines;
     }
-
-    //menu interativo para escolher a resolução temporal
-    public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start) throws FileNotFoundException {
-        System.out.printf("Que resolução temporal deseja %n"
-                + "1. Períodos do dia; %n"
-                + "2. Diário; %n"
-                + "3. Mensal; %n"
-                + "4. Anual; %n"
-                + "5. Média Móvel Pesada. %n");
-        int resolution = sc.nextInt();
-        switch (resolution) {
+    //menu interativo geral
+    public static int menu(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start) throws FileNotFoundException {
+        System.out.printf("Indique a opção que pretende:%n"
+                + "1. Visualizar gráfico de consumos;%n"
+                + "2. Visualizar média global e distribuição de observações;%n"
+                + "3. Calcular Média Móvel Simples;%n"
+                + "4. Calcular Média Móvel Pesada;%n"
+                + "5. Ordenar valores;%n"
+                + "6. Efetuar uma previsão;%n"
+                + "7. Sair.%n");
+        int option = sc.nextInt();
+        switch (option) {
             case 1:
-                System.out.printf("Que periodo do dia deseja? %n"
-                        + "1. Madrugada; %n"
-                        + "2. Manhã; %n"
-                        + "3. Tarde; %n"
-                        + "4. Noite. %n");
-                int period = sc.nextInt();
-                switch (period) {
-                    case 1:
-                        dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
-                        size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 0);
-                        criarGrafico(consumptionMW, size);
-                        averages(consumptionMW, dateTime, size);
-                        defineOrder(consumptionMW, start, size);
-                        MediaMovelSimples(consumptionMW);
-                        break;
-                    case 2:
-                        dayPeriod(consumptionMW, dateTime, size, 6);
-                        size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 6);
-                        criarGrafico(consumptionMW, size);
-                        averages(consumptionMW, dateTime, size);
-                        defineOrder(consumptionMW, start, size);
-                        break;
-                    case 3:
-                        dayPeriod(consumptionMW, dateTime, size, 12);
-                        size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 12);
-                        criarGrafico(consumptionMW, size);
-                        averages(consumptionMW, dateTime, size);
-                        defineOrder(consumptionMW, start, size);
-                        break;
-                    case 4:
-                        dayPeriod(consumptionMW, dateTime, size, 18);
-                        size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 18);
-                        criarGrafico(consumptionMW, size);
-                        averages(consumptionMW, dateTime, size);
-                        defineOrder(consumptionMW, start, size);
-                        break;
-                    default:
-                        System.out.println("Opção inválida.");
-                        break;
-                }
+                size = definePeriod(consumptionMW, dateTime, size, start);
+                criarGrafico(consumptionMW, size);
                 break;
             case 2:
-                size = dailyPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW, size);
+                size = definePeriod(consumptionMW, dateTime, size, start);
                 averages(consumptionMW, dateTime, size);
-                defineOrder(consumptionMW, start, size);
                 break;
             case 3:
-                size = monthlyPeriod(consumptionMW, dateTime, size);
+                size = definePeriod(consumptionMW, dateTime, size, start);
+                MediaMovelSimples(consumptionMW); //não é necessário passar size como parâmetro
                 criarGrafico(consumptionMW, size);
-                averages(consumptionMW, dateTime, size);
-                defineOrder(consumptionMW, start, size);
                 break;
             case 4:
-                size = annualPeriod(consumptionMW, dateTime, size);
+                size = definePeriod(consumptionMW, dateTime, size, start);
+                MediaMovelPesada(consumptionMW, size);
                 criarGrafico(consumptionMW, size);
-                averages(consumptionMW, dateTime, size);
-                defineOrder(consumptionMW, start, size);
                 break;
             case 5:
-                MediaMovelPesada(consumptionMW, size);
+                size = definePeriod(consumptionMW, dateTime, size, start);
+                defineOrder(consumptionMW, start, size); //não dá output?
+                break;
+            case 6:
+                size = definePeriod(consumptionMW, dateTime, size, start);
+                definePrevision(consumptionMW, dateTime);
+                break;
+        }
+        return option;
+    }
+
+    //menu para escolher a resolução temporal
+     public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start) throws FileNotFoundException {
+        System.out.printf("Que resolução temporal deseja %n"
+                + "1. Madrugadas;%n"
+                + "2. Manhãs;%n"
+                + "3. Tardes;%n"
+                + "4. Noites;%n"
+                + "5. Diário; %n"
+                + "6. Mensal; %n"
+                + "7. Anual; %n");
+        int option = sc.nextInt();
+        switch (option) {
+            case 1:
+                dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
+                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 0);
+                break;
+            case 2:
+                dayPeriod(consumptionMW, dateTime, size, 6);
+                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 6);
+                break;
+            case 3:
+                dayPeriod(consumptionMW, dateTime, size, 12);
+                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 12);
+                break;
+            case 4:
+                dayPeriod(consumptionMW, dateTime, size, 18);
+                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 18);
+                break;
+            case 5:
+                size = dailyPeriod(consumptionMW, dateTime, size);
+                break;
+            case 6:
+                size = monthlyPeriod(consumptionMW, dateTime, size);
+                break;
+            case 7:
+                size = annualPeriod(consumptionMW, dateTime, size);
                 break;
             default:
                 System.out.println("Opção inválida. ");
@@ -155,26 +165,9 @@ public class LAPR1_1DK_Mafia {
     }
 
     public static void definePrevision (int []consumptionMW, LocalDateTime[] dateTime){
-        System.out.printf("Pretende fazer uma pevisão: %n"
-                + "1. De períodos do dia; %n"
-                + "2. Diária; %n"
-                + "3. Mensal; %n"
-                + "4. Anual. %n");
-        int option=sc.nextInt();
-        switch (option){
-            case 1:  
-                System.out.printf("Que periodo do dia deseja? %n"
-                        + "1. Madrugada; %n"
-                        + "2. Manhã; %n"
-                        + "3. Tarde; %n"
-                        + "4. Noite. %n");
-                int period = sc.nextInt();
-                switch (period) {
-                    case 1:
-        }
-            case 2: System.out.println("Qual o dia? ");
-    
-    }
+        System.out.println("Que dia pretende prever?");
+        //Podes continuar a partir daqui. Já está a pedir a resolução temporal no menu()
+        //Sugiro que faças passar algum parâmetro para este método para saberes com que resolução estás a trabalhar
     }
     
     //ordena de forma crescente ou decrescente conforme escolha do utilizador
@@ -489,7 +482,7 @@ public class LAPR1_1DK_Mafia {
         previsionMediaSimples(auxConsumptionMW, n, n);
     }
 
-    public static void MediaMovelPesada(int[] consumptionMW, int size) throws FileNotFoundException {
+    public static double[] MediaMovelPesada(int[] consumptionMW, int size) throws FileNotFoundException {
         double[] consumptionNewMW = new double[size];
         System.out.println("Insira o valor de α (entre 0 e 1): ");
         double alpha = sc.nextDouble();
@@ -509,15 +502,17 @@ public class LAPR1_1DK_Mafia {
         criarGraficoPesada(consumptionMW, consumptionNewMW, size);
         previsionMediaMovelPesada(consumptionMW, consumptionNewMW,size, alpha);
         absoluteError(consumptionMW, consumptionNewMW, size);
+        return consumptionNewMW;
     }
 
-    public static void absoluteError(int[] consumptionMW, double[] arrayY, int size) {
+    public static double absoluteError(int[] consumptionMW, double[] arrayY, int size) {
         int sum = 0;
         for (int i = 0; i < size - 1; i++) {
             sum = (int) (sum + Math.abs(arrayY[i] - consumptionMW[i]));
         }
         double absoluteError = sum / size;
         System.out.println("Erro absoluto: " + absoluteError);
+        return absoluteError;
     }
 
     private static void criarGrafico(int[] grafico, int size) {
