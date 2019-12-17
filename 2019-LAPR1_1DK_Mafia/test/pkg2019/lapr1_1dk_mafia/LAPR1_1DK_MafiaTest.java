@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package pkg2019.lapr1_1dk_mafia;
 
 import java.time.LocalDateTime;
@@ -10,15 +5,12 @@ import java.util.Arrays;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author bdian
- */
 public class LAPR1_1DK_MafiaTest {
-    
+
     public LAPR1_1DK_MafiaTest() {
     }
- /**
+
+    /**
      * Test of readFile method, of class LAPR1_1DK_Mafia.
      */
     @Test
@@ -139,7 +131,7 @@ public class LAPR1_1DK_MafiaTest {
         int size = consumptionMW.length;
         LAPR1_1DK_Mafia.monthlyPeriod(consumptionMW, dateTime, size);
         int[] expResult = {1618977, 1451230, 1370286};
-        int[] result = Arrays.copyOf(consumptionMW, 3);
+        int[] result = Arrays.copyOf(consumptionMW, size);
         System.out.println(Arrays.toString(expResult));
         System.out.println(Arrays.toString(result));
         assertTrue(Arrays.equals(expResult, result));
@@ -191,15 +183,21 @@ public class LAPR1_1DK_MafiaTest {
      * Test of annualPeriod method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Incompleto
-    public void testAnnualPeriod() {
-        System.out.println("annualPeriod");
-        int[] consumptionMW = null;
-        LocalDateTime[] dateTime = null;
-        int size = 0;
-        int expResult = 0;
-        int result = LAPR1_1DK_Mafia.annualPeriod(consumptionMW, dateTime, size);
-        assertEquals(expResult, result);
+    //Not working - verificar
+    public void testAnnualPeriod() throws Exception {
+        System.out.println("annualPeriod - 2 anos");
+        int[] auxConsumptionMW = new int[26280];
+        LocalDateTime[] auxDateTime = new LocalDateTime[26280];
+        LAPR1_1DK_Mafia.readFile(auxConsumptionMW, auxDateTime);
+        int[] consumptionMW = Arrays.copyOf(auxConsumptionMW, 731);
+        LocalDateTime[] dateTime = Arrays.copyOf(auxDateTime, 731);
+        int size = 731;
+        LAPR1_1DK_Mafia.annualPeriod(consumptionMW, dateTime, size);
+        int[] expResult = {17825259, 17295849};
+        int[] result = Arrays.copyOf(consumptionMW, size);
+        System.out.println(Arrays.toString(expResult));
+        System.out.println(Arrays.toString(result));
+        assertTrue(Arrays.equals(expResult, result));
     }
 
     /**
@@ -252,81 +250,36 @@ public class LAPR1_1DK_MafiaTest {
     }
 
     /**
-     * Test of main method, of class LAPR1_1DK_Mafia.
-     */
-    @org.junit.Test
-    public void testMain() throws Exception {
-        System.out.println("main");
-        String[] args = null;
-        LAPR1_1DK_Mafia.main(args);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of readFile method, of class LAPR1_1DK_Mafia.
-     */
-    @org.junit.Test
-    public void testReadFile() throws Exception {
-        System.out.println("readFile");
-        int[] consumptionMW = null;
-        LocalDateTime[] dateTime = null;
-        String[] args = null;
-        int expResult = 0;
-        int result = LAPR1_1DK_Mafia.readFile(consumptionMW, dateTime, args);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of definePeriod method, of class LAPR1_1DK_Mafia.
-     */
-    @org.junit.Test
-    public void testDefinePeriod() throws Exception {
-        System.out.println("definePeriod");
-        int[] consumptionMW = null;
-        LocalDateTime[] dateTime = null;
-        int size = 0;
-        int start = 0;
-        int expResult = 0;
-        int result = LAPR1_1DK_Mafia.definePeriod(consumptionMW, dateTime, size, start);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of definePrevision method, of class LAPR1_1DK_Mafia.
      */
-    @org.junit.Test
+    @Test
+    //Método não acabado
     public void testDefinePrevision() {
         System.out.println("definePrevision");
         int[] consumptionMW = null;
         LocalDateTime[] dateTime = null;
         LAPR1_1DK_Mafia.definePrevision(consumptionMW, dateTime);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
      * Test of defineOrder method, of class LAPR1_1DK_Mafia.
      */
-    @org.junit.Test
+    @Test
+    //Método void - como testar?
     public void testDefineOrder() {
         System.out.println("defineOrder");
         int[] consumptionMW = null;
         int start = 0;
         int size = 0;
         LAPR1_1DK_Mafia.defineOrder(consumptionMW, start, size);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
      * Test of defineMedia method, of class LAPR1_1DK_Mafia.
      */
-    @org.junit.Test
+    @Test
+    //Método void - como testar?
     public void testDefineMedia() throws Exception {
         System.out.println("defineMedia");
         int[] consumptionMW = null;
@@ -338,69 +291,25 @@ public class LAPR1_1DK_MafiaTest {
     }
 
     /**
-     * Test of dayPeriod method, of class LAPR1_1DK_Mafia.
-     */
-    @org.junit.Test
-    public void testDayPeriod() throws Exception {
-        System.out.println("dayPeriod");
-        int[] consuptionMW = null;
-        LocalDateTime[] dateTime = null;
-        int size = 0;
-        int startPeriod = 0;
-        LAPR1_1DK_Mafia.dayPeriod(consuptionMW, dateTime, size, startPeriod);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of averages method, of class LAPR1_1DK_Mafia.
      */
-    @org.junit.Test
-    public void testAverages() {
+    @Test
+    //Working
+    public void testAverages() throws Exception {
         System.out.println("averages");
-        int[] consumptionMW = null;
+        int[] consumptionMW = {1793, 1741, 1694, 1659, 1630, 1643, 1677, 1719, 1780, 1793, 1854, 1883, 1906, 1904, 1890, 1886, 1890, 1924, 2039, 2079, 2058, 2029, 1982, 1910};
         LocalDateTime[] dateTime = null;
-        int size = 0;
-        LAPR1_1DK_Mafia.averages(consumptionMW, dateTime, size);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of dailyPeriod method, of class LAPR1_1DK_Mafia.
-     */
-    @org.junit.Test
-    public void testDailyPeriod() throws Exception {
-        System.out.println("dailyPeriod");
-        int[] consumptionMW = null;
-        LocalDateTime[] dateTime = null;
-        int size = 0;
-        int expResult = 0;
-        int result = LAPR1_1DK_Mafia.dailyPeriod(consumptionMW, dateTime, size);
+        int size = consumptionMW.length;
+        int expResult = 1848;
+        int result = LAPR1_1DK_Mafia.averages(consumptionMW, dateTime, size);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getMonthLength method, of class LAPR1_1DK_Mafia.
-     */
-    @org.junit.Test
-    public void testGetMonthLength() {
-        System.out.println("getMonthLength");
-        LocalDateTime[] dateTime = null;
-        int index = 0;
-        int expResult = 0;
-        int result = LAPR1_1DK_Mafia.getMonthLength(dateTime, index);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
      * Test of merge method, of class LAPR1_1DK_Mafia.
      */
-    @org.junit.Test
+    @Test
+    //Incompleto
     public void testMerge() {
         System.out.println("merge");
         int[] consumption = null;
@@ -415,7 +324,8 @@ public class LAPR1_1DK_MafiaTest {
     /**
      * Test of inverseMerge method, of class LAPR1_1DK_Mafia.
      */
-    @org.junit.Test
+    @Test
+    //Incompleto
     public void testInverseMerge() {
         System.out.println("inverseMerge");
         int[] consumption = null;
@@ -430,62 +340,82 @@ public class LAPR1_1DK_MafiaTest {
     /**
      * Test of inverseMergeSort method, of class LAPR1_1DK_Mafia.
      */
-    @org.junit.Test
+    @Test
+    //Not working - verificar
     public void testInverseMergeSort() {
         System.out.println("inverseMergeSort");
-        int[] consumption = null;
+        int[] consumptionMW = {1793,1741,1694,1659,1630,1643,1677,1719,1780,1793,1854,1883,1906,1904,1890,1886,1890,1924,2039,2079,2058,2029,1982,1910};
         int start = 0;
-        int end = 0;
-        LAPR1_1DK_Mafia.inverseMergeSort(consumption, start, end);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        int end = consumptionMW.length;
+        LAPR1_1DK_Mafia.inverseMergeSort(consumptionMW, start, end);
+        int[] expResult = {2079,2058,2039,2029,1982,1924,1910,1906,1904,1890,1890,1886,1883,1854,1793,1793,1780,1741,1719,1694,1677,1659,1643,1630};
+        int[] result = consumptionMW;
+        assertTrue(Arrays.equals(expResult, result));
     }
 
     /**
      * Test of mergeSort method, of class LAPR1_1DK_Mafia.
      */
-    @org.junit.Test
+    @Test
+    //Not working - verificar
     public void testMergeSort() {
         System.out.println("mergeSort");
-        int[] consumption = null;
+        int[] consumptionMW = {1793,1741,1694,1659,1630,1643,1677,1719,1780,1793,1854,1883,1906,1904,1890,1886,1890,1924,2039,2079,2058,2029,1982,1910};
         int start = 0;
-        int end = 0;
-        LAPR1_1DK_Mafia.mergeSort(consumption, start, end);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        int end = consumptionMW.length;
+        LAPR1_1DK_Mafia.mergeSort(consumptionMW, start, end);
+        int[] expResult = {1630,1643,1659,1677,1694,1719,1741,1780,1793,1793,1854,1883,1886,1890,1890,1904,1906,1910,1924,1982,2029,2039,2058,2079};
+        int[] result = consumptionMW;
+        assertTrue(Arrays.equals(expResult, result));
+    }
+    
+     /**
+     * Test of MediaMovelSimples method, of class LAPR1_1DK_Mafia.
+     */
+    @Test
+    //Corrigir método!!! Retornar double[]
+    public void testMediaMovelSimples() throws Exception {
+        System.out.println("MediaMovelSimples");
+        int[] auxConsumptionMW = {1793,1741,1694,1659,1630,1643,1677,1719,1780,1793,1854,1883,1906,1904,1890,1886,1890,1924,2039,2079,2058,2029,1982,1910};
+        int n = 5;
+        //double[] result = LAPR1_1DK_Mafia.MediaMovelSimples(auxConsumptionMW);
+        double[] expResult = {2037.4,2006.4,1976.8,1950.2,1925.2,1906.8,1900,1895.2,1890.6,1880.6,1861.2,1841.8,1820.6,1792.2,1765.2,1745.4,1722.2,1698,1678.4,1660.6};
+        //assertTrue(Arrays.equals(expResult, result));
     }
 
-    /**
+     /**
      * Test of MediaMovelPesada method, of class LAPR1_1DK_Mafia.
      */
-    @org.junit.Test
+    @Test
+    //Not working - corrigir MediaMovelSimples()
     public void testMediaMovelPesada() throws Exception {
         System.out.println("MediaMovelPesada");
-        int[] consumptionMW = null;
-        int size = 0;
-        LAPR1_1DK_Mafia.MediaMovelPesada(consumptionMW, size);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        int[] consumptionMW = {1793,1741,1694,1659,1630,1643,1677,1719,1780,1793,1854,1883,1906,1904,1890,1886,1890,1924,2039,2079,2058,2029,1982,1910};
+        int size = consumptionMW.length;
+        double[] result = LAPR1_1DK_Mafia.MediaMovelPesada(consumptionMW, size);
+        double[] expResult = {2043.58,2016.18,1992.46,1959.74,1924.84,1907.76,1901.8,1897.84,1890.42,1883.42,1868.64,1854.16,1830.62,1792.44,1773.54,1755.78,1727.84,1704.3,1683.08,1665.52};
+        assertTrue(Arrays.equals(expResult, result));
     }
 
     /**
      * Test of absoluteError method, of class LAPR1_1DK_Mafia.
      */
-    @org.junit.Test
-    public void testAbsoluteError() {
-        System.out.println("absoluteError");
-        int[] consumptionMW = null;
-        double[] arrayY = null;
-        int size = 0;
-        LAPR1_1DK_Mafia.absoluteError(consumptionMW, arrayY, size);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    @Test
+    //Not working
+    public void testAbsoluteErrorSimples() {
+        System.out.println("absoluteErrorSimples");
+        int[] consumptionMW = {1793,1741,1694,1659,1630,1643,1677,1719,1780,1793,1854,1883,1906,1904,1890,1886,1890,1924,2039,2079,2058,2029,1982,1910};
+        double[] arrayY = {2037.4,2006.4,1976.8,1950.2,1925.2,1906.8,1900,1895.2,1890.6,1880.6,1861.2,1841.8,1820.6,1792.2,1765.2,1745.4,1722.2,1698,1678.4,1660.6};
+        int size = consumptionMW.length;
+        double result = LAPR1_1DK_Mafia.absoluteError(consumptionMW, arrayY, size);
+        double expResult = 39.96;
     }
 
     /**
      * Test of DefineOrderNonInteractive method, of class LAPR1_1DK_Mafia.
      */
     @org.junit.Test
+    //Incompleto
     public void testDefineOrderNonInteractive() throws Exception {
         System.out.println("DefineOrderNonInteractive");
         int[] consumptionMW = null;
@@ -501,6 +431,7 @@ public class LAPR1_1DK_MafiaTest {
      * Test of DefineModel method, of class LAPR1_1DK_Mafia.
      */
     @org.junit.Test
+    //Incompleto
     public void testDefineModel() throws Exception {
         System.out.println("DefineModel");
         int[] consumptionMW = null;
@@ -515,6 +446,7 @@ public class LAPR1_1DK_MafiaTest {
      * Test of previsionMediaSimples method, of class LAPR1_1DK_Mafia.
      */
     @org.junit.Test
+    //Incompleto
     public void testPrevisionMediaSimples() throws Exception {
         System.out.println("previsionMediaSimples");
         int[] consumptionMW = null;
@@ -526,9 +458,11 @@ public class LAPR1_1DK_MafiaTest {
     }
 
     /**
-     * Test of MediaMovelPesadaNonInteractive method, of class LAPR1_1DK_Mafia.
+     * Test of MediaMovelPesadaNonInteractive method, of class
+     * LAPR1_1DK_Mafia.
      */
     @org.junit.Test
+    //Incompleto
     public void testMediaMovelPesadaNonInteractive() throws Exception {
         System.out.println("MediaMovelPesadaNonInteractive");
         int[] consumptionMW = null;
@@ -543,6 +477,7 @@ public class LAPR1_1DK_MafiaTest {
      * Test of previsionMediaMovelPesada method, of class LAPR1_1DK_Mafia.
      */
     @org.junit.Test
+    //Incompleto
     public void testPrevisionMediaMovelPesada() {
         System.out.println("previsionMediaMovelPesada");
         int[] consumptionMW = null;
@@ -558,12 +493,76 @@ public class LAPR1_1DK_MafiaTest {
      * Test of averagesNonInteractive method, of class LAPR1_1DK_Mafia.
      */
     @org.junit.Test
+    //Incompleto
     public void testAveragesNonInteractive() throws Exception {
         System.out.println("averagesNonInteractive");
         int[] consumptionMW = null;
         LocalDateTime[] dateTime = null;
         int size = 0;
         LAPR1_1DK_Mafia.averagesNonInteractive(consumptionMW, dateTime, size);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of criarGrafico method, of class LAPR1_1DK_Mafia.
+     */
+    @Test
+    //Incompleto
+    public void testCriarGrafico() {
+        System.out.println("criarGrafico");
+        int[] grafico = null;
+        int size = 0;
+        LAPR1_1DK_Mafia.criarGrafico(grafico, size);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of criarGraficoPesada method, of class LAPR1_1DK_Mafia.
+     */
+    @Test
+    //Incompleto
+    public void testCriarGraficoPesada() {
+        System.out.println("criarGraficoPesada");
+        int[] grafico1 = null;
+        double[] grafico2 = null;
+        int size = 0;
+        LAPR1_1DK_Mafia.criarGraficoPesada(grafico1, grafico2, size);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of DefinePeriodNonInteractive method, of class LAPR1_1DK_Mafia.
+     */
+    @Test
+    //Incompleto
+    public void testDefinePeriodNonInteractive() throws Exception {
+        System.out.println("DefinePeriodNonInteractive");
+        int[] consumptionMW = null;
+        LocalDateTime[] dateTime = null;
+        int size = 0;
+        int start = 0;
+        String[] args = null;
+        int expResult = 0;
+        int result = LAPR1_1DK_Mafia.DefinePeriodNonInteractive(consumptionMW, dateTime, size, start, args);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of MediaMovelSimplesNonInteractive method, of class LAPR1_1DK_Mafia.
+     */
+    @Test
+    //Incompleto
+    public void testMediaMovelSimplesNonInteractive() throws Exception {
+        System.out.println("MediaMovelSimplesNonInteractive");
+        int[] consumptionMW = null;
+        int size = 0;
+        String[] args = null;
+        LAPR1_1DK_Mafia.MediaMovelSimplesNonInteractive(consumptionMW, size, args);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
