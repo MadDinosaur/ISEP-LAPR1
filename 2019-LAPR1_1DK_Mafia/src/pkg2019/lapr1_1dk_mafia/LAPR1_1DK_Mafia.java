@@ -744,8 +744,7 @@ public class LAPR1_1DK_Mafia {
                 criarGrafico(consumptionMW, size);
                 break;
             case "2":
-                double []consumptionNewMW = MediaMovelPesadaNonInteractive(consumptionMW, size, args);
-                criarGraficoPesada(consumptionMW, consumptionNewMW, size);
+            MediaMovelPesadaNonInteractive(consumptionMW, size, args);
                 break;
             default:
                 System.out.println("Parâmetro de modelo inválido.");
@@ -781,7 +780,7 @@ public class LAPR1_1DK_Mafia {
         System.out.println(finalSum*(1)/(n)+ "MW. ");
     }
 
-<<<<<<< HEAD
+
     public static void MediaMovelPesadaNonInteractive(int[] consumptionMW, int size, String[] args) throws FileNotFoundException {
         PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
         double[] consumptionNewMW = new double[size];
@@ -799,8 +798,7 @@ public class LAPR1_1DK_Mafia {
         }
     }
     //falta testar, pois ainda não estão a funcionar as médias
-=======
->>>>>>> d696c5e2ccfee40d3455b2a12dd7d158e832a0b5
+
     public static void previsionMediaMovelPesada(int[] consumptionMW, double [] consumptionNewMW, int size, double alpha) {
             for (int i=size-1; i>0; i--){
                 consumptionNewMW[i]=(alpha*consumptionMW[i-1])+(1-alpha)*consumptionNewMW[i-1];
@@ -837,23 +835,5 @@ public class LAPR1_1DK_Mafia {
         out.println("Quantidade de valores acima da média: " + aboveAverageValues);
         System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
         out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
-    }
-
-    private static double [] MediaMovelPesadaNonInteractive(int[] consumptionMW, int size, String[] args) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
-        double[] consumptionNewMW = new double[size];
-        double alpha = Integer.parseInt(args[4]);
-
-        if (alpha < 0 || alpha > 1) {
-            System.out.println("O parâmetro que toma o valor númerico alpha é inválido ");
-            out.println("O parâmetro que toma o valor númerico n é inválido ");
-        }
-
-        for (int i = 1; i < size; i++) {
-            consumptionNewMW[0] = consumptionMW[0];
-            consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
-            consumptionNewMW[size - 1] = consumptionMW[size - 1];
-        }
-        return consumptionNewMW;
     }
 }
