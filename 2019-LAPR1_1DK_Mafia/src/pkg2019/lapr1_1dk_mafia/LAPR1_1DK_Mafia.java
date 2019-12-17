@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.io.FileInputStream;
 import com.panayotis.gnuplot.GNUPlotException;
+import static javafx.beans.binding.Bindings.size;
 
 public class LAPR1_1DK_Mafia {
 
@@ -144,7 +145,8 @@ public class LAPR1_1DK_Mafia {
                 defineOrder(consumptionMW, start, size);
                 break;
             case 5:
-                MediaMovelPesada(consumptionMW, size);
+                MediaMovelSimples(consumptionMW);
+                //MediaMovelPesada(consumptionMW, size);
                 break;
             default:
                 System.out.println("Opção inválida. ");
@@ -467,37 +469,37 @@ public class LAPR1_1DK_Mafia {
             finalSum = sum - k; //é o xi-k(k é o indice)
         }
         System.out.print(finalSum * (1)/(n) + "MW. ");
+        previsionMediaSimples(auxConsumptionMW, n, n);
     }
 
-    private static void MediaMovelPesada(int[] consumptionMW, int size) throws FileNotFoundException {
+    public static void MediaMovelPesada(int[] consumptionMW, int size) throws FileNotFoundException {
 
         double[] consumptionNewMW = new double[size];
         System.out.println("Insira o valor de α (entre 0 e 1): ");
         double alpha = sc.nextDouble();
 
         if (alpha < 0 || alpha > 1) {
-            do {
                 System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
                 alpha = sc.nextDouble();
-            } while (alpha < 0 || alpha > 1);
-        }
-
+        }else{
         for (int i = 1; i < size; i++) {
             consumptionNewMW[0] = consumptionMW[0];
             consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
             consumptionNewMW[size - 1] = consumptionMW[size - 1];
         }
+        }
             
 
         // criar 1 gráfico com os valores inicias e o valor de α
         criarGraficoPesada(consumptionMW, consumptionNewMW, size);
-        previsionMediaMovelPesada(consumptionMW,size);
+        previsionMediaMovelPesada(consumptionMW, consumptionNewMW,size, alpha);
+        absoluteError(consumptionMW, consumptionNewMW, size);
     }
 
-    public static void absoluteError(int[] consumptionMW, int[] arrayY, int size) {
+    public static void absoluteError(int[] consumptionMW, double[] arrayY, int size) {
         int sum = 0;
         for (int i = 0; i < size - 1; i++) {
-            sum = sum + Math.abs(arrayY[i] - consumptionMW[i]);
+            sum = (int) (sum + Math.abs(arrayY[i] - consumptionMW[i]));
         }
         double absoluteError = sum / size;
         System.out.println("Erro absoluto: " + absoluteError);
@@ -772,17 +774,17 @@ public class LAPR1_1DK_Mafia {
             }
             System.out.print(((1 / n) * finalSum) + " " + "MW. ");
         }
-        previsionMediaSimplesNonInteractive(consumptionMW, size, args, n);
+        previsionMediaSimples(consumptionMW, size, n);
     }
 
-    public static void previsionMediaSimplesNonInteractive(int[] consumptionMW, int size, String[] args, int n) throws FileNotFoundException {
+    public static void previsionMediaSimples(int[] consumptionMW, int size, int n) throws FileNotFoundException {
         PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
         double sum = 0, finalSum = 0;
         for (int k = 1; k <= n - 1; k++) {
             sum = consumptionMW[k - 1] + sum;
             finalSum = sum - k;
         }
-        System.out.println("Previsão: " + ((1 / n) * finalSum) + " " + "MW.");
+        System.out.println(finalSum*(1)/(n)+ "MW. ");
     }
 
     public static void MediaMovelPesadaNonInteractive(int[] consumptionMW, int size, String[] args) throws FileNotFoundException {
@@ -802,13 +804,11 @@ public class LAPR1_1DK_Mafia {
         }
     }
     //falta testar, pois ainda não estão a funcionar as médias
-    public static void previsionMediaMovelPesada(int[] consumptionMW, int size, double alpha) {
-        double[] consumptionNewMW = new double[size];
-        for (int i = 0; i < size; i++) {
-            consumptionNewMW[0]=consumptionMW[0]; //copiar array
-            consumptionNewMW[i+1]=(consumptionMW[i]*alpha)+ consumptionNewMW[i]*(1-alpha);
-           
-        }
+    public static void previsionMediaMovelPesada(int[] consumptionMW, double [] consumptionNewMW, int size, double alpha) {
+            for (int i=0; i<size; i++){
+                consumptionNewMW[i+1]=(alpha*consumptionMW[i])+(1-alpha)*consumptionNewMW[i];
+            }
+            System.out.println(consumptionNewMW[0]);
     }
 
     public static void averagesNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
