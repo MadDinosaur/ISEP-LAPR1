@@ -143,7 +143,7 @@ public class LAPR1_1DK_Mafia {
                 averages(consumptionMW, dateTime, size);
                 defineOrder(consumptionMW, start, size);
                 break;
-            case 5:   
+            case 5:
                 MediaMovelPesada(consumptionMW, size);
                 break;
             default:
@@ -168,6 +168,26 @@ public class LAPR1_1DK_Mafia {
                 break;
             default:
                 System.out.println("Opção inválida.");
+                break;
+        }
+    }
+    
+    public static void defineMedia(int[]consumptionMW, int start, int size) throws FileNotFoundException{
+        System.out.println("Que método deseja utilizar? %n"
+                + "1. Média Móvel Simples; %n"
+                + "2. Média Móvel Exponecialmente Pesada.");
+        int option = sc.nextInt();
+        switch(option){
+            case 1:
+                MediaMovelSimples(consumptionMW);
+                break;
+                
+            case 2:
+                MediaMovelPesada(consumptionMW,size);
+                break;
+                
+            default:
+                System.out.println("Opção Inválida");
                 break;
         }
     }
@@ -446,7 +466,7 @@ public class LAPR1_1DK_Mafia {
             sum = auxConsumptionMW[k] + sum; //está a somar bem
             finalSum = sum - k; //é o xi-k(k é o indice)
         }
-        System.out.print(((1 / n) * finalSum) + "MW. ");
+        System.out.print(finalSum * (1)/(n) + "MW. ");
     }
 
     private static void MediaMovelPesada(int[] consumptionMW, int size) throws FileNotFoundException {
@@ -467,10 +487,11 @@ public class LAPR1_1DK_Mafia {
             consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
             consumptionNewMW[size - 1] = consumptionMW[size - 1];
         }
+            
 
         // criar 1 gráfico com os valores inicias e o valor de α
         criarGraficoPesada(consumptionMW, consumptionNewMW, size);
-
+        previsionMediaMovelPesada(consumptionMW,size);
     }
 
     public static void absoluteError(int[] consumptionMW, int[] arrayY, int size) {
@@ -612,10 +633,8 @@ public class LAPR1_1DK_Mafia {
                 JavaPlot p1 = new JavaPlot();
                 p.setTerminal(png);
 
-                p1.getAxis("x").setLabel("yield");
-                p1.getAxis("y").setLabel("biomass");
-                p1.getAxis("x").setBoundaries(0.0, 1.0);
-                p1.getAxis("y").setBoundaries(0.0, 1.0);
+                p1.getAxis("x").setLabel("observações");
+                p1.getAxis("y").setLabel("consumo energético");
                 p1.addPlot(setDeleted);
                 p1.addPlot(setExist);
                 p1.setTitle("remaining EMs");
@@ -783,16 +802,13 @@ public class LAPR1_1DK_Mafia {
         }
     }
     //falta testar, pois ainda não estão a funcionar as médias
-    public static void previsionMediaMovelPesada(int[] consumptionMW, int size, String[] args, int alpha) {
+    public static void previsionMediaMovelPesada(int[] consumptionMW, int size, double alpha) {
         double[] consumptionNewMW = new double[size];
-        double sum=0;
         for (int i = 0; i < size; i++) {
-            consumptionMW[i]=consumptionMW[i]; //copiar array
+            consumptionNewMW[0]=consumptionMW[0]; //copiar array
+            consumptionNewMW[i+1]=(consumptionMW[i]*alpha)+ consumptionNewMW[i]*(1-alpha);
+           
         }
-        for (int j=1; j<size;j++){
-           sum = sum +((consumptionMW[j-1]*alpha)+ consumptionNewMW[j-1]*(1-alpha));
-        }
-        System.out.println("Previsão: " + sum);
     }
 
     public static void averagesNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
