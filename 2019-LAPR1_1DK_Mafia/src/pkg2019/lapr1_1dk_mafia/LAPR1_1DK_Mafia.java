@@ -38,12 +38,12 @@ public class LAPR1_1DK_Mafia {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
         int size = readFile(consumptionMW, dateTime, args);
-        
+
         //menu interativo
         int option;
         do {
             int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-            option = menu(auxConsumptionMW, dateTime, size);
+            option = menu(auxConsumptionMW, dateTime, size, args);
         } while (option != 7);
 //        }
 //        if (args.length == 6) {
@@ -77,8 +77,9 @@ public class LAPR1_1DK_Mafia {
         //retorna para entrar como comprimento do array
         return numLines;
     }
+
     //menu interativo geral
-    public static int menu(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+    public static int menu(int[] consumptionMW, LocalDateTime[] dateTime, int size, String[] args) throws FileNotFoundException {
         System.out.printf("Indique a opção que pretende:%n"
                 + "1. Visualizar gráfico de consumos;%n"
                 + "2. Visualizar média global e distribuição de observações;%n"
@@ -95,7 +96,7 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 2:
                 size = definePeriod(consumptionMW, dateTime, size);
-                averages(consumptionMW, dateTime, size);
+                averages(consumptionMW, size, args);
                 break;
             case 3:
                 size = definePeriod(consumptionMW, dateTime, size);
@@ -120,7 +121,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //menu para escolher a resolução temporal
-     public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+    public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         System.out.printf("Que resolução temporal deseja %n"
                 + "1. Madrugadas;%n"
                 + "2. Manhãs;%n"
@@ -132,23 +133,23 @@ public class LAPR1_1DK_Mafia {
         int option = sc.nextInt();
         switch (option) {
             case 1:
-                dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
-                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 0);
+                dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
+                size = exchangeInfoDayPeriods(consumptionMW, size, 0);
                 break;
             case 2:
-                dayPeriod(consumptionMW, dateTime, size, 6);
-                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 6);
+                dayPeriod(consumptionMW, size, 6);
+                size = exchangeInfoDayPeriods(consumptionMW, size, 6);
                 break;
             case 3:
-                dayPeriod(consumptionMW, dateTime, size, 12);
-                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 12);
+                dayPeriod(consumptionMW, size, 12);
+                size = exchangeInfoDayPeriods(consumptionMW, size, 12);
                 break;
             case 4:
-                dayPeriod(consumptionMW, dateTime, size, 18);
-                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 18);
+                dayPeriod(consumptionMW, size, 18);
+                size = exchangeInfoDayPeriods(consumptionMW, size, 18);
                 break;
             case 5:
-                size = dailyPeriod(consumptionMW, dateTime, size);
+                size = dailyPeriod(consumptionMW, size);
                 break;
             case 6:
                 size = monthlyPeriod(consumptionMW, dateTime, size);
@@ -163,12 +164,12 @@ public class LAPR1_1DK_Mafia {
         return size;
     }
 
-    public static void definePrevision (int []consumptionMW, LocalDateTime[] dateTime){
+    public static void definePrevision(int[] consumptionMW, LocalDateTime[] dateTime) {
         System.out.println("Que dia pretende prever?");
         //Podes continuar a partir daqui. Já está a pedir a resolução temporal no menu()
         //Sugiro que faças passar algum parâmetro para este método para saberes com que resolução estás a trabalhar
     }
-    
+
     //ordena de forma crescente ou decrescente conforme escolha do utilizador
     public static void defineOrder(int[] consumptionMW, int size) {
         int start = 0;
@@ -190,7 +191,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //calcula consumos de um dado periodo do dia - manhã, tarde, noite ou madrugada
-    public static void dayPeriod(int[] consuptionMW, LocalDateTime[] dateTime, int size, int startPeriod) throws FileNotFoundException {
+    public static void dayPeriod(int[] consuptionMW, int size, int startPeriod) throws FileNotFoundException {
         int endPeriod = startPeriod + NUM_HOURS_IN_STAGE;
         while (endPeriod < size) {
             for (int i = startPeriod + 1; i < endPeriod; i++) {
@@ -201,7 +202,7 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
-    public static void averages(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
+    public static void averages(int[] consumptionMW, int size, String[] args) throws FileNotFoundException {
         int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
         for (int i = 0; i < size; i++) {
             consumptionSum += consumptionMW[i];
@@ -220,14 +221,22 @@ public class LAPR1_1DK_Mafia {
                 aboveAverageValues++;
             }
         }
+        if (args.length == 6) {
+            PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+            System.out.println("Média : " + (consumptionSum / size) + " " + "MW");
+            out.println("Média : " + (consumptionSum / size) + " " + "MW");
+            out.println("Quantidade de valores dentro da média: " + averageValues);
+            out.println("Quantidade de valores acima da média: " + aboveAverageValues);
+            out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+        }
         System.out.println("Média : " + (consumptionSum / size) + " " + "MW");
-        System.out.println("Quantidade de valores próximos da média: " + averageValues);     
-        System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);      
-        System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);      
+        System.out.println("Quantidade de valores próximos da média: " + averageValues);
+        System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
+        System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
     }
-    
+
     //calcula consumos diários
-    public static int dailyPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+    public static int dailyPeriod(int[] consumptionMW, int size) throws FileNotFoundException {
         int startPeriod = 0, endPeriod = NUM_HOURS;
         boolean leftovers = false;
         while (endPeriod < size) {
@@ -244,9 +253,7 @@ public class LAPR1_1DK_Mafia {
                 leftovers = true;
             }
         }
-
-        //return size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS);
-        size = exchangeInfoDays(consumptionMW, dateTime, size, NUM_HOURS);
+        size = exchangeInfoDays(consumptionMW, size, NUM_HOURS);
         return size;
 
     }
@@ -293,11 +300,9 @@ public class LAPR1_1DK_Mafia {
         return size = exchangeInfoMonthsYears(consumptionMW, dateTime, size, numYears, false);
     }
 
-    public static int exchangeInfoDayPeriods(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start) {
+    public static int exchangeInfoDayPeriods(int[] consumptionMW, int size, int start) {
         int i, idx2 = start;
         for (i = 0; i < size / NUM_HOURS; i++) {
-            //trocar datas
-            dateTime[i] = dateTime[idx2];
             //trocar consumos
             consumptionMW[i] = consumptionMW[idx2];
             idx2 += NUM_HOURS;
@@ -307,18 +312,14 @@ public class LAPR1_1DK_Mafia {
     }
 
     //troca informação dos dias
-    public static int exchangeInfoDays(int[] consumptionMW, LocalDateTime[] dateTime, int size, int period) {
+    public static int exchangeInfoDays(int[] consumptionMW, int size, int period) {
         int i;
         for (i = 1; i < size / period; i++) {
             int idx2 = i * period;
-            //trocar datas
-            dateTime[i] = dateTime[idx2];
             //trocar consumos
             consumptionMW[i] = consumptionMW[idx2];
         }
         size = i;
-        //System.out.println(size);
-        //System.out.println(dateTime[size - 2]);
         return size;
     }
 
@@ -335,16 +336,11 @@ public class LAPR1_1DK_Mafia {
                     idx2 += NUM_DAYS_IN_YEAR * NUM_HOURS;
                 }
             }
-            dateTime[i] = dateTime[idx2];
             consumptionMW[i] = consumptionMW[idx2];
         }
         size = i;
-        //System.out.println(size);
-        //System.out.println(dateTime[size - 1]);
-        //System.out.println(Arrays.toString(consumptionMW));
         return size;
     }
-
 
     public static void merge(int consumption[], int start, int middle, int end) {
 
@@ -453,17 +449,17 @@ public class LAPR1_1DK_Mafia {
             System.out.println("O valor introduzido é inválido. Por favor introduza um valor entre 0 e " + consumptionMW.length + ".");
             n = sc.nextInt();
         }
-        double[] mediaMovelSimples = new double[size-n];
-        for (int k = 0; k < size-n; k++) {
-            for (int i = k; i<k+n; i++){
-            mediaMovelSimples[k] += consumptionMW[i];
-                    }
+        double[] mediaMovelSimples = new double[size - n];
+        for (int k = 0; k < size - n; k++) {
+            for (int i = k; i < k + n; i++) {
+                mediaMovelSimples[k] += consumptionMW[i];
+            }
             mediaMovelSimples[k] /= n;
         }
-        criarGraficoMedias (consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
+        criarGraficoMedias(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
         absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
         previsionMediaSimples(consumptionMW, n, n);
-        return mediaMovelSimples; 
+        return mediaMovelSimples;
     }
 
     public static double[] MediaMovelPesada(int[] consumptionMW, int size) throws FileNotFoundException {
@@ -472,19 +468,19 @@ public class LAPR1_1DK_Mafia {
         double alpha = sc.nextDouble();
 
         if (alpha < 0 || alpha > 1) {
-                System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
-                alpha = sc.nextDouble();
-        }else{
-        for (int i = size-1; i>0; i--) {
-            consumptionNewMW[0] = consumptionMW[0];
-            consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
-            consumptionNewMW[size - 1] = consumptionMW[size - 1];
+            System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
+            alpha = sc.nextDouble();
+        } else {
+            for (int i = size - 1; i > 0; i--) {
+                consumptionNewMW[0] = consumptionMW[0];
+                consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
+                consumptionNewMW[size - 1] = consumptionMW[size - 1];
+            }
         }
-        }
-            
+
         // criar 1 gráfico com os valores inicias e o valor de α
         criarGraficoMedias(consumptionMW, consumptionNewMW, size);
-        previsionMediaMovelPesada(consumptionMW, consumptionNewMW,size, alpha);
+        previsionMediaMovelPesada(consumptionMW, consumptionNewMW, size, alpha);
         absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length);
         return consumptionNewMW;
     }
@@ -523,7 +519,7 @@ public class LAPR1_1DK_Mafia {
         p.addPlot(s);
 
         p.newGraph();
-        p.plot();   
+        p.plot();
     }
 
     private static void criarGraficoMedias(int[] grafico1, double[] grafico2, int size) {
@@ -567,136 +563,132 @@ public class LAPR1_1DK_Mafia {
 
         p.newGraph();
         p.plot();
-        
+
         System.out.println("Pretende gravar o gráfico? 1.Sim 2.Não");
-                int op = sc.nextInt();
-                
-                if(op != 1 && op != 2)
-                {
-                    do{
-                    System.out.println("Pretende gravar o gráfico? 1.Sim 2.Não");
-                    op = sc.nextInt();
-                    }while(op==1 || op==2);
-                }
-                
-                // ainda a desenvolver a parte de guardar em png.
-                if (op==1){
-        
-                double[][] values = new double[3][2];
-                values[0][0] = 0.1;
-                values[0][1] = 0.3;
-                values[1][0] = 0.4;
-                values[1][1] = 0.3;
-                values[2][0] = 0.5;
-                values[2][1] = 0.5;
+        int op = sc.nextInt();
 
-                double[][] values2 = new double[3][2];
-                values2[0][0] = 0.2;
-                values2[0][1] = 0.0;
-                values2[1][0] = 0.7;
-                values2[1][1] = 0.1;
-                values2[2][0] = 0.6;
-                values2[2][1] = 0.5;
+        if (op != 1 && op != 2) {
+            do {
+                System.out.println("Pretende gravar o gráfico? 1.Sim 2.Não");
+                op = sc.nextInt();
+            } while (op == 1 || op == 2);
+        }
 
-                PlotStyle styleDeleted = new PlotStyle();
-                styleDeleted.setStyle(Style.LINES);
-                styleDeleted.setLineType(NamedPlotColor.GRAY80);
+        // ainda a desenvolver a parte de guardar em png.
+        if (op == 1) {
 
-                PlotStyle styleExist = new PlotStyle();
-                styleExist.setStyle(Style.LINES);
-                styleExist.setLineType(NamedPlotColor.BLACK);
+            double[][] values = new double[3][2];
+            values[0][0] = 0.1;
+            values[0][1] = 0.3;
+            values[1][0] = 0.4;
+            values[1][1] = 0.3;
+            values[2][0] = 0.5;
+            values[2][1] = 0.5;
 
-                DataSetPlot setDeleted = new DataSetPlot(values);
-                setDeleted.setPlotStyle(styleDeleted);
-                setDeleted.setTitle("deleted EMs");
+            double[][] values2 = new double[3][2];
+            values2[0][0] = 0.2;
+            values2[0][1] = 0.0;
+            values2[1][0] = 0.7;
+            values2[1][1] = 0.1;
+            values2[2][0] = 0.6;
+            values2[2][1] = 0.5;
 
-                DataSetPlot setExist = new DataSetPlot(values2);
-                setExist.setPlotStyle(styleExist);
-                setExist.setTitle("remaining EMs");
+            PlotStyle styleDeleted = new PlotStyle();
+            styleDeleted.setStyle(Style.LINES);
+            styleDeleted.setLineType(NamedPlotColor.GRAY80);
 
-                // supostamente esta é a parte que interessa, daqui...
-                ImageTerminal png = new ImageTerminal();
-                File file = new File("Ambiente de trabalho");
-                try {
-                    file.createNewFile();
-                    png.processOutput(new FileInputStream(file));
-                } catch (FileNotFoundException ex) {
-                    System.err.print(ex);
-                } catch (IOException ex) {
-                    System.err.print(ex);
-                }
+            PlotStyle styleExist = new PlotStyle();
+            styleExist.setStyle(Style.LINES);
+            styleExist.setLineType(NamedPlotColor.BLACK);
 
-                JavaPlot p1 = new JavaPlot();
-                p.setTerminal(png);
+            DataSetPlot setDeleted = new DataSetPlot(values);
+            setDeleted.setPlotStyle(styleDeleted);
+            setDeleted.setTitle("deleted EMs");
 
-                p1.getAxis("x").setLabel("observações");
-                p1.getAxis("y").setLabel("consumo energético");
-                p1.addPlot(setDeleted);
-                p1.addPlot(setExist);
-                p1.setTitle("remaining EMs");
-                p1.plot();
+            DataSetPlot setExist = new DataSetPlot(values2);
+            setExist.setPlotStyle(styleExist);
+            setExist.setTitle("remaining EMs");
 
-                try {
-                    ImageIO.write(png.getImage(), "png", file);
-                } catch (IOException ex) {
-                    System.err.print(ex);
-                }
-                p.setPersist(false);
-                // até aqui, o resto é só esboçar o gráfico.
-                
-                System.out.println("Items guardados.");
-                }
-                
-                else
-                {
-                     System.out.println("Nenhum ficheiro guardado.");
-                }
+            // supostamente esta é a parte que interessa, daqui...
+            ImageTerminal png = new ImageTerminal();
+            File file = new File("Ambiente de trabalho");
+            try {
+                file.createNewFile();
+                png.processOutput(new FileInputStream(file));
+            } catch (FileNotFoundException ex) {
+                System.err.print(ex);
+            } catch (IOException ex) {
+                System.err.print(ex);
+            }
+
+            JavaPlot p1 = new JavaPlot();
+            p.setTerminal(png);
+
+            p1.getAxis("x").setLabel("observações");
+            p1.getAxis("y").setLabel("consumo energético");
+            p1.addPlot(setDeleted);
+            p1.addPlot(setExist);
+            p1.setTitle("remaining EMs");
+            p1.plot();
+
+            try {
+                ImageIO.write(png.getImage(), "png", file);
+            } catch (IOException ex) {
+                System.err.print(ex);
+            }
+            p.setPersist(false);
+            // até aqui, o resto é só esboçar o gráfico.
+
+            System.out.println("Items guardados.");
+        } else {
+            System.out.println("Nenhum ficheiro guardado.");
+        }
 
     }
 
     private static int DefinePeriodNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start, String[] args) throws FileNotFoundException {
         switch (args[1]) {
             case "11":
-                dayPeriod(consumptionMW, dateTime, size, 0); //TODO: alterar números para constantes
-                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 0);
+                dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
+                size = exchangeInfoDayPeriods(consumptionMW, size, 0);
                 criarGrafico(consumptionMW, size);
-                averagesNonInteractive(consumptionMW, dateTime, size);
+                averages(consumptionMW, size, args);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
                 //falta previsão
                 break;
 
             case "12":
-                dayPeriod(consumptionMW, dateTime, size, 6);
-                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 6);
+                dayPeriod(consumptionMW, size, 6);
+                size = exchangeInfoDayPeriods(consumptionMW, size, 6);
                 criarGrafico(consumptionMW, size);
-                averagesNonInteractive(consumptionMW, dateTime, size);
+                averages(consumptionMW, size, args);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
                 //falta previsão
                 break;
             case "13":
-                dayPeriod(consumptionMW, dateTime, size, 12);
-                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 12);
+                dayPeriod(consumptionMW, size, 12);
+                size = exchangeInfoDayPeriods(consumptionMW, size, 12);
                 criarGrafico(consumptionMW, size);
-                averagesNonInteractive(consumptionMW, dateTime, size);
+                averages(consumptionMW, size, args);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
                 //falta previsão
                 break;
             case "14":
-                dayPeriod(consumptionMW, dateTime, size, 18);
-                size = exchangeInfoDayPeriods(consumptionMW, dateTime, size, 18);
+                dayPeriod(consumptionMW, size, 18);
+                size = exchangeInfoDayPeriods(consumptionMW, size, 18);
                 criarGrafico(consumptionMW, size);
-                averagesNonInteractive(consumptionMW, dateTime, size);
+                averages(consumptionMW, size, args);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
                 //falta previsão
                 break;
             case "2":
-                size = dailyPeriod(consumptionMW, dateTime, size);
+                size = dailyPeriod(consumptionMW, size);
                 criarGrafico(consumptionMW, size);
-                averagesNonInteractive(consumptionMW, dateTime, size);
+                averages(consumptionMW, size, args);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
                 //falta previsão
@@ -704,7 +696,7 @@ public class LAPR1_1DK_Mafia {
             case "3":
                 size = monthlyPeriod(consumptionMW, dateTime, size);
                 criarGrafico(consumptionMW, size);
-                averagesNonInteractive(consumptionMW, dateTime, size);
+                averages(consumptionMW, size, args);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
                 //falta previsão
@@ -712,7 +704,7 @@ public class LAPR1_1DK_Mafia {
             case "4":
                 size = annualPeriod(consumptionMW, dateTime, size);
                 criarGrafico(consumptionMW, size);
-                averagesNonInteractive(consumptionMW, dateTime, size);
+                averages(consumptionMW, size, args);
                 DefineOrderNonInteractive(consumptionMW, start, size, args);
                 DefineModel(consumptionMW, size, args);
                 //falta previsão
@@ -746,7 +738,7 @@ public class LAPR1_1DK_Mafia {
                 criarGrafico(consumptionMW, size);
                 break;
             case "2":
-            MediaMovelPesadaNonInteractive(consumptionMW, size, args);
+                MediaMovelPesadaNonInteractive(consumptionMW, size, args);
                 break;
             default:
                 System.out.println("Parâmetro de modelo inválido.");
@@ -779,9 +771,8 @@ public class LAPR1_1DK_Mafia {
             sum = consumptionMW[k - 1] + sum;
             finalSum = sum - k;
         }
-        System.out.println(finalSum*(1)/(n)+ "MW. ");
+        System.out.println(finalSum * (1) / (n) + "MW. ");
     }
-
 
     public static void MediaMovelPesadaNonInteractive(int[] consumptionMW, int size, String[] args) throws FileNotFoundException {
         PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
@@ -790,7 +781,7 @@ public class LAPR1_1DK_Mafia {
         if (alpha < 0 || alpha > 1) {
             System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
         } else {
-            for (int i = size-1; i > 0; i--) {
+            for (int i = size - 1; i > 0; i--) {
                 consumptionNewMW[0] = consumptionMW[0];
                 consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
                 consumptionNewMW[size - 1] = consumptionMW[size - 1];
@@ -801,41 +792,10 @@ public class LAPR1_1DK_Mafia {
     }
     //falta testar, pois ainda não estão a funcionar as médias
 
-    public static void previsionMediaMovelPesada(int[] consumptionMW, double [] consumptionNewMW, int size, double alpha) {
-            for (int i=size-1; i>0; i--){
-                consumptionNewMW[i]=(alpha*consumptionMW[i-1])+(1-alpha)*consumptionNewMW[i-1];
-            }
-            System.out.println(consumptionNewMW[0]);
-    }
-
-    public static void averagesNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
-        int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
-        for (int i = 0; i < size; i++) {
-            consumptionSum += consumptionMW[i];
+    public static void previsionMediaMovelPesada(int[] consumptionMW, double[] consumptionNewMW, int size, double alpha) {
+        for (int i = size - 1; i > 0; i--) {
+            consumptionNewMW[i] = (alpha * consumptionMW[i - 1]) + (1 - alpha) * consumptionNewMW[i - 1];
         }
-        double averageConsumption = consumptionSum / size;
-        double upperLimit = averageConsumption + (averageConsumption * 0.2);
-        double lowerLimit = averageConsumption - (averageConsumption * 0.2);
-        for (int i = 0; i < size; i++) {
-            if (consumptionMW[i] >= lowerLimit && consumptionMW[i] < upperLimit) {
-                averageValues++;
-            }
-            if (consumptionMW[i] < lowerLimit) {
-                belowAverageValues++;
-            }
-            if (consumptionMW[i] >= upperLimit) {
-                aboveAverageValues++;
-            }
-        }
-
-        System.out.println("Média : " + (consumptionSum / size) + " " + "MW");
-        out.println("Média : " + (consumptionSum / size) + " " + "MW");
-        System.out.println("Quantidade de valores próximos da média: " + averageValues);
-        out.println("Quantidade de valores dentro da média: " + averageValues);
-        System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
-        out.println("Quantidade de valores acima da média: " + aboveAverageValues);
-        System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
-        out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+        System.out.println(consumptionNewMW[0]);
     }
 }
