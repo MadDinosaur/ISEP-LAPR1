@@ -167,7 +167,7 @@ public class LAPR1_1DK_Mafia {
             case 1:
                 //madrugadas
                 flag = true; //esta flag serve para dizer aos métodos se hão-de chamar a previsão ou verificar o critério mensal
-                mark = true;   //esta flag serve para dizer aos métodos se hão-de chamar a previsão ou verificar o critério diário
+                mark = true;   //este mark serve para dizer aos métodos se hão-de chamar a previsão ou verificar o critério diário
                 verifyYear(consumptionMW, dateTime, size, flag, mark);
                 break;
             case 2:
@@ -212,6 +212,9 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
+    //O ERRO ESTÁ NOS IFS! QUANDO PONHO ALGO INVÁLIDO NÃO DEVE PEDIR OUTRO PARÂMTERO, MAS SIM SAIR
+    //E QUANDO A FLAG É FALSA, O PROGRAMA DEVIA IR PARA AS PREVISÕES E NÃO PEDIR OS MESES
+    //CORRIGIR!
     //método de verificação do dia
     public static void verifyDay(int[] consumption, LocalDateTime[] dateTime, int size, int year, int monthsNumber, int daysNumber) throws FileNotFoundException {
         System.out.println("Insira o dia pretendido. ");
@@ -232,7 +235,9 @@ public class LAPR1_1DK_Mafia {
                 int daysNumber = YearMonth.of(year, month).lengthOfMonth(); //achar o número de dias que o mês inserido tem
                 verifyDay(consumption, dateTime, size, year, monthsNumber, daysNumber);
             } else {
+                if (mark==false){
                 previsionType(consumption, dateTime, size);
+            }
             }
         } else {
             System.out.println("O mês introduzido não existe nos registos. ");
@@ -252,7 +257,9 @@ public class LAPR1_1DK_Mafia {
                 int monthsNumber = dateTime[size - 1].getMonthValue(); //ver quantos meses tem o úlimo ano
                 verifyMonth(consumption, dateTime, size, year, monthsNumber, mark);
             } else {
+                if (flag==false){
                 previsionType(consumption, dateTime, size);
+            }
             }
         } else {
             if (year != dateTime[size - 1].getYear()) {
