@@ -466,20 +466,23 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
-    private static void MediaMovelSimples(int[] auxConsumptionMW) throws FileNotFoundException {
+    private static double[] MediaMovelSimples(int[] auxConsumptionMW, int size) throws FileNotFoundException {
         System.out.println("Defina o parâmetro n: ");
         int n = sc.nextInt();
         while (n <= 0 || n > auxConsumptionMW.length) {
             System.out.println("O valor introduzido é inválido. Por favor introduza um valor entre 0 e " + auxConsumptionMW.length + ".");
             n = sc.nextInt();
         }
-        double sum = 0, finalSum = 0;
-        for (int k = 0; k <= n - 1; k++) { //vai até n-1, conforme o que está na fórmula
-            sum = auxConsumptionMW[k] + sum; //está a somar bem
-            finalSum = sum - k; //é o xi-k(k é o indice)
+        double[] mediaMovelSimples = new double[size-n];
+        for (int k = 0; k < size-n; k++) {
+            for (int i = k; i<k+n; i++){
+            mediaMovelSimples[k] += auxConsumptionMW[i];
+                    }
+            mediaMovelSimples[k] /= n;
         }
-        System.out.print(finalSum * (1)/(n) + "MW. ");
+        criarGraficoMedias (auxConsumptionMW, mediaMovelSimples, mediaMovelSimples.length);
         previsionMediaSimples(auxConsumptionMW, n, n);
+        return mediaMovelSimples; 
     }
 
     public static double[] MediaMovelPesada(int[] consumptionMW, int size) throws FileNotFoundException {
@@ -499,7 +502,7 @@ public class LAPR1_1DK_Mafia {
         }
             
         // criar 1 gráfico com os valores inicias e o valor de α
-        criarGraficoPesada(consumptionMW, consumptionNewMW, size);
+        criarGraficoMedias(consumptionMW, consumptionNewMW, size);
         previsionMediaMovelPesada(consumptionMW, consumptionNewMW,size, alpha);
         absoluteError(consumptionMW, consumptionNewMW, size);
         return consumptionNewMW;
@@ -542,7 +545,7 @@ public class LAPR1_1DK_Mafia {
         p.plot();   
     }
 
-    private static void criarGraficoPesada(int[] grafico1, double[] grafico2, int size) {
+    private static void criarGraficoMedias(int[] grafico1, double[] grafico2, int size) {
         JavaPlot p = new JavaPlot();
 
         PlotStyle myPlotStyle = new PlotStyle();
