@@ -34,29 +34,27 @@ public class LAPR1_1DK_Mafia {
     static final String OUTPUT_FILE = "Output.txt";
 
     public static void main(String[] args) throws FileNotFoundException {
-        //if (args.length == 1) {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
         int size = readFile(consumptionMW, dateTime, args);
-
-        //menu interativo
-        int option;
-        do {
-            int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-            option = menu(auxConsumptionMW, dateTime, size, args);
-        } while (option != 7);
-//        }
-//        if (args.length == 6) {
-//            int[] consumptionMW = new int[MAX_OBSERVATIONS];
-//            LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
-//            int size = readFile(consumptionMW, dateTime, args);
-//            int start = 0;
-//            int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-//            int auxSize = DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, start, args);
-//        }
-//        if (args.length != 1 && args.length != 6) {
-//            System.out.println("Parâmetros inválidos");
-//        }
+        if (args.length == 1) {
+            PrintWriter out = null;
+            //menu interativo
+            int option;
+            do {
+                int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
+                option = menu(auxConsumptionMW, dateTime, size, args, out);
+            } while (option != 7);
+        } else {
+            PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+            if (args.length == 6) {
+                int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
+                DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, args, out);
+            } else {
+                System.out.println("Parâmetros inválidos");
+            }
+            out.close();
+        }
     }
 
     //lê ficheiro .csv
@@ -79,7 +77,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //menu interativo geral
-    public static int menu(int[] consumptionMW, LocalDateTime[] dateTime, int size, String[] args) throws FileNotFoundException {
+    public static int menu(int[] consumptionMW, LocalDateTime[] dateTime, int size, String[] args, PrintWriter out) throws FileNotFoundException {
         System.out.printf("Indique a opção que pretende:%n"
                 + "1. Visualizar gráfico de consumos;%n"
                 + "2. Visualizar média global e distribuição de observações;%n"
@@ -100,17 +98,17 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 3:
                 size = definePeriod(consumptionMW, dateTime, size);
-                MediaMovelSimples(consumptionMW, size);
+                MediaMovelSimples(consumptionMW, size, args, out);
                 criarGrafico(consumptionMW, size);
                 break;
             case 4:
                 size = definePeriod(consumptionMW, dateTime, size);
-                MediaMovelPesada(consumptionMW, size);
+                MediaMovelPesada(consumptionMW, size, args, out);
                 criarGrafico(consumptionMW, size);
                 break;
             case 5:
                 size = definePeriod(consumptionMW, dateTime, size);
-                defineOrder(consumptionMW, size); //não dá output?
+                defineOrder(consumptionMW, size, args, out);
                 break;
             case 6:
                 size = definePeriod(consumptionMW, dateTime, size);
@@ -171,12 +169,17 @@ public class LAPR1_1DK_Mafia {
     }
 
     //ordena de forma crescente ou decrescente conforme escolha do utilizador
-    public static void defineOrder(int[] consumptionMW, int size) {
-        int start = 0;
-        System.out.printf("De que forma pretende ordenar? %n"
-                + "1. Crescente; %n"
-                + "2. Decrescente. %n");
-        int order = sc.nextInt();
+    public static void defineOrder(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+        int start = 0, order;
+        if (args.length == 6) {
+            order = Integer.parseInt(args[3]);
+        } else {
+            System.out.printf("De que forma pretende ordenar? %n"
+                    + "1. Crescente; %n"
+                    + "2. Decrescente. %n");
+            order = sc.nextInt();
+        }
+
         switch (order) {
             case 1:
                 mergeSort(consumptionMW, start, size);
@@ -185,7 +188,11 @@ public class LAPR1_1DK_Mafia {
                 inverseMergeSort(consumptionMW, start, size);
                 break;
             default:
-                System.out.println("Opção inválida.");
+                System.out.println("Parâmentro de ordenação inválido.");
+                if (args.length == 6) {
+                    out.println("Parâmetro de ordenação inválido.");
+                    out.close();
+                }
                 break;
         }
     }
@@ -228,6 +235,7 @@ public class LAPR1_1DK_Mafia {
             out.println("Quantidade de valores dentro da média: " + averageValues);
             out.println("Quantidade de valores acima da média: " + aboveAverageValues);
             out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+            out.close();
         }
         System.out.println("Média : " + (consumptionSum / size) + " " + "MW");
         System.out.println("Quantidade de valores próximos da média: " + averageValues);
@@ -442,46 +450,74 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
-    private static double[] MediaMovelSimples(int[] consumptionMW, int size) throws FileNotFoundException {
-        System.out.println("Defina o parâmetro n: ");
-        int n = sc.nextInt();
-        while (n <= 0 || n > consumptionMW.length) {
-            System.out.println("O valor introduzido é inválido. Por favor introduza um valor entre 0 e " + consumptionMW.length + ".");
+    private static double[] MediaMovelSimples(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+        int n;
+        boolean nonInteractiveInvalidInput = false;
+        if (args.length == 6) {
+            n = Integer.parseInt(args[4]);
+        } else {
+            System.out.println("Defina o parâmetro n: ");
             n = sc.nextInt();
         }
-        double[] mediaMovelSimples = new double[size - n];
-        for (int k = 0; k < size - n; k++) {
-            for (int i = k; i < k + n; i++) {
-                mediaMovelSimples[k] += consumptionMW[i];
+        while (n <= 0 || n > consumptionMW.length) {
+            if (args.length == 6) {
+                System.out.println("O parâmetro que toma o valor númerico n é inválido");
+                out.println("O parâmetro que toma o valor númerico n é inválido ");
+                nonInteractiveInvalidInput = true;
+                break;
+            } else {
+                System.out.println("O valor introduzido é inválido. Por favor introduza um valor entre 0 e " + consumptionMW.length + ".");
+                n = sc.nextInt();
             }
-            mediaMovelSimples[k] /= n;
         }
-        criarGraficoMedias(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
-        absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
-        previsionMediaSimples(consumptionMW, n, n);
+        double[] mediaMovelSimples = new double[size - n];
+        if (nonInteractiveInvalidInput == false) {
+            for (int k = 0; k < size - n; k++) {
+                for (int i = k; i < k + n; i++) {
+                    mediaMovelSimples[k] += consumptionMW[i];
+                }
+                mediaMovelSimples[k] /= n;
+            }
+            criarGraficoMedias(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
+            absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
+            previsionMediaSimples(consumptionMW, n, n);
+        }
         return mediaMovelSimples;
     }
 
-    public static double[] MediaMovelPesada(int[] consumptionMW, int size) throws FileNotFoundException {
+    public static double[] MediaMovelPesada(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+        double alpha;
         double[] consumptionNewMW = new double[size];
-        System.out.println("Insira o valor de α (entre 0 e 1): ");
-        double alpha = sc.nextDouble();
-
-        if (alpha < 0 || alpha > 1) {
-            System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
-            alpha = sc.nextDouble();
+        boolean nonInteractiveInvalidInput = false;
+        if (args.length == 6) {
+            alpha = Integer.parseInt(args[4]);
         } else {
-            for (int i = size - 1; i > 0; i--) {
-                consumptionNewMW[0] = consumptionMW[0];
-                consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
-                consumptionNewMW[size - 1] = consumptionMW[size - 1];
-            }
+            System.out.println("Insira o valor de α (entre 0 e 1): ");
+            alpha = sc.nextDouble();
         }
 
+        while (alpha < 0 || alpha > 1) {
+            if (args.length == 6) {
+                System.out.println("O parâmetro que toma o valor númerico α é inválido");
+                out.println("O parâmetro que toma o valor númerico α é inválido ");
+                nonInteractiveInvalidInput = true;
+                break;
+            } else {
+            System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
+            alpha = sc.nextDouble();
+            }
+        }
+        if (nonInteractiveInvalidInput == false) {
+        for (int i = size - 1; i > 0; i--) {
+            consumptionNewMW[0] = consumptionMW[0];
+            consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
+            consumptionNewMW[size - 1] = consumptionMW[size - 1];
+        }
         // criar 1 gráfico com os valores inicias e o valor de α
         criarGraficoMedias(consumptionMW, consumptionNewMW, size);
         previsionMediaMovelPesada(consumptionMW, consumptionNewMW, size, alpha);
         absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length);
+        }
         return consumptionNewMW;
     }
 
@@ -646,15 +682,15 @@ public class LAPR1_1DK_Mafia {
 
     }
 
-    private static int DefinePeriodNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start, String[] args) throws FileNotFoundException {
+    private static void DefinePeriodNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size, String[] args, PrintWriter out) throws FileNotFoundException {
         switch (args[1]) {
             case "11":
                 dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
                 size = exchangeInfoDayPeriods(consumptionMW, size, 0);
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, size, args);
-                DefineOrderNonInteractive(consumptionMW, start, size, args);
-                DefineModel(consumptionMW, size, args);
+                defineOrder(consumptionMW, size, args, out);
+                DefineModel(consumptionMW, size, args, out);
                 //falta previsão
                 break;
 
@@ -663,8 +699,8 @@ public class LAPR1_1DK_Mafia {
                 size = exchangeInfoDayPeriods(consumptionMW, size, 6);
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, size, args);
-                DefineOrderNonInteractive(consumptionMW, start, size, args);
-                DefineModel(consumptionMW, size, args);
+                defineOrder(consumptionMW, size, args, out);
+                DefineModel(consumptionMW, size, args, out);
                 //falta previsão
                 break;
             case "13":
@@ -672,8 +708,8 @@ public class LAPR1_1DK_Mafia {
                 size = exchangeInfoDayPeriods(consumptionMW, size, 12);
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, size, args);
-                DefineOrderNonInteractive(consumptionMW, start, size, args);
-                DefineModel(consumptionMW, size, args);
+                defineOrder(consumptionMW, size, args, out);
+                DefineModel(consumptionMW, size, args, out);
                 //falta previsão
                 break;
             case "14":
@@ -681,64 +717,46 @@ public class LAPR1_1DK_Mafia {
                 size = exchangeInfoDayPeriods(consumptionMW, size, 18);
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, size, args);
-                DefineOrderNonInteractive(consumptionMW, start, size, args);
-                DefineModel(consumptionMW, size, args);
+                defineOrder(consumptionMW, size, args, out);
+                DefineModel(consumptionMW, size, args, out);
                 //falta previsão
                 break;
             case "2":
                 size = dailyPeriod(consumptionMW, size);
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, size, args);
-                DefineOrderNonInteractive(consumptionMW, start, size, args);
-                DefineModel(consumptionMW, size, args);
+                defineOrder(consumptionMW, size, args, out);
+                DefineModel(consumptionMW, size, args, out);
                 //falta previsão
                 break;
             case "3":
                 size = monthlyPeriod(consumptionMW, dateTime, size);
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, size, args);
-                DefineOrderNonInteractive(consumptionMW, start, size, args);
-                DefineModel(consumptionMW, size, args);
+                defineOrder(consumptionMW, size, args, out);
+                DefineModel(consumptionMW, size, args, out);
                 //falta previsão
                 break;
             case "4":
                 size = annualPeriod(consumptionMW, dateTime, size);
                 criarGrafico(consumptionMW, size);
                 averages(consumptionMW, size, args);
-                DefineOrderNonInteractive(consumptionMW, start, size, args);
-                DefineModel(consumptionMW, size, args);
+                defineOrder(consumptionMW, size, args, out);
+                DefineModel(consumptionMW, size, args, out);
                 //falta previsão
                 break;
 
         }
-        return size;
     }
 
-    public static void DefineOrderNonInteractive(int[] consumptionMW, int start, int size, String[] args) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
-        switch (args[3]) {
-            case "1":
-                mergeSort(consumptionMW, start, size);
-                break;
-            case "2":
-                inverseMergeSort(consumptionMW, start, size);
-                break;
-            default:
-                System.out.println("Parâmetro de ordenação inválido.");
-                out.println("Parâmetro de ordenação inválido.");
-                break;
-        }
-    }
-
-    public static void DefineModel(int[] consumptionMW, int size, String[] args) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+    public static void DefineModel(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
         switch (args[2]) {
             case "1":
-                MediaMovelSimplesNonInteractive(consumptionMW, size, args);
+                MediaMovelSimples(consumptionMW, size, args, out);
                 criarGrafico(consumptionMW, size);
                 break;
             case "2":
-                MediaMovelPesadaNonInteractive(consumptionMW, size, args);
+                MediaMovelPesada(consumptionMW, size, args, out);
                 break;
             default:
                 System.out.println("Parâmetro de modelo inválido.");
@@ -747,25 +765,7 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
-    private static void MediaMovelSimplesNonInteractive(int[] consumptionMW, int size, String[] args) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
-        int n = Integer.parseInt(args[4]);
-        if (n <= 0 || n > size) {
-            System.out.println("O parâmetro que toma o valor númerico n é inválido ");
-            out.println("O parâmetro que toma o valor númerico n é inválido ");
-        } else {
-            double sum = 0, finalSum = 0;
-            for (int k = 0; k <= n - 1; k++) { //vai até n-1, conforme o que está na fórmula
-                sum = consumptionMW[k] + sum; //está a somar bem
-                finalSum = sum - k; //é o xi-k(k é o indice)
-            }
-            System.out.print(((1 / n) * finalSum) + " " + "MW. ");
-        }
-        previsionMediaSimples(consumptionMW, size, n);
-    }
-
     public static void previsionMediaSimples(int[] consumptionMW, int size, int n) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
         double sum = 0, finalSum = 0;
         for (int k = 1; k <= n - 1; k++) {
             sum = consumptionMW[k - 1] + sum;
@@ -773,24 +773,6 @@ public class LAPR1_1DK_Mafia {
         }
         System.out.println(finalSum * (1) / (n) + "MW. ");
     }
-
-    public static void MediaMovelPesadaNonInteractive(int[] consumptionMW, int size, String[] args) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
-        double[] consumptionNewMW = new double[size];
-        int alpha = Integer.parseInt(args[4]);
-        if (alpha < 0 || alpha > 1) {
-            System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
-        } else {
-            for (int i = size - 1; i > 0; i--) {
-                consumptionNewMW[0] = consumptionMW[0];
-                consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
-                consumptionNewMW[size - 1] = consumptionMW[size - 1];
-            }
-            // criar 1 gráfico com os valores inicias e o valor de α
-            criarGraficoMedias(consumptionMW, consumptionNewMW, size);
-        }
-    }
-    //falta testar, pois ainda não estão a funcionar as médias
 
     public static void previsionMediaMovelPesada(int[] consumptionMW, double[] consumptionNewMW, int size, double alpha) {
         for (int i = size - 1; i > 0; i--) {
