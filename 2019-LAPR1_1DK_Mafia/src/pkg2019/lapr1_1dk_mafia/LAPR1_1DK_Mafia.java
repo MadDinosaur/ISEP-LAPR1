@@ -36,7 +36,7 @@ public class LAPR1_1DK_Mafia {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
         int size = readFile(consumptionMW, dateTime, args);
-        if (args.length == 1) {
+        //if (args.length == 1) {
             PrintWriter out = null;
             //menu interativo
             int option;
@@ -44,17 +44,17 @@ public class LAPR1_1DK_Mafia {
                 int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
                 option = menu(auxConsumptionMW, dateTime, size, args, out);
             } while (option != 7);
-        } else {
-            PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
-            if (args.length == 6) {
-                int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-                DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, args, out);
-            } else {
-                System.out.println("Parâmetros inválidos");
-            }
-            out.close();
+        //} else {
+          //  PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+            //if (args.length == 6) {
+              //  int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
+                //DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, args, out);
+            //} else {
+              //  System.out.println("Parâmetros inválidos");
+            //}
+            //out.close();
         }
-    }
+    //}
 
     //lê ficheiro .csv
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime, String[] args) throws FileNotFoundException {
@@ -111,7 +111,7 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 6:
                 size = definePeriod(consumptionMW, dateTime, size);
-                definePrevision(consumptionMW, dateTime);
+                definePrevision(consumptionMW, dateTime,size, option);
                 break;
         }
         return option;
@@ -161,11 +161,130 @@ public class LAPR1_1DK_Mafia {
         return size;
     }
 
-    public static void definePrevision(int[] consumptionMW, LocalDateTime[] dateTime) {
-        System.out.println("Que dia pretende prever?");
-        //Podes continuar a partir daqui. Já está a pedir a resolução temporal no menu()
-        //Sugiro que faças passar algum parâmetro para este método para saberes com que resolução estás a trabalhar
+    public static void definePrevision(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
+        boolean flag, mark;
+          switch (option) {
+            case 1:
+                //madrugadas
+                flag = true; //esta flag serve para dizer aos métodos se hão-de chamar a previsão ou verificar o critério mensal
+                mark = true;   //esta flag serve para dizer aos métodos se hão-de chamar a previsão ou verificar o critério diário
+                verifyYear(consumptionMW, dateTime, size, flag, mark);
+                break;
+            case 2:
+                //manhãs
+                flag = true;
+                mark = true;
+                verifyYear(consumptionMW, dateTime, size, flag, mark);
+                break;
+            case 3:
+                //tardes
+                flag = true;
+                mark = true;
+                verifyYear(consumptionMW, dateTime, size, flag, mark);
+                break;
+            case 4:
+                //noites
+                flag = true;
+                mark = true;
+                verifyYear(consumptionMW, dateTime, size, flag, mark);
+                break;
+            case 5:
+                //dias
+                flag = true;
+                mark = true;
+                verifyYear(consumptionMW, dateTime, size, flag, mark);
+                break;
+            case 6:
+                //meses
+                flag = true;
+                mark = false;
+                verifyYear(consumptionMW, dateTime, size, flag, mark);
+                break;
+            case 7:
+                //anos
+                flag = false;
+                mark = false;
+                verifyYear(consumptionMW, dateTime, size, flag, mark);
+                break;
+            default:
+                System.out.println("Opção inválida. ");
+                break;
+        }
     }
+
+    //método de verificação do dia
+    public static void verifyDay(int[] consumption, LocalDateTime[] dateTime, int size, int year, int monthsNumber, int daysNumber) throws FileNotFoundException {
+        System.out.println("Insira o dia pretendido. ");
+        int day = sc.nextInt();
+        if (day > 0 && day <= daysNumber) {
+            previsionType(consumption, dateTime, size);
+        } else {
+            System.out.println("O dia introduzido não existe nos registos. ");
+        }
+    }
+
+    //método de verificação do mês
+    public static void verifyMonth(int[] consumption, LocalDateTime[] dateTime, int size, int year, int monthsNumber, boolean mark) throws FileNotFoundException {
+        System.out.println("Insira o mês pretendido. ");
+        int month = sc.nextInt();
+        if (month > 0 && month <= monthsNumber) {
+            if (mark == true) {
+                int daysNumber = YearMonth.of(year, month).lengthOfMonth(); //achar o número de dias que o mês inserido tem
+                verifyDay(consumption, dateTime, size, year, monthsNumber, daysNumber);
+            } else {
+                previsionType(consumption, dateTime, size);
+            }
+        } else {
+            System.out.println("O mês introduzido não existe nos registos. ");
+        }
+    }
+
+    //método de verificação do ano
+    public static void verifyYear(int[] consumption, LocalDateTime[] dateTime, int size, boolean flag, boolean mark) throws FileNotFoundException {
+        System.out.println("Insira o ano. ");
+        int year = sc.nextInt();
+        while (year < dateTime[0].getYear() && year > dateTime[size - 1].getYear()) {
+            System.out.println("O ano introduzido não existe nos registos. ");
+            year = sc.nextInt();
+        }
+        if (year == dateTime[size - 1].getYear()) { //caso de ser o último ano
+            if (flag == true) {
+                int monthsNumber = dateTime[size - 1].getMonthValue(); //ver quantos meses tem o úlimo ano
+                verifyMonth(consumption, dateTime, size, year, monthsNumber, mark);
+            } else {
+                previsionType(consumption, dateTime, size);
+            }
+        } else {
+            if (year != dateTime[size - 1].getYear()) {
+                if (flag == true) {
+                    int monthsNumber = dateTime[size - 1].getMonthValue(); //ver quantos meses tem o úlimo ano
+                    verifyMonth(consumption, dateTime, size, year, monthsNumber, mark);
+                } else {
+                    previsionType(consumption, dateTime, size);                }
+            }
+        }
+    }
+    
+    public static void previsionType (int []consumption, LocalDateTime[] dateTime, int size) throws FileNotFoundException{
+         System.out.printf("Que resolução temporal deseja %n"
+                + "1. Previsão a partir da média móvel simples;%n"
+                + "2. Previsão a partir da média exponencialmente pesada.%n");
+         int option=sc.nextInt();
+         switch (option){
+             case 1:
+                 previsionMediaSimples(consumption, size, size);
+                 break;
+             case 2:
+         {
+             double[] consumptionNewMW = null;
+             previsionMediaMovelPesada(consumption, consumptionNewMW, size, size);
+         }
+                 break;
+                 default:
+                     System.out.println("Opção inválida. ");
+                     break;
+         }
+         }
 
     //ordena de forma crescente ou decrescente conforme escolha do utilizador
     public static void defineOrder(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
