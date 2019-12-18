@@ -1,10 +1,13 @@
 package pkg2019.lapr1_1dk_mafia;
 
 import com.panayotis.gnuplot.JavaPlot;
+import com.panayotis.gnuplot.plot.AbstractPlot;
 import com.panayotis.gnuplot.plot.DataSetPlot;
 import com.panayotis.gnuplot.style.NamedPlotColor;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
+import com.panayotis.gnuplot.terminal.FileTerminal;
+import com.panayotis.gnuplot.terminal.GNUPlotTerminal;
 import com.panayotis.gnuplot.terminal.ImageTerminal;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,14 +17,10 @@ import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Scanner;
-import javafx.print.PaperSource;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.io.FileInputStream;
-import com.panayotis.gnuplot.GNUPlotException;
-import static javafx.beans.binding.Bindings.size;
 
 public class LAPR1_1DK_Mafia {
 
@@ -183,9 +182,11 @@ public class LAPR1_1DK_Mafia {
         switch (order) {
             case 1:
                 mergeSort(consumptionMW, start, size);
+                criarGrafico(consumptionMW,size);
                 break;
             case 2:
                 inverseMergeSort(consumptionMW, start, size);
+                criarGrafico(consumptionMW,size);
                 break;
             default:
                 System.out.println("Parâmentro de ordenação inválido.");
@@ -237,6 +238,9 @@ public class LAPR1_1DK_Mafia {
             out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
             out.close();
         }
+        
+        imprimirGraficoBarras(belowAverageValues,averageValues,aboveAverageValues);
+        
         System.out.println("Média : " + (consumptionSum / size) + " " + "MW");
         System.out.println("Quantidade de valores próximos da média: " + averageValues);
         System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
@@ -478,7 +482,7 @@ public class LAPR1_1DK_Mafia {
                 }
                 mediaMovelSimples[k] /= n;
             }
-            criarGraficoMedias(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
+            criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length,n);
             absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
             previsionMediaSimples(consumptionMW, n, n);
         }
@@ -503,20 +507,20 @@ public class LAPR1_1DK_Mafia {
                 nonInteractiveInvalidInput = true;
                 break;
             } else {
-            System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
-            alpha = sc.nextDouble();
+                System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
+                alpha = sc.nextDouble();
             }
         }
         if (nonInteractiveInvalidInput == false) {
-        for (int i = size - 1; i > 0; i--) {
-            consumptionNewMW[0] = consumptionMW[0];
-            consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
-            consumptionNewMW[size - 1] = consumptionMW[size - 1];
-        }
-        // criar 1 gráfico com os valores inicias e o valor de α
-        criarGraficoMedias(consumptionMW, consumptionNewMW, size);
-        previsionMediaMovelPesada(consumptionMW, consumptionNewMW, size, alpha);
-        absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length);
+            for (int i = 1; i < size-1; i++) {
+                consumptionNewMW[0] = consumptionMW[0];
+                consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
+                consumptionNewMW[size - 1] = consumptionMW[size - 1];
+            }
+            // criar 1 gráfico com os valores inicias e o valor de α
+            criarGraficoMediaPesada(consumptionMW, consumptionNewMW, size, alpha);
+            previsionMediaMovelPesada(consumptionMW, consumptionNewMW, size, alpha);
+            absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length);
         }
         return consumptionNewMW;
     }
@@ -531,7 +535,7 @@ public class LAPR1_1DK_Mafia {
         return absoluteError;
     }
 
-    private static void criarGrafico(int[] grafico, int size) {
+    public static void criarGrafico(int[] grafico, int size) {
 
         JavaPlot p = new JavaPlot();
 
@@ -548,17 +552,135 @@ public class LAPR1_1DK_Mafia {
         }
 
         DataSetPlot s = new DataSetPlot(tab);
-        s.setTitle("Teste");
+        s.setTitle("GRAFICO");
         s.setPlotStyle(myPlotStyle);
 
-        //p.newGraph();
         p.addPlot(s);
 
         p.newGraph();
         p.plot();
+        
+        System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
+        int op = sc.nextInt();
+
+        if (op != 1 && op != 2 && op != 3 && op != 4) {
+            do {
+                System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
+                op = sc.nextInt();
+            } while (op == 1 || op == 2 || op == 3 || op == 4);
+        }
+
+        // ainda a desenvolver a parte de guardar em png.
+        if (op == 1) {
+
+            String title = "Consumo de energia";
+            //Genera um file em .png
+            File file = new File("statistics_" + title + ".png");
+            //Cria um novo plot
+            JavaPlot plot = new JavaPlot();
+            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            plot.setTerminal(terminal);
+            //Configuração dos labels
+            plot.set("xlabel", "\"Observações\"");
+            plot.set("ylabel", "\"" + title + "\"");
+            plot.addPlot(s);
+            //Define o estilo do gráfico
+            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+            stl.setStyle(Style.LINES);
+            plot.setKey(JavaPlot.Key.OFF);
+
+            System.out.println("Items guardados.");
+        }
+
+        if (op == 4) {
+            System.out.println("Nenhum ficheiro guardado.");
+        }
+        
     }
 
-    private static void criarGraficoMedias(int[] grafico1, double[] grafico2, int size) {
+    public static void criarGraficoMediaPesada(int[] grafico1, double[] grafico2, int size, double alpha) {
+        JavaPlot p = new JavaPlot();
+
+        PlotStyle myPlotStyle = new PlotStyle();
+        PlotStyle myPlotStyle2 = new PlotStyle();
+        myPlotStyle.setStyle(Style.LINES);
+        myPlotStyle.setLineWidth(1);
+        myPlotStyle2.setStyle(Style.LINES);
+        myPlotStyle2.setLineWidth(1);
+        myPlotStyle.setLineType(NamedPlotColor.BLUE);
+        myPlotStyle2.setLineType(NamedPlotColor.ORANGE);
+        p.set("xrange", "[0:200]");
+
+        int tab1[][];
+        double tab2[][];
+
+        tab1 = new int[size][2];
+        tab2 = new double[size][2];
+
+        for (int i = 0; i < size; i++) {
+            tab1[i][0] = i;
+            tab1[i][1] = grafico1[i];
+
+            tab2[i][0] = i;
+            tab2[i][1] = grafico2[i];
+        }
+
+        DataSetPlot s = new DataSetPlot(tab1);
+        DataSetPlot t = new DataSetPlot(tab2);
+
+        s.setTitle("ATUAL");
+        t.setTitle("ALPHA" + alpha);
+        s.setPlotStyle(myPlotStyle);
+        t.setPlotStyle(myPlotStyle2);
+
+        p.addPlot(s);
+        p.addPlot(t);
+
+        p.newGraph();
+        p.plot();
+
+        System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
+        int op = sc.nextInt();
+
+        if (op != 1 && op != 2 && op != 3 && op != 4) {
+            do {
+                System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
+                op = sc.nextInt();
+            } while (op == 1 || op == 2 || op == 3 || op == 4);
+        }
+
+        // ainda a desenvolver a parte de guardar em png.
+        if (op == 1) {
+
+            String title = "Consumo de energia no gráfico α = " + alpha;
+            //Genera um file em .png
+            File file = new File("statistics_" + title + ".png");
+            //Cria um novo plot
+            JavaPlot plot = new JavaPlot();
+            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            plot.setTerminal(terminal);
+            //Configuração dos labels
+            plot.set("xlabel", "\"Observações\"");
+            plot.set("ylabel", "\"" + title + "\"");
+            plot.addPlot(s);
+            plot.addPlot(t);
+            //Define o estilo do gráfico
+            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+            stl.setStyle(Style.LINES);
+            plot.setKey(JavaPlot.Key.OFF);
+
+            System.out.println("Items guardados.");
+        }
+
+        if (op == 4) {
+            System.out.println("Nenhum ficheiro guardado.");
+        }
+
+    }
+    
+    public static void criarGraficoMediaSimples (int[] grafico1, double[] grafico2, int size, int n) {
         JavaPlot p = new JavaPlot();
 
         PlotStyle myPlotStyle = new PlotStyle();
@@ -593,90 +715,47 @@ public class LAPR1_1DK_Mafia {
         s.setPlotStyle(myPlotStyle);
         t.setPlotStyle(myPlotStyle2);
 
-        //p.newGraph();
         p.addPlot(s);
         p.addPlot(t);
 
         p.newGraph();
         p.plot();
 
-        System.out.println("Pretende gravar o gráfico? 1.Sim 2.Não");
+        System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
         int op = sc.nextInt();
 
-        if (op != 1 && op != 2) {
+        if (op != 1 && op != 2 && op != 3 && op != 4) {
             do {
-                System.out.println("Pretende gravar o gráfico? 1.Sim 2.Não");
+                System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
                 op = sc.nextInt();
-            } while (op == 1 || op == 2);
+            } while (op == 1 || op == 2 || op == 3 || op == 4);
         }
 
         // ainda a desenvolver a parte de guardar em png.
         if (op == 1) {
 
-            double[][] values = new double[3][2];
-            values[0][0] = 0.1;
-            values[0][1] = 0.3;
-            values[1][0] = 0.4;
-            values[1][1] = 0.3;
-            values[2][0] = 0.5;
-            values[2][1] = 0.5;
-
-            double[][] values2 = new double[3][2];
-            values2[0][0] = 0.2;
-            values2[0][1] = 0.0;
-            values2[1][0] = 0.7;
-            values2[1][1] = 0.1;
-            values2[2][0] = 0.6;
-            values2[2][1] = 0.5;
-
-            PlotStyle styleDeleted = new PlotStyle();
-            styleDeleted.setStyle(Style.LINES);
-            styleDeleted.setLineType(NamedPlotColor.GRAY80);
-
-            PlotStyle styleExist = new PlotStyle();
-            styleExist.setStyle(Style.LINES);
-            styleExist.setLineType(NamedPlotColor.BLACK);
-
-            DataSetPlot setDeleted = new DataSetPlot(values);
-            setDeleted.setPlotStyle(styleDeleted);
-            setDeleted.setTitle("deleted EMs");
-
-            DataSetPlot setExist = new DataSetPlot(values2);
-            setExist.setPlotStyle(styleExist);
-            setExist.setTitle("remaining EMs");
-
-            // supostamente esta é a parte que interessa, daqui...
-            ImageTerminal png = new ImageTerminal();
-            File file = new File("Ambiente de trabalho");
-            try {
-                file.createNewFile();
-                png.processOutput(new FileInputStream(file));
-            } catch (FileNotFoundException ex) {
-                System.err.print(ex);
-            } catch (IOException ex) {
-                System.err.print(ex);
-            }
-
-            JavaPlot p1 = new JavaPlot();
-            p.setTerminal(png);
-
-            p1.getAxis("x").setLabel("observações");
-            p1.getAxis("y").setLabel("consumo energético");
-            p1.addPlot(setDeleted);
-            p1.addPlot(setExist);
-            p1.setTitle("remaining EMs");
-            p1.plot();
-
-            try {
-                ImageIO.write(png.getImage(), "png", file);
-            } catch (IOException ex) {
-                System.err.print(ex);
-            }
-            p.setPersist(false);
-            // até aqui, o resto é só esboçar o gráfico.
+            String title = "Consumo de energia no gráfico n = " + n;
+            //Genera um file em .png
+            File file = new File("statistics_" + title + ".png");
+            //Cria um novo plot
+            JavaPlot plot = new JavaPlot();
+            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            plot.setTerminal(terminal);
+            //Configuração dos labels
+            plot.set("xlabel", "\"Observações\"");
+            plot.set("ylabel", "\"" + title + "\"");
+            plot.addPlot(s);
+            plot.addPlot(t);
+            //Define o estilo do gráfico
+            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+            stl.setStyle(Style.LINES);
+            plot.setKey(JavaPlot.Key.OFF);
 
             System.out.println("Items guardados.");
-        } else {
+        }
+
+        if (op == 4) {
             System.out.println("Nenhum ficheiro guardado.");
         }
 
@@ -780,4 +859,32 @@ public class LAPR1_1DK_Mafia {
         }
         System.out.println(consumptionNewMW[0]);
     }
+    
+    public static void imprimirGraficoBarras(int belowAverageValues, int averageValues, int aboveAverageValues){
+     JavaPlot p = new JavaPlot();
+        PlotStyle myPlotStyle = new PlotStyle();
+        myPlotStyle.setStyle(Style.BOXES);
+        myPlotStyle.setLineWidth(1);
+        myPlotStyle.setLineType(NamedPlotColor.BLUE);
+        myPlotStyle.setPointType(7);
+        myPlotStyle.setPointSize(1);
+
+        int tab[][] = new int[7][1];
+
+        //tab[0][0] = 0;
+        tab[1][0] = belowAverageValues ;
+        //tab[2][0] = 0;
+        tab[2][0] = averageValues;
+        //tab[4][0] = 0;
+        tab[3][0] = aboveAverageValues;
+        //tab[6][0] = 0;
+
+        DataSetPlot s = new DataSetPlot(tab);
+        s.setTitle("Consumo de Energia");
+        s.setPlotStyle(myPlotStyle);
+
+        p.addPlot(s);
+        p.newGraph();
+        p.plot();
+}
 }
