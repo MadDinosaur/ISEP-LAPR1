@@ -38,13 +38,12 @@ public class LAPR1_1DK_Mafia {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
         int size = readFile(consumptionMW, dateTime, args);
-        int start = 0;
         
         //menu interativo
         int option;
         do {
             int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-            option = menu(auxConsumptionMW, dateTime, size, start);
+            option = menu(auxConsumptionMW, dateTime, size);
         } while (option != 7);
 //        }
 //        if (args.length == 6) {
@@ -79,7 +78,7 @@ public class LAPR1_1DK_Mafia {
         return numLines;
     }
     //menu interativo geral
-    public static int menu(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start) throws FileNotFoundException {
+    public static int menu(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         System.out.printf("Indique a opção que pretende:%n"
                 + "1. Visualizar gráfico de consumos;%n"
                 + "2. Visualizar média global e distribuição de observações;%n"
@@ -91,29 +90,29 @@ public class LAPR1_1DK_Mafia {
         int option = sc.nextInt();
         switch (option) {
             case 1:
-                size = definePeriod(consumptionMW, dateTime, size, start);
+                size = definePeriod(consumptionMW, dateTime, size);
                 criarGrafico(consumptionMW, size);
                 break;
             case 2:
-                size = definePeriod(consumptionMW, dateTime, size, start);
+                size = definePeriod(consumptionMW, dateTime, size);
                 averages(consumptionMW, dateTime, size);
                 break;
             case 3:
-                size = definePeriod(consumptionMW, dateTime, size, start);
+                size = definePeriod(consumptionMW, dateTime, size);
                 MediaMovelSimples(consumptionMW); //não é necessário passar size como parâmetro
                 criarGrafico(consumptionMW, size);
                 break;
             case 4:
-                size = definePeriod(consumptionMW, dateTime, size, start);
+                size = definePeriod(consumptionMW, dateTime, size);
                 MediaMovelPesada(consumptionMW, size);
                 criarGrafico(consumptionMW, size);
                 break;
             case 5:
-                size = definePeriod(consumptionMW, dateTime, size, start);
-                defineOrder(consumptionMW, start, size); //não dá output?
+                size = definePeriod(consumptionMW, dateTime, size);
+                defineOrder(consumptionMW, size); //não dá output?
                 break;
             case 6:
-                size = definePeriod(consumptionMW, dateTime, size, start);
+                size = definePeriod(consumptionMW, dateTime, size);
                 definePrevision(consumptionMW, dateTime);
                 break;
         }
@@ -121,7 +120,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //menu para escolher a resolução temporal
-     public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size, int start) throws FileNotFoundException {
+     public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         System.out.printf("Que resolução temporal deseja %n"
                 + "1. Madrugadas;%n"
                 + "2. Manhãs;%n"
@@ -171,7 +170,8 @@ public class LAPR1_1DK_Mafia {
     }
     
     //ordena de forma crescente ou decrescente conforme escolha do utilizador
-    public static void defineOrder(int[] consumptionMW, int start, int size) {
+    public static void defineOrder(int[] consumptionMW, int size) {
+        int start = 0;
         System.out.printf("De que forma pretende ordenar? %n"
                 + "1. Crescente; %n"
                 + "2. Decrescente. %n");
