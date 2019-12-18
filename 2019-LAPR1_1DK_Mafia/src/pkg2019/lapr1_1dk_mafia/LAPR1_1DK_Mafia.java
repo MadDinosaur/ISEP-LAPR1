@@ -613,7 +613,7 @@ public class LAPR1_1DK_Mafia {
         double[] consumptionNewMW = new double[size];
         boolean nonInteractiveInvalidInput = false;
         if (args.length == 6) {
-            alpha = Integer.parseInt(args[4]);
+            alpha = Double.parseDouble(args[4]);
         } else {
             System.out.println("Insira o valor de α (entre 0 e 1): ");
             alpha = sc.nextDouble();
