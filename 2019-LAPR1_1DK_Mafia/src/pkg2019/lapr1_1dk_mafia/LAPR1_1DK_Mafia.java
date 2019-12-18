@@ -99,7 +99,7 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 3:
                 size = definePeriod(consumptionMW, dateTime, size);
-                MediaMovelSimples(consumptionMW); //não é necessário passar size como parâmetro
+                MediaMovelSimples(consumptionMW, size);
                 criarGrafico(consumptionMW, size);
                 break;
             case 4:
@@ -185,26 +185,6 @@ public class LAPR1_1DK_Mafia {
                 break;
             default:
                 System.out.println("Opção inválida.");
-                break;
-        }
-    }
-    
-    public static void defineMedia(int[]consumptionMW, int start, int size) throws FileNotFoundException{
-        System.out.println("Que método deseja utilizar? %n"
-                + "1. Média Móvel Simples; %n"
-                + "2. Média Móvel Exponecialmente Pesada.");
-        int option = sc.nextInt();
-        switch(option){
-            case 1:
-                MediaMovelSimples(consumptionMW);
-                break;
-                
-            case 2:
-                MediaMovelPesada(consumptionMW,size);
-                break;
-                
-            default:
-                System.out.println("Opção Inválida");
                 break;
         }
     }
@@ -466,22 +446,23 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
-    private static double[] MediaMovelSimples(int[] auxConsumptionMW, int size) throws FileNotFoundException {
+    private static double[] MediaMovelSimples(int[] consumptionMW, int size) throws FileNotFoundException {
         System.out.println("Defina o parâmetro n: ");
         int n = sc.nextInt();
-        while (n <= 0 || n > auxConsumptionMW.length) {
-            System.out.println("O valor introduzido é inválido. Por favor introduza um valor entre 0 e " + auxConsumptionMW.length + ".");
+        while (n <= 0 || n > consumptionMW.length) {
+            System.out.println("O valor introduzido é inválido. Por favor introduza um valor entre 0 e " + consumptionMW.length + ".");
             n = sc.nextInt();
         }
         double[] mediaMovelSimples = new double[size-n];
         for (int k = 0; k < size-n; k++) {
             for (int i = k; i<k+n; i++){
-            mediaMovelSimples[k] += auxConsumptionMW[i];
+            mediaMovelSimples[k] += consumptionMW[i];
                     }
             mediaMovelSimples[k] /= n;
         }
-        criarGraficoMedias (auxConsumptionMW, mediaMovelSimples, mediaMovelSimples.length);
-        previsionMediaSimples(auxConsumptionMW, n, n);
+        criarGraficoMedias (consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
+        absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
+        previsionMediaSimples(consumptionMW, n, n);
         return mediaMovelSimples; 
     }
 
@@ -504,7 +485,7 @@ public class LAPR1_1DK_Mafia {
         // criar 1 gráfico com os valores inicias e o valor de α
         criarGraficoMedias(consumptionMW, consumptionNewMW, size);
         previsionMediaMovelPesada(consumptionMW, consumptionNewMW,size, alpha);
-        absoluteError(consumptionMW, consumptionNewMW, size);
+        absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length);
         return consumptionNewMW;
     }
 
@@ -815,7 +796,7 @@ public class LAPR1_1DK_Mafia {
                 consumptionNewMW[size - 1] = consumptionMW[size - 1];
             }
             // criar 1 gráfico com os valores inicias e o valor de α
-            criarGraficoPesada(consumptionMW, consumptionNewMW, size);
+            criarGraficoMedias(consumptionMW, consumptionNewMW, size);
         }
     }
     //falta testar, pois ainda não estão a funcionar as médias
