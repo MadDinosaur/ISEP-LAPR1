@@ -44,7 +44,7 @@ public class LAPR1_1DK_Mafia {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
         int size = readFile(consumptionMW, dateTime, args);
-        if (args.length == 2) {
+        //if (args.length == 2) {
         PrintWriter out = null;
         //menu interativo
         int option;
@@ -52,17 +52,17 @@ public class LAPR1_1DK_Mafia {
             int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
             option = menu(auxConsumptionMW, dateTime, size, args, out);
         } while (option != 7);
-        } else {
-         PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
-        if (args.length == 12) {
-          int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-        DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, args, out);
-        } else {
-          System.out.println("Parâmetros inválidos");
-        }
-       out.close();
+//        } else {
+//         PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+//        if (args.length == 12) {
+//          int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
+//        DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, args, out);
+//        } else {
+//          System.out.println("Parâmetros inválidos");
+//        }
+//       out.close();
     }
-    }
+    
 
     //lê ficheiro .csv
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime, String[] args) throws FileNotFoundException {
@@ -84,7 +84,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //menu interativo geral
-   public static int menu(int[] consumptionMW, LocalDateTime[] dateTime, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+    public static int menu(int[] consumptionMW, LocalDateTime[] dateTime, int size, String[] args, PrintWriter out) throws FileNotFoundException {
         System.out.printf("Indique a opção que pretende:%n"
                 + "1. Visualizar gráfico de consumos;%n"
                 + "2. Visualizar média global e distribuição de observações;%n"
@@ -713,7 +713,7 @@ public class LAPR1_1DK_Mafia {
 
         p.newGraph();
         p.plot();
-        if (args.length == 2) {
+//        if (args.length == 2) {
             System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
             int op = sc.nextInt();
 
@@ -722,7 +722,7 @@ public class LAPR1_1DK_Mafia {
                     System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
                     op = sc.nextInt();
                 } while (op == 1 || op == 2 || op == 3 || op == 4);
-            }
+//            }
 
             // ainda a desenvolver a parte de guardar em png.
             if (op == 1) {
@@ -776,29 +776,30 @@ public class LAPR1_1DK_Mafia {
             if (op == 4) {
                 System.out.println("Nenhum ficheiro guardado.");
             }
-        } else {
-            String title = "Grafico de Barras";
-            //Gera um file em .png
-            File file = new File("statistics_" + title + ".png");
-            //Cria um novo plot
-            JavaPlot plot = new JavaPlot();
-            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
-            plot.setTerminal(terminal);
-            //Configuração dos labels
-            plot.set("xlabel", "\"Observações\"");
-            plot.set("ylabel", "\"" + title + "\"");
-            plot.addPlot(s);
-            //Define o estilo do gráfico
-            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
-            stl.setStyle(Style.LINES);
-            plot.setKey(JavaPlot.Key.OFF);
-            plot.plot();
-
-            System.out.println("Ficheiro guardado em PNG.");
-            out.println("Ficheiro guardado em PNG.");
-
-        }
+//        } else {
+//            String title = "Consumo de energia";
+//                //Genera um file em .png
+//                File file = new File("statistics_" + title + ".png");
+//                //Cria um novo plot
+//                JavaPlot plot = new JavaPlot();
+//                //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+//                GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+//                plot.setTerminal(terminal);
+//                //Configuração dos labels
+//                plot.set("xlabel", "\"Observações\"");
+//                plot.set("ylabel", "\"" + title + "\"");
+//                plot.addPlot(s);
+//                //Define o estilo do gráfico
+//                PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+//                stl.setStyle(Style.LINES);
+//                plot.setKey(JavaPlot.Key.OFF);
+//                plot.plot();
+//
+//            System.out.println("Ficheiro guardado em PNG.");
+//            out.println("Ficheiro guardado em PNG.");
+//
+//        }
+            }
     }
 
     public static void criarGraficoMediaPesada(int[] grafico1, double[] grafico2, int size, double alpha,String[]args,PrintWriter out) throws FileNotFoundException {
@@ -841,7 +842,7 @@ public class LAPR1_1DK_Mafia {
         p.newGraph();
         p.plot();
         
- if (args.length==2){
+// if (args.length==2){
         System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
         int op = sc.nextInt();
 
@@ -909,28 +910,28 @@ public class LAPR1_1DK_Mafia {
         if (op == 4) {
             System.out.println("Nenhum ficheiro guardado.");
         }
-        }
-        else{String title = "Consumo de energia no gráfico α = " + alpha;
-            //Genera um file em .png
-            File file = new File("statistics_" + title + ".png");
-            //Cria um novo plot
-            JavaPlot plot = new JavaPlot();
-            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
-            plot.setTerminal(terminal);
-            //Configuração dos labels
-            plot.set("xlabel", "\"Observações\"");
-            plot.set("ylabel", "\"" + title + "\"");
-            plot.addPlot(s);
-            plot.addPlot(t);
-            //Define o estilo do gráfico
-            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
-            stl.setStyle(Style.LINES);
-            plot.setKey(JavaPlot.Key.OFF);
-            plot.plot();
-            System.out.println("Ficheiro guardado em PNG.");
-            out.println("Ficheiro guardado em PNG.");
-        }
+//        }
+//        else{String title = "Consumo de energia no gráfico α = " + alpha;
+//            //Genera um file em .png
+//            File file = new File("statistics_" + title + ".png");
+//            //Cria um novo plot
+//            JavaPlot plot = new JavaPlot();
+//            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+//            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+//            plot.setTerminal(terminal);
+//            //Configuração dos labels
+//            plot.set("xlabel", "\"Observações\"");
+//            plot.set("ylabel", "\"" + title + "\"");
+//            plot.addPlot(s);
+//            plot.addPlot(t);
+//            //Define o estilo do gráfico
+//            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+//            stl.setStyle(Style.LINES);
+//            plot.setKey(JavaPlot.Key.OFF);
+//            plot.plot();
+//            System.out.println("Ficheiro guardado em PNG.");
+//            out.println("Ficheiro guardado em PNG.");
+//        }
 
     }
 
@@ -977,7 +978,7 @@ public class LAPR1_1DK_Mafia {
 
         System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
         int op = sc.nextInt();
-if(args.length==2){
+//if(args.length==2){
         if (op != 1 && op != 2 && op != 3 && op != 4) {
             do {
                 System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
@@ -1040,29 +1041,29 @@ if(args.length==2){
         if (op == 4) {
             System.out.println("Nenhum ficheiro guardado.");
         } 
-    }else {
-            String title = "Grafico de Barras";
-            //Gera um file em .png
-            File file = new File("statistics_" + title + ".png");
-            //Cria um novo plot
-            JavaPlot plot = new JavaPlot();
-            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
-            plot.setTerminal(terminal);
-            //Configuração dos labels
-            plot.set("xlabel", "\"Observações\"");
-            plot.set("ylabel", "\"" + title + "\"");
-            plot.addPlot(s);
-            //Define o estilo do gráfico
-            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
-            stl.setStyle(Style.LINES);
-            plot.setKey(JavaPlot.Key.OFF);
-            plot.plot();
-
-            System.out.println("Ficheiro guardado em PNG.");
-            out.println("Ficheiro guardado em PNG.");
-
-        }
+//    }else {
+//            String title = "Grafico de Barras";
+//            //Gera um file em .png
+//            File file = new File("statistics_" + title + ".png");
+//            //Cria um novo plot
+//            JavaPlot plot = new JavaPlot();
+//            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+//            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+//            plot.setTerminal(terminal);
+//            //Configuração dos labels
+//            plot.set("xlabel", "\"Observações\"");
+//            plot.set("ylabel", "\"" + title + "\"");
+//            plot.addPlot(s);
+//            //Define o estilo do gráfico
+//            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+//            stl.setStyle(Style.LINES);
+//            plot.setKey(JavaPlot.Key.OFF);
+//            plot.plot();
+//
+//            System.out.println("Ficheiro guardado em PNG.");
+//            out.println("Ficheiro guardado em PNG.");
+//
+//        }
 
     }
 
@@ -1209,7 +1210,7 @@ if(args.length==2){
         p.addPlot(s);
         p.newGraph();
         p.plot();
-        if (args.length == 2) {
+//        if (args.length == 2) {
             System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
             int op = sc.nextInt();
 
@@ -1237,7 +1238,7 @@ if(args.length==2){
                 plot.addPlot(s);
                 //Define o estilo do gráfico
                 PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
-                stl.setStyle(Style.LINES);
+                stl.setStyle(Style.BOXES);
                 plot.setKey(JavaPlot.Key.OFF);
                 plot.plot();
 
@@ -1263,7 +1264,7 @@ if(args.length==2){
                 plot.addPlot(s);
                 //Define o estilo do gráfico
                 PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
-                stl.setStyle(Style.LINES);
+                stl.setStyle(Style.BOXES);
                 plot.setKey(JavaPlot.Key.OFF);
                 plot.plot();
                 csvWriteBarras(belowAverageValues, averageValues, aboveAverageValues);
@@ -1273,29 +1274,29 @@ if(args.length==2){
             if (op == 4) {
                 System.out.println("Nenhum ficheiro guardado.");
             }
-        } else {
-            String title = "Grafico de Barras";
-            //Gera um file em .png
-            File file = new File("statistics_" + title + ".png");
-            //Cria um novo plot
-            JavaPlot plot = new JavaPlot();
-            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
-            plot.setTerminal(terminal);
-            //Configuração dos labels
-            plot.set("xlabel", "\"Observações\"");
-            plot.set("ylabel", "\"" + title + "\"");
-            plot.addPlot(s);
-            //Define o estilo do gráfico
-            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
-            stl.setStyle(Style.LINES);
-            plot.setKey(JavaPlot.Key.OFF);
-            plot.plot();
-
-            System.out.println("Ficheiro guardado em PNG.");
-            out.println("Ficheiro guardado em PNG.");
-
-        }
+//        } else {
+//            String title = "Grafico de Barras";
+//            //Gera um file em .png
+//            File file = new File("statistics_" + title + ".png");
+//            //Cria um novo plot
+//            JavaPlot plot = new JavaPlot();
+//            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+//            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+//            plot.setTerminal(terminal);
+//            //Configuração dos labels
+//            plot.set("xlabel", "\"Observações\"");
+//            plot.set("ylabel", "\"" + title + "\"");
+//            plot.addPlot(s);
+//            //Define o estilo do gráfico
+//            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+//            stl.setStyle(Style.BOXES);
+//            plot.setKey(JavaPlot.Key.OFF);
+//            plot.plot();
+//
+//            System.out.println("Ficheiro guardado em PNG.");
+//            out.println("Ficheiro guardado em PNG.");
+//
+//        }
     }
 
     public static String getDateTime() {
