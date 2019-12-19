@@ -24,6 +24,9 @@ import java.util.Scanner;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.io.FileInputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class LAPR1_1DK_Mafia {
 
@@ -34,6 +37,7 @@ public class LAPR1_1DK_Mafia {
     static final int NUM_HOURS = 24;
     static final int NUM_DAYS_IN_YEAR = 365;
     static final String OUTPUT_FILE = "Output.txt";
+    static final String nome = "Consumos.csv";
 
     public static void main(String[] args) throws FileNotFoundException {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
@@ -176,7 +180,6 @@ public class LAPR1_1DK_Mafia {
                 dayPeriod(consumptionMW, size, 18);
                 break;
             case 5:
-
                 break;
             case 6:
                 break;
@@ -627,13 +630,14 @@ public class LAPR1_1DK_Mafia {
             }
         }
         double[] mediaMovelSimples = new double[size - n];
-        int total=0;
+        int total=0,i;
         if (nonInteractiveInvalidInput == false) {
-            for (int k = n-1; k <= size; k++) {
-                for (int i = k-n+1; i <=k; i++) {
+            for (i = n-1; i <= size; i++) {
+                for (int j = i-n+1; j <= i; j++) {
                     total += consumptionMW[i];
                 }
-                mediaMovelSimples[k]= (total/ n);
+                mediaMovelSimples[i]= (total / n);
+                total = 0;
             }
             criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n);
             absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
@@ -686,7 +690,7 @@ public class LAPR1_1DK_Mafia {
         return absoluteError;
     }
 
-    public static void criarGrafico(int[] grafico, int size) {
+    public static void criarGrafico(int[] grafico, int size) throws FileNotFoundException {
 
         JavaPlot p = new JavaPlot();
 
@@ -743,6 +747,10 @@ public class LAPR1_1DK_Mafia {
 
             System.out.println("Items guardados.");
         }
+        
+        if(op==2){
+            csvWriteGrafico(grafico,size);
+        }
 
         if (op == 4) {
             System.out.println("Nenhum ficheiro guardado.");
@@ -750,7 +758,7 @@ public class LAPR1_1DK_Mafia {
 
     }
 
-    public static void criarGraficoMediaPesada(int[] grafico1, double[] grafico2, int size, double alpha) {
+    public static void criarGraficoMediaPesada(int[] grafico1, double[] grafico2, int size, double alpha) throws FileNotFoundException {
         JavaPlot p = new JavaPlot();
 
         PlotStyle myPlotStyle = new PlotStyle();
@@ -761,7 +769,6 @@ public class LAPR1_1DK_Mafia {
         myPlotStyle2.setLineWidth(1);
         myPlotStyle.setLineType(NamedPlotColor.BLUE);
         myPlotStyle2.setLineType(NamedPlotColor.ORANGE);
-        p.set("xrange", "[0:200]");
 
         int tab1[][];
         double tab2[][];
@@ -824,6 +831,10 @@ public class LAPR1_1DK_Mafia {
 
             System.out.println("Items guardados.");
         }
+        
+        if (op == 2) {
+            csvWriteMedias(grafico1, grafico2, size);
+        }
 
         if (op == 4) {
             System.out.println("Nenhum ficheiro guardado.");
@@ -831,7 +842,7 @@ public class LAPR1_1DK_Mafia {
 
     }
 
-    public static void criarGraficoMediaSimples(int[] grafico1, double[] grafico2, int size, int n) {
+    public static void criarGraficoMediaSimples(int[] grafico1, double[] grafico2, int length, int n) throws FileNotFoundException {
         JavaPlot p = new JavaPlot();
 
         PlotStyle myPlotStyle = new PlotStyle();
@@ -846,14 +857,14 @@ public class LAPR1_1DK_Mafia {
         int tab1[][];
         double tab2[][];
 
-        tab1 = new int[size][2];
-        tab2 = new double[size - n+1][2];
+        tab1 = new int[length][2];
+        tab2 = new double[length - n + 1][2];
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < length; i++) {
             tab1[i][0] = i;
             tab1[i][1] = grafico1[i];
         }
-        for(int i=0;i<size-n+1;i++){
+        for(int i=0; i < length - n + 1; i++){
             tab2[i - n + 1][0] = i;
             tab2[i - n + 1][1] = grafico2[i];
         }
@@ -862,7 +873,7 @@ public class LAPR1_1DK_Mafia {
         DataSetPlot t = new DataSetPlot(tab2);
 
         s.setTitle("ATUAL");
-        t.setTitle("ALPHA");
+        t.setTitle("N = " + n);
         s.setPlotStyle(myPlotStyle);
         t.setPlotStyle(myPlotStyle2);
 
@@ -904,6 +915,10 @@ public class LAPR1_1DK_Mafia {
             plot.setKey(JavaPlot.Key.OFF);
 
             System.out.println("Items guardados.");
+        }
+        
+        if (op == 2) {
+            csvWriteMedias(grafico1, grafico2, length);
         }
 
         if (op == 4) {
@@ -1029,7 +1044,7 @@ public class LAPR1_1DK_Mafia {
         return x;
     }
 
-    public static void imprimirGraficoBarras(int belowAverageValues, int averageValues, int aboveAverageValues) {
+    public static void imprimirGraficoBarras(int belowAverageValues, int averageValues, int aboveAverageValues) throws FileNotFoundException {
         JavaPlot p = new JavaPlot();
         PlotStyle myPlotStyle = new PlotStyle();
         myPlotStyle.setStyle(Style.BOXES);
@@ -1055,5 +1070,112 @@ public class LAPR1_1DK_Mafia {
         p.addPlot(s);
         p.newGraph();
         p.plot();
+        
+        System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
+        int op = sc.nextInt();
+
+        if (op != 1 && op != 2 && op != 3 && op != 4) {
+            do {
+                System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
+                op = sc.nextInt();
+            } while (op == 1 || op == 2 || op == 3 || op == 4);
+        }
+
+        // ainda a desenvolver a parte de guardar em png.
+        if (op == 1) {
+
+            String title = "Grafico de Barras";
+            //Gera um file em .png
+            File file = new File("statistics_" + title + ".png");
+            //Cria um novo plot
+            JavaPlot plot = new JavaPlot();
+            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            plot.setTerminal(terminal);
+            //Configuração dos labels
+            plot.set("xlabel", "\"Observações\"");
+            plot.set("ylabel", "\"" + title + "\"");
+            plot.addPlot(s);
+            //Define o estilo do gráfico
+            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+            stl.setStyle(Style.LINES);
+            plot.setKey(JavaPlot.Key.OFF);
+            plot.plot();
+
+            System.out.println("Ficheiro guardado em PNG.");
+        }
+
+        if (op == 2) {
+            csvWriteBarras(belowAverageValues, averageValues, aboveAverageValues);
+            System.out.println("Ficheiro guardado em CSV");
+        }
+        if (op==3){
+            String title = "Grafico de Barras";
+            //Gera um file em .png
+            File file = new File("statistics_" + title + ".png");
+            //Cria um novo plot
+            JavaPlot plot = new JavaPlot();
+            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            plot.setTerminal(terminal);
+            //Configuração dos labels
+            plot.set("xlabel", "\"Observações\"");
+            plot.set("ylabel", "\"" + title + "\"");
+            plot.addPlot(s);
+            //Define o estilo do gráfico
+            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+            stl.setStyle(Style.LINES);
+            plot.setKey(JavaPlot.Key.OFF);
+            plot.plot();
+            csvWriteBarras(belowAverageValues, averageValues, aboveAverageValues);
+            System.out.println("Ficheiros guardados em PNG e CSV");
+        }
+
+        if (op == 4) {
+            System.out.println("Nenhum ficheiro guardado.");
+        }
     }
+
+    public static String getDateTime() {
+        DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy  HH,mm,ss");
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+
+    public static void csvWriteMedias(int consumptionMW[], double consumptionNewMW[], int size) throws FileNotFoundException {
+        String hora;
+        hora = getDateTime();
+
+        PrintWriter out = new PrintWriter(new File(nome + "," + hora + ".csv"));
+        for (int i = 0; i < size; i++) {
+            out.println(consumptionMW[i] + " (original)");
+            out.printf("%.1f(filtrada)\n", consumptionNewMW[i]);
+        }
+
+        out.close();
+    }
+
+    public static void csvWriteGrafico(int consumptionMW[], int size) throws FileNotFoundException {
+        String hora;
+        hora = getDateTime();
+
+        PrintWriter out = new PrintWriter(new File(nome + "," + hora + ".csv"));
+        for (int i = 0; i < size; i++) {
+            out.println(consumptionMW[i]);
+        }
+
+        out.close();
+    }
+
+    public static void csvWriteBarras(int belowAverageValues, int averageValues, int aboveAverageValues) throws FileNotFoundException {
+        String hora;
+        hora = getDateTime();
+
+        PrintWriter out = new PrintWriter(new File(nome + "," + hora + ".csv"));
+        out.println("Quantidade de valores dentro da média: " + averageValues);
+        out.println("Quantidade de valores acima da média: " + aboveAverageValues);
+        out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+        out.close();
+    }
+    
 }
