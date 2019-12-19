@@ -675,10 +675,9 @@ public class LAPR1_1DK_Mafia {
             }
         }
         if (nonInteractiveInvalidInput == false) {
-            for (int i = 1; i < size - 1; i++) {
+            for (int i = 1; i < size; i++) {
                 consumptionNewMW[0] = consumptionMW[0];
                 consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
-                consumptionNewMW[size - 1] = consumptionMW[size - 1];
             }
             // criar 1 gráfico com os valores inicias e o valor de α
             criarGraficoMediaPesada(consumptionMW, consumptionNewMW, size, alpha,args,out);
@@ -688,9 +687,9 @@ public class LAPR1_1DK_Mafia {
     }
 
     public static double absoluteError(int[] consumptionMW, double[] arrayY, int size) {
-        int sum = 0;
-        for (int i = 0; i < size - 1; i++) {
-            sum = (int) (sum + Math.abs(arrayY[i] - consumptionMW[i]));
+        double sum = 0;
+        for (int i = 0; i < size; i++) {
+            sum = sum + Math.abs(arrayY[i] - consumptionMW[i]);
         }
         double absoluteError = sum / size;
         System.out.println("Erro absoluto: " + absoluteError);
