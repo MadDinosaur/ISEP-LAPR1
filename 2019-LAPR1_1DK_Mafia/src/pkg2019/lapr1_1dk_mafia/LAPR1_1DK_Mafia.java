@@ -1074,8 +1074,9 @@ public class LAPR1_1DK_Mafia {
                 size = exchangeInfoDayPeriods(consumptionMW, size, 0, dateTime);
                 criarGrafico(consumptionMW, size, args,out);
                 averages(consumptionMW, size, args,out);
-                defineOrder(consumptionMW, size, args, out);
                 DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out);
+                
                 //falta previsão
                 break;
 
@@ -1084,8 +1085,9 @@ public class LAPR1_1DK_Mafia {
                 size = exchangeInfoDayPeriods(consumptionMW, size, 6, dateTime);
                 criarGrafico(consumptionMW, size, args,out);
                 averages(consumptionMW, size, args,out);
-                defineOrder(consumptionMW, size, args, out);
                 DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out);
+                
                 //falta previsão
                 break;
             case "13":
@@ -1093,8 +1095,9 @@ public class LAPR1_1DK_Mafia {
                 size = exchangeInfoDayPeriods(consumptionMW, size, 12, dateTime);
                 criarGrafico(consumptionMW, size, args,out);
                 averages(consumptionMW, size, args,out);
-                defineOrder(consumptionMW, size, args, out);
                 DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out);
+                
                 //falta previsão
                 break;
             case "14":
@@ -1102,32 +1105,36 @@ public class LAPR1_1DK_Mafia {
                 size = exchangeInfoDayPeriods(consumptionMW, size, 18, dateTime);
                 criarGrafico(consumptionMW, size, args,out);
                 averages(consumptionMW, size, args,out);
-                defineOrder(consumptionMW, size, args, out);
                 DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out);
+                
                 //falta previsão
                 break;
             case "2":
                 size = dailyPeriod(consumptionMW, size, dateTime);
                 criarGrafico(consumptionMW, size, args,out);
                 averages(consumptionMW, size, args,out);
-                defineOrder(consumptionMW, size, args, out);
                 DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out);
+                
                 //falta previsão
                 break;
             case "3":
                 size = monthlyPeriod(consumptionMW, dateTime, size);
                 criarGrafico(consumptionMW, size, args,out);
                 averages(consumptionMW, size, args,out);
-                defineOrder(consumptionMW, size, args, out);
                 DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out);
+                
                 //falta previsão
                 break;
             case "4":
                 size = annualPeriod(consumptionMW, dateTime, size);
                 criarGrafico(consumptionMW, size, args,out);
                 averages(consumptionMW, size, args,out);
-                defineOrder(consumptionMW, size, args, out);
                 DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out);
+                
                 //falta previsão
                 break;
 
@@ -1138,7 +1145,6 @@ public class LAPR1_1DK_Mafia {
         switch (args[5]) {
             case "1":
                 MediaMovelSimples(consumptionMW, size, args, out);
-                averages(consumptionMW, size, args,out);
                 break;
             case "2":
                 MediaMovelPesada(consumptionMW, size, args, out);
