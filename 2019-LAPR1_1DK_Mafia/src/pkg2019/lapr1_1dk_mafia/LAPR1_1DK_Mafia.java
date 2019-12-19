@@ -239,9 +239,6 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
         }
     }
 
-    //O ERRO ESTÁ NOS IFS! QUANDO PONHO ALGO INVÁLIDO NÃO DEVE PEDIR OUTRO PARÂMTERO, MAS SIM SAIR
-    //E QUANDO A FLAG É FALSA, O PROGRAMA DEVIA IR PARA AS PREVISÕES E NÃO PEDIR OS MESES
-    //CORRIGIR!
     //método de verificação do dia
     public static void verifyDay(int[] consumption, LocalDateTime[] dateTime, int size, int year, int monthsNumber, int daysNumber) throws FileNotFoundException {
         System.out.println("Insira o dia pretendido. ");
@@ -300,17 +297,17 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
     
     
     public static void previsionType(int[] consumption, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
-        System.out.printf("Que resolução temporal deseja %n"
+        System.out.printf("Que tipo de previsão pretende? %n"
                 + "1. Previsão a partir da média móvel simples;%n"
                 + "2. Previsão a partir da média exponencialmente pesada.%n");
         int option = sc.nextInt();
         switch (option) {
             case 1:
-                previsionMediaSimples(consumption, size, size);
+                previsionMediaSimples(consumption, size);
                 break;
             case 2: {
                 double[] consumptionNewMW = null;
-                previsionMediaMovelPesada(consumption, consumptionNewMW, size, size);
+                previsionMediaMovelPesada(consumption, size);
             }
             break;
             default:
@@ -639,7 +636,7 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
             }
             criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n);
             absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
-            previsionMediaSimples(consumptionMW, n, n);
+            previsionMediaSimples(consumptionMW, n);
         }
         return mediaMovelSimples;
     }
@@ -674,7 +671,7 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
             }
             // criar 1 gráfico com os valores inicias e o valor de α
             criarGraficoMediaPesada(consumptionMW, consumptionNewMW, size, alpha);
-            previsionMediaMovelPesada(consumptionMW, consumptionNewMW, size, alpha);
+            previsionMediaMovelPesada(consumptionMW, size);
             absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length);
         }
         return consumptionNewMW;
@@ -999,7 +996,9 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
         }
     }
 
-    public static void previsionMediaSimples(int[] consumptionMW, int size, int n) throws FileNotFoundException {
+    public static void previsionMediaSimples(int[] consumptionMW, int size) throws FileNotFoundException {
+        System.out.println("Introduza o valor da ordem. ");
+        int n=sc.nextInt();
         double sum = 0, finalSum = 0;
         for (int k = 1; k <= n - 1; k++) {
             sum = consumptionMW[k - 1] + sum;
@@ -1008,11 +1007,26 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
         System.out.print(finalSum * (1) / (n) + "MW. ");
     }
 
-    public static void previsionMediaMovelPesada(int[] consumptionMW, double[] consumptionNewMW, int size, double alpha) {
-        for (int i = size - 1; i > 0; i--) {
-            consumptionNewMW[i] = (alpha * consumptionMW[i - 1]) + (1 - alpha) * consumptionNewMW[i - 1];
+    public static void previsionMediaMovelPesada(int[] consumptionMW, int size) {
+        double [] consumptionNewMW = new double [size];
+         System.out.println("Insira o alfa. ");
+         double alpha=sc.nextDouble();
+         while (alpha < 0 || alpha > 1) {
+                System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
+                alpha = sc.nextDouble();
+            }
+        for (int i = size-2; i<0; i++) {
+                consumptionNewMW[0] = consumptionMW[0];
+                consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
+                consumptionNewMW[size - 1] = consumptionMW[size - 1];
+                System.out.print(consumptionNewMW[0]);
+            }
+        
+      /*  double sum=0;
+        for (int k=0; k<size-1; k++){
+            sum=sum+consumptionNewMW[k];
         }
-        System.out.println(consumptionNewMW[0]);
+        System.out.print(sum/(size-1));*/
     }
 
     public static void imprimirGraficoBarras(int belowAverageValues, int averageValues, int aboveAverageValues) {
