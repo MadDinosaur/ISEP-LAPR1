@@ -334,11 +334,11 @@ public class LAPR1_1DK_Mafia {
 
         switch (order) {
             case 1:
-                mergeSort(consumptionMW, start, size);
+                mergeSort(consumptionMW, start, size-1);
                 criarGrafico(consumptionMW, size, args,out);
                 break;
             case 2:
-                inverseMergeSort(consumptionMW, start, size);
+                inverseMergeSort(consumptionMW, start, size-1);
                 criarGrafico(consumptionMW, size, args,out);
                 break;
             default:
@@ -361,9 +361,15 @@ public class LAPR1_1DK_Mafia {
             startPeriod += NUM_HOURS_IN_STAGE * NUM_STAGES;
             endPeriod = startPeriod + NUM_HOURS_IN_STAGE;
         }
+        int leftoverHours = endPeriod - size;
+        if (leftoverHours < NUM_HOURS) {
+            for (int i = startPeriod + 1; i < size; i++) {
+                consuptionMW[startPeriod] += consuptionMW[i];
+            }
+        }
     }
 
-    public static void averages(int[] consumptionMW, int size, String[] args,PrintWriter out) throws FileNotFoundException {
+    public static int averages(int[] consumptionMW, int size, String[] args,PrintWriter out) throws FileNotFoundException {
         int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
         for (int i = 0; i < size; i++) {
             consumptionSum += consumptionMW[i];
@@ -396,6 +402,7 @@ public class LAPR1_1DK_Mafia {
         System.out.println("Quantidade de valores próximos da média: " + averageValues);
         System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
         System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+        return consumptionSum/size;
     }
 
     //calcula consumos diários
@@ -434,7 +441,7 @@ public class LAPR1_1DK_Mafia {
         }
         int leftoverDays = endPeriod - size;
         if (leftoverDays < getMonthLength(dateTime, startPeriod) * NUM_HOURS) {
-            for (int i = startPeriod; i < size; i++) {
+            for (int i = startPeriod + 1; i < size; i++) {
                 consumptionMW[startPeriod] += consumptionMW[i];
             }
             numMonths++;
@@ -452,6 +459,7 @@ public class LAPR1_1DK_Mafia {
     public static int annualPeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) {
         int startPeriod = 0, i = 0, numYears = 0, year = dateTime[0].getYear();
         while (startPeriod < size) {
+            i++;
             while (i < size && dateTime[i].getYear() == year) {
                 consumptionMW[startPeriod] += consumptionMW[i];
                 i++;
@@ -608,7 +616,7 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
-    private static double[] MediaMovelSimples(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+    public static double[] MediaMovelSimples(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
         int n;
         boolean nonInteractiveInvalidInput = false;
         if (args.length == 12) {
