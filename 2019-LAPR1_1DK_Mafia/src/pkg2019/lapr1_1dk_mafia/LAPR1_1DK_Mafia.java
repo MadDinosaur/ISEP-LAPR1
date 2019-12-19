@@ -743,6 +743,7 @@ public class LAPR1_1DK_Mafia {
                 PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
                 stl.setStyle(Style.LINES);
                 plot.setKey(JavaPlot.Key.OFF);
+                plot.plot();
 
                 System.out.println("Ficheiro guardado em PNG.");
             }
@@ -767,6 +768,7 @@ public class LAPR1_1DK_Mafia {
                 PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
                 stl.setStyle(Style.LINES);
                 plot.setKey(JavaPlot.Key.OFF);
+                plot.plot();
                 csvWriteGrafico(grafico, size);
                 System.out.println("Ficheiros guardados em PNG e CSV.");
             }
@@ -838,6 +840,7 @@ public class LAPR1_1DK_Mafia {
 
         p.newGraph();
         p.plot();
+        
  if (args.length==2){
         System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
         int op = sc.nextInt();
@@ -870,6 +873,7 @@ public class LAPR1_1DK_Mafia {
             PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
             stl.setStyle(Style.LINES);
             plot.setKey(JavaPlot.Key.OFF);
+            plot.plot();
 
             System.out.println("Ficheiro guardado em PNG.");
         }
@@ -879,7 +883,7 @@ public class LAPR1_1DK_Mafia {
             System.out.println("Ficheiro guardado em CSV.");
         }
         if(op==3){
-              String title = "Consumo de energia no gráfico α = " + alpha;
+            String title = "Consumo de energia no gráfico α = " + alpha;
             //Genera um file em .png
             File file = new File("statistics_" + title + ".png");
             //Cria um novo plot
@@ -896,6 +900,7 @@ public class LAPR1_1DK_Mafia {
             PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
             stl.setStyle(Style.LINES);
             plot.setKey(JavaPlot.Key.OFF);
+            plot.plot();
             csvWriteMedias(grafico1, grafico2, size);
             System.out.println("Ficheiros guardados em PNG e CSV.");
             
@@ -922,6 +927,7 @@ public class LAPR1_1DK_Mafia {
             PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
             stl.setStyle(Style.LINES);
             plot.setKey(JavaPlot.Key.OFF);
+            plot.plot();
             System.out.println("Ficheiro guardado em PNG.");
             out.println("Ficheiro guardado em PNG.");
         }
@@ -999,6 +1005,7 @@ if(args.length==2){
             PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
             stl.setStyle(Style.LINES);
             plot.setKey(JavaPlot.Key.OFF);
+            plot.plot();
 
             System.out.println("Items guardados.");
         }
@@ -1025,6 +1032,7 @@ if(args.length==2){
             PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
             stl.setStyle(Style.LINES);
             plot.setKey(JavaPlot.Key.OFF);
+            plot.plot();
 
             System.out.println("Ficheiros guardados em CSV e PNG.");
         }
