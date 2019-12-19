@@ -44,7 +44,7 @@ public class LAPR1_1DK_Mafia {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
         int size = readFile(consumptionMW, dateTime, args);
-        //if (args.length == 2) {
+        if (args.length == 2) {
         PrintWriter out = null;
         //menu interativo
         int option;
@@ -52,17 +52,17 @@ public class LAPR1_1DK_Mafia {
             int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
             option = menu(auxConsumptionMW, dateTime, size, args, out);
         } while (option != 7);
-        //} else {
-        //  PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
-        //if (args.length == 12) {
-        //  int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-        //DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, args, out);
-        //} else {
-        //  System.out.println("Parâmetros inválidos");
-        //}
-        //out.close();
+        } else {
+         PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+        if (args.length == 12) {
+          int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
+        DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, args, out);
+        } else {
+          System.out.println("Parâmetros inválidos");
+        }
+       out.close();
     }
-    //}
+    }
 
     //lê ficheiro .csv
     public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime, String[] args) throws FileNotFoundException {
