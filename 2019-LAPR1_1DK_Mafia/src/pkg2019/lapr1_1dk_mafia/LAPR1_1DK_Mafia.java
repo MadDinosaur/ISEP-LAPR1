@@ -10,6 +10,7 @@ import com.panayotis.gnuplot.terminal.FileTerminal;
 import com.panayotis.gnuplot.terminal.GNUPlotTerminal;
 import com.panayotis.gnuplot.terminal.ImageTerminal;
 import com.sun.glass.ui.Size;
+import com.sun.jndi.url.iiop.iiopURLContext;
 import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.dateTime;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -103,13 +104,11 @@ public class LAPR1_1DK_Mafia {
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
                 MediaMovelSimples(consumptionMW, size, args, out);
-                criarGrafico(consumptionMW, size);
                 break;
             case 4:
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
                 MediaMovelPesada(consumptionMW, size, args, out);
-                criarGrafico(consumptionMW, size);
                 break;
             case 5:
                 option = definePeriod(consumptionMW, dateTime, size);
@@ -628,18 +627,18 @@ public class LAPR1_1DK_Mafia {
             }
         }
         double[] mediaMovelSimples = new double[size - n];
+        int total=0;
         if (nonInteractiveInvalidInput == false) {
-            for (int k = 0; k < size - n; k++) {
-                for (int i = k; i < k + n; i++) {
-                    mediaMovelSimples[k] += consumptionMW[i];
+            for (int k = n-1; k <= size; k++) {
+                for (int i = k-n+1; i <=k; i++) {
+                    total += consumptionMW[i];
                 }
-                mediaMovelSimples[k] /= n;
+                mediaMovelSimples[k]= (total/ n);
             }
             criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n);
             absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
-            previsionMediaSimples(consumptionMW, n);
         }
-        return mediaMovelSimples;
+        return mediaMovelSimples; 
     }
 
     public static double[] MediaMovelPesada(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
@@ -843,20 +842,20 @@ public class LAPR1_1DK_Mafia {
         myPlotStyle2.setLineWidth(1);
         myPlotStyle.setLineType(NamedPlotColor.BLUE);
         myPlotStyle2.setLineType(NamedPlotColor.ORANGE);
-        p.set("xrange", "[0:200]");
 
         int tab1[][];
         double tab2[][];
 
         tab1 = new int[size][2];
-        tab2 = new double[size][2];
+        tab2 = new double[size - n+1][2];
 
         for (int i = 0; i < size; i++) {
             tab1[i][0] = i;
             tab1[i][1] = grafico1[i];
-
-            tab2[i][0] = i;
-            tab2[i][1] = grafico2[i];
+        }
+        for(int i=0;i<size-n+1;i++){
+            tab2[i - n + 1][0] = i;
+            tab2[i - n + 1][1] = grafico2[i];
         }
 
         DataSetPlot s = new DataSetPlot(tab1);
