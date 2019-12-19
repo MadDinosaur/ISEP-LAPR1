@@ -96,60 +96,62 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 2:
                 option = definePeriod(consumptionMW, dateTime, size);
-                size=exchange(consumptionMW, dateTime, size, option);
+                size = exchange(consumptionMW, dateTime, size, option);
                 averages(consumptionMW, size, args);
                 break;
             case 3:
                 option = definePeriod(consumptionMW, dateTime, size);
-                size=exchange(consumptionMW, dateTime, size, option);
+                size = exchange(consumptionMW, dateTime, size, option);
                 MediaMovelSimples(consumptionMW, size, args, out);
                 criarGrafico(consumptionMW, size);
                 break;
             case 4:
                 option = definePeriod(consumptionMW, dateTime, size);
-                size=exchange(consumptionMW, dateTime, size, option);
+                size = exchange(consumptionMW, dateTime, size, option);
                 MediaMovelPesada(consumptionMW, size, args, out);
                 criarGrafico(consumptionMW, size);
                 break;
             case 5:
                 option = definePeriod(consumptionMW, dateTime, size);
-                size=exchange(consumptionMW, dateTime, size, option);
+                size = exchange(consumptionMW, dateTime, size, option);
                 defineOrder(consumptionMW, size, args, out);
                 break;
             case 6:
                 option = definePeriod(consumptionMW, dateTime, size);
-                size=exchange(consumptionMW, dateTime, size, option);
+                size = exchange(consumptionMW, dateTime, size, option);
                 definePrevision(consumptionMW, dateTime, size, option);
                 break;
         }
         return option;
     }
-public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException{
-    switch(option) {
-        case 1: 
-            size = exchangeInfoDayPeriods(consumptionMW, size, 0, dateTime);
-            break;
-        case 2: 
-            size = exchangeInfoDayPeriods(consumptionMW, size, 6, dateTime);
-            break;
-        case 3: 
-            size = exchangeInfoDayPeriods(consumptionMW, size, 12, dateTime);
-            break;
-        case 4: 
-             size = exchangeInfoDayPeriods(consumptionMW, size, 18, dateTime);
-             break;
-        case 5: 
-            size = dailyPeriod(consumptionMW, size, dateTime);
-            break;
-        case 6: 
-            size = monthlyPeriod(consumptionMW, dateTime, size);
-            break;
-        case 7:
-          size = annualPeriod(consumptionMW, dateTime, size);
-          break; 
+
+    public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
+        switch (option) {
+            case 1:
+                size = exchangeInfoDayPeriods(consumptionMW, size, 0, dateTime);
+                break;
+            case 2:
+                size = exchangeInfoDayPeriods(consumptionMW, size, 6, dateTime);
+                break;
+            case 3:
+                size = exchangeInfoDayPeriods(consumptionMW, size, 12, dateTime);
+                break;
+            case 4:
+                size = exchangeInfoDayPeriods(consumptionMW, size, 18, dateTime);
+                break;
+            case 5:
+                size = dailyPeriod(consumptionMW, size, dateTime);
+                break;
+            case 6:
+                size = monthlyPeriod(consumptionMW, dateTime, size);
+                break;
+            case 7:
+                size = annualPeriod(consumptionMW, dateTime, size);
+                break;
+        }
+        return size;
     }
-    return size;
-}
+
     //menu para escolher a resolução temporal
     public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         System.out.printf("Que resolução temporal deseja %n"
@@ -175,7 +177,7 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
                 dayPeriod(consumptionMW, size, 18);
                 break;
             case 5:
-                
+
                 break;
             case 6:
                 break;
@@ -253,13 +255,12 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
     //método de verificação do mês
     public static void verifyMonth(int[] consumption, LocalDateTime[] dateTime, int size, int year, int monthsNumber, boolean mark) throws FileNotFoundException {
         System.out.println("Insira o mês pretendido. ");
-        System.out.println(size);
         int month = sc.nextInt();
         if (month < 01 || month > monthsNumber) {
             System.out.println("O mês introduzido não existe nos registos. ");
         } else {
             if (mark == true) { //caso de ser necessária a verificação dos dias
-                                int daysNumber = YearMonth.of(year, month).lengthOfMonth(); //achar o número de dias que o mês inserido tem
+                int daysNumber = YearMonth.of(year, month).lengthOfMonth(); //achar o número de dias que o mês inserido tem
                 verifyDay(consumption, dateTime, size, year, monthsNumber, daysNumber);
             } else {
                 if (mark == false) {
@@ -272,30 +273,30 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
     //método de verificação do ano  //Os anos já estão a funcionar bem!
     public static void verifyYear(int[] consumption, LocalDateTime[] dateTime, int size, boolean flag, boolean mark) throws FileNotFoundException {
         System.out.println("Insira o ano. ");
-        int year=sc.nextInt();
-    if (year < dateTime[0].getYear() || year > dateTime[size - 1].getYear()) {
-            System.out.println("O ano introduzido não existe nos registos. ");          
-    }else{
-        if (year == dateTime[size - 1].getYear()) { //caso de ser o último ano
-            if (flag == true) {
-                int monthsNumber = dateTime[size - 1].getMonthValue(); //ver quantos meses tem o úlimo ano
-                verifyMonth(consumption, dateTime, size, year, monthsNumber, mark);
-            } else {
-                if (flag==false){
-                previsionType(consumption, dateTime, size);
-            }
-            }
-        }else{
+        int year = sc.nextInt();
+        if (year < dateTime[0].getYear() || year > dateTime[size - 1].getYear()) {
+            System.out.println("O ano introduzido não existe nos registos. ");
+        } else {
+            if (year == dateTime[size - 1].getYear()) { //caso de ser o último ano
                 if (flag == true) {
-                   int monthsNumber=12; 
+                    int monthsNumber = dateTime[size - 1].getMonthValue(); //ver quantos meses tem o úlimo ano
                     verifyMonth(consumption, dateTime, size, year, monthsNumber, mark);
                 } else {
-                    previsionType(consumption, dateTime, size);                }
+                    if (flag == false) {
+                        previsionType(consumption, dateTime, size);
+                    }
+                }
+            } else {
+                if (flag == true) {
+                    int monthsNumber = 12;
+                    verifyMonth(consumption, dateTime, size, year, monthsNumber, mark);
+                } else {
+                    previsionType(consumption, dateTime, size);
+                }
             }
         }
     }
-    
-    
+
     public static void previsionType(int[] consumption, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
         System.out.printf("Que tipo de previsão pretende? %n"
                 + "1. Previsão a partir da média móvel simples;%n"
@@ -466,7 +467,7 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
         for (i = 0; i < size / NUM_HOURS; i++) {
             //trocar consumos
             consumptionMW[i] = consumptionMW[idx2];
-            dateTime[i]=dateTime[idx2];
+            dateTime[i] = dateTime[idx2];
             idx2 += NUM_HOURS;
         }
         size = i;
@@ -480,7 +481,7 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
             int idx2 = i * period;
             //trocar consumos
             consumptionMW[i] = consumptionMW[idx2];
-            dateTime[i]=dateTime[idx2];
+            dateTime[i] = dateTime[idx2];
         }
         size = i;
         return size;
@@ -500,7 +501,7 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
                 }
             }
             consumptionMW[i] = consumptionMW[idx2];
-            dateTime[i]=dateTime[idx2];
+            dateTime[i] = dateTime[idx2];
         }
         size = i;
         return size;
@@ -671,7 +672,6 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
             }
             // criar 1 gráfico com os valores inicias e o valor de α
             criarGraficoMediaPesada(consumptionMW, consumptionNewMW, size, alpha);
-            previsionMediaMovelPesada(consumptionMW, size);
             absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length);
         }
         return consumptionNewMW;
@@ -998,35 +998,36 @@ public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int si
 
     public static void previsionMediaSimples(int[] consumptionMW, int size) throws FileNotFoundException {
         System.out.println("Introduza o valor da ordem. ");
-        int n=sc.nextInt();
+        int n = sc.nextInt();
         double sum = 0, finalSum = 0;
         for (int k = 1; k <= n - 1; k++) {
             sum = consumptionMW[k - 1] + sum;
             finalSum = sum - k;
         }
-        System.out.print(finalSum * (1) / (n) + "MW. ");
+        System.out.print(finalSum * (1) / (n) + " MW. ");
     }
 
-    public static void previsionMediaMovelPesada(int[] consumptionMW, int size) {
-        double [] consumptionNewMW = new double [size];
-         System.out.println("Insira o alfa. ");
-         double alpha=sc.nextDouble();
-         while (alpha < 0 || alpha > 1) {
-                System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
-                alpha = sc.nextDouble();
-            }
-        for (int i = size-2; i<0; i++) {
-                consumptionNewMW[0] = consumptionMW[0];
-                consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
-                consumptionNewMW[size - 1] = consumptionMW[size - 1];
-                System.out.print(consumptionNewMW[0]);
-            }
-        
-      /*  double sum=0;
-        for (int k=0; k<size-1; k++){
-            sum=sum+consumptionNewMW[k];
+    public static double previsionMediaMovelPesada(int[] consumptionMW, int size) {
+        double[] consumptionNewMW = new double[size];
+        System.out.println("Insira o alfa. ");
+        double alpha = sc.nextDouble();
+        while (alpha <= 0 || alpha >= 1) {
+            System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
+            alpha = sc.nextFloat();
         }
-        System.out.print(sum/(size-1));*/
+        for (int i = size - 2; i < 0; i++) {
+            consumptionNewMW[0] = consumptionMW[0];
+            consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
+            consumptionNewMW[size - 1] = consumptionMW[size - 1];
+            System.out.print(consumptionNewMW[0]);
+        }
+        double sum = 0;
+        for (int k = 0; k < size - 1; k++) {
+            sum = sum + consumptionNewMW[k];
+        }
+        double x = (sum) / (size - 2);
+        System.out.print(x + " MW. %n ");
+        return x;
     }
 
     public static void imprimirGraficoBarras(int belowAverageValues, int averageValues, int aboveAverageValues) {
