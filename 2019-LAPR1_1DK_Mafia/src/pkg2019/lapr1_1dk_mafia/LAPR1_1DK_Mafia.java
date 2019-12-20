@@ -115,7 +115,9 @@ public class LAPR1_1DK_Mafia {
                     case 2:
                         MediaMovelPesada(consumptionMW, size, args, out);
                         break;
+                        
                 }
+                break;
             case 4:
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
