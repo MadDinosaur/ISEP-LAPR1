@@ -864,7 +864,7 @@ public class LAPR1_1DK_Mafia {
        
         if (op == 1) {
 
-            String title = "Consumo de energia no gráfico α = " + alpha;
+            String title = "Consumo de energia no grafico α = " + alpha;
             //Genera um file em .png
             File file = new File("statistics_" + title + ".png");
             //Cria um novo plot
