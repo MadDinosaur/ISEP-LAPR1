@@ -741,7 +741,7 @@ public class LAPR1_1DK_Mafia {
                 System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
                 op = sc.nextInt();
             } while (op != 1 && op != 2 && op != 3 && op != 4);
-//            }
+            }
 
             // ainda a desenvolver a parte de guardar em png.
             if (op == 1) {
@@ -819,7 +819,7 @@ public class LAPR1_1DK_Mafia {
 //
 //        }
         }
-    }
+    
 
     public static void criarGraficoMediaPesada(int[] grafico1, double[] grafico2, int size, double alpha, String[] args, PrintWriter out) throws FileNotFoundException {
         JavaPlot p = new JavaPlot();
