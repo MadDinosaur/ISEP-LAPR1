@@ -32,8 +32,9 @@ public class LAPR1_1DK_Mafia {
     static final int NUM_HOURS = 24;
     static final int NUM_DAYS_IN_YEAR = 365;
     static final String OUTPUT_FILE = "Output.txt";
-    static final String nome = "Consumos.csv";
-    final String agregacao = "";
+    static final String nome = "Consumos ";
+    static String agregacao = "";
+    static String tipo = "";
 
     public static void main(String[] args) throws FileNotFoundException {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
@@ -92,17 +93,64 @@ public class LAPR1_1DK_Mafia {
             case 1:
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
-                criarGrafico(consumptionMW, size, args, out);
+                switch(option){
+                    case 1:
+                        agregacao = "Madrugadas";
+                        break;
+                    case 2: 
+                        agregacao = "Manhãs";
+                        break;
+                    case 3:
+                        agregacao = "Tardes";
+                        break;
+                    case 4:
+                        agregacao = "Noites";
+                        break;
+                    case 5:
+                        agregacao = "Diario";
+                        break;
+                    case 6:
+                        agregacao = "Mensal";
+                        break;
+                    case 7:
+                        agregacao = "Anual";
+                        break;
+                }
+                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
                 break;
             case 2:
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
-                averages(consumptionMW, size, args, out);
+                switch(option)
+                {
+                    case 1: 
+                        agregacao = "Madrugadas";
+                        break;
+                    case 2:
+                        agregacao = "Manhãs";
+                        break;
+                     case 3:
+                        agregacao = "Tardes";
+                        break;
+                    case 4:
+                        agregacao = "Noites";
+                        break;
+                    case 5:
+                        agregacao = "Diario";
+                        break;
+                    case 6:
+                        agregacao = "Mensal";
+                        break;
+                    case 7:
+                        agregacao = "Anual";
+                        break;
+                }
+                averages(consumptionMW, size, args, out, agregacao);
                 break;
             case 3:
                 System.out.printf("Que tipo de filtragem pretende?%n "
-                        + "1. A partir da média móvel simples;%n "
-                        + "2. A partir da média exponencialmente pesada.");
+                +"1. A partir da média móvel simples;%n "
+                +"2. A partir da média exponencialmente pesada. %n");
                 int op = sc.nextInt();
                 while (op != 1 && op != 2) {
                     System.out.println("Introduza uma opção válida. ");
@@ -112,18 +160,86 @@ public class LAPR1_1DK_Mafia {
                 size = exchange(consumptionMW, dateTime, size, option);
                 switch (op) {
                     case 1:
-                        MediaMovelSimples(consumptionMW, size, args, out);
+                        switch(option){
+                            case 1: 
+                        agregacao = "Madrugadas";
                         break;
                     case 2:
-                        MediaMovelPesada(consumptionMW, size, args, out);
+                        agregacao = "Manhãs";
                         break;
-                        
+                     case 3:
+                        agregacao = "Tardes";
+                        break;
+                    case 4:
+                        agregacao = "Noites";
+                        break;
+                    case 5:
+                        agregacao = "Diario";
+                        break;
+                    case 6:
+                        agregacao = "Mensal";
+                        break;
+                    case 7:
+                        agregacao = "Anual";
+                        break;       
+                        }
+                        MediaMovelSimples(consumptionMW, size, args, out, agregacao);
+                        break;
+                    case 2:
+                        switch(option){
+                            case 1: 
+                        agregacao = "Madrugadas";
+                        break;
+                    case 2:
+                        agregacao = "Manhãs";
+                        break;
+                     case 3:
+                        agregacao = "Tardes";
+                        break;
+                    case 4:
+                        agregacao = "Noites";
+                        break;
+                    case 5:
+                        agregacao = "Diario";
+                        break;
+                    case 6:
+                        agregacao = "Mensal";
+                        break;
+                    case 7:
+                        agregacao = "Anual";
+                        break;       
+                        }
+                        MediaMovelPesada(consumptionMW, size, args, out,agregacao);
+                        break;     
                 }
                 break;
             case 4:
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
-                defineOrder(consumptionMW, size, args, out);
+                switch(option){
+                    case 1: 
+                        agregacao = "Madrugadas";
+                        break;
+                    case 2:
+                        agregacao = "Manhãs";
+                        break;
+                     case 3:
+                        agregacao = "Tardes";
+                        break;
+                    case 4:
+                        agregacao = "Noites";
+                        break;
+                    case 5:
+                        agregacao = "Diario";
+                        break;
+                    case 6:
+                        agregacao = "Mensal";
+                        break;
+                    case 7:
+                        agregacao = "Anual";
+                        break;       
+                        }
+                defineOrder(consumptionMW, size, args, out,agregacao);
                 break;
             case 5:
                 option = definePeriod(consumptionMW, dateTime, size);
@@ -311,7 +427,7 @@ public class LAPR1_1DK_Mafia {
     }
 
     //ordena de forma crescente ou decrescente conforme escolha do utilizador
-    public static void defineOrder(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+    public static void defineOrder(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
         int start = 0, order;
         if (args.length == 12) {
             order = Integer.parseInt(args[7]);
@@ -325,11 +441,13 @@ public class LAPR1_1DK_Mafia {
         switch (order) {
             case 1:
                 mergeSort(consumptionMW, start, size - 1);
-                criarGrafico(consumptionMW, size, args, out);
+                tipo = "Crescente";
+                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
                 break;
             case 2:
                 inverseMergeSort(consumptionMW, start, size - 1);
-                criarGrafico(consumptionMW, size, args, out);
+                tipo = "Decrescente";
+                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
                 break;
             default:
                 System.out.println("Parâmentro de ordenação inválido.");
@@ -359,7 +477,7 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
-    public static int averages(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+    public static int averages(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
         int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
         for (int i = 0; i < size; i++) {
             consumptionSum += consumptionMW[i];
@@ -386,7 +504,7 @@ public class LAPR1_1DK_Mafia {
 
         }
 
-        imprimirGraficoBarras(belowAverageValues, averageValues, aboveAverageValues, args, out);
+        imprimirGraficoBarras(belowAverageValues, averageValues, aboveAverageValues, args, out,agregacao);
 
         System.out.println("Média : " + (consumptionSum / size) + " " + "MW");
         System.out.println("Quantidade de valores próximos da média: " + averageValues);
@@ -606,7 +724,7 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
-    public static double[] MediaMovelSimples(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+    public static double[] MediaMovelSimples(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
         int n;
         boolean nonInteractiveInvalidInput = false;
         if (args.length == 12) {
@@ -637,13 +755,13 @@ public class LAPR1_1DK_Mafia {
                 mediaMovelSimples[i] = (total / n);
                 total = 0;
             }
-            criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n, out, args);
+            criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n, out, args, agregacao);
             absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length,out,args);
         }
         return mediaMovelSimples;
     }
 
-    public static double[] MediaMovelPesada(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+    public static double[] MediaMovelPesada(int[] consumptionMW, int size, String[] args, PrintWriter out,String agregacao) throws FileNotFoundException {
         double alpha;
         double[] consumptionNewMW = new double[size];
         boolean nonInteractiveInvalidInput = false;
@@ -691,7 +809,7 @@ public class LAPR1_1DK_Mafia {
     }
 
 
-    public static void criarGrafico(int[] grafico, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+    public static void criarGrafico(int[] grafico, int size, String[] args, PrintWriter out, String agregacao, String tipo) throws FileNotFoundException {
 
         JavaPlot p = new JavaPlot();
 
@@ -731,11 +849,11 @@ public class LAPR1_1DK_Mafia {
 
                 String title = "Consumo de energia";
                 //Genera um file em .png
-                File file = new File("statistics_" + title + ".png");
+                File file = new File("Grafico " + title + ".png");
                 //Cria um novo plot
                 JavaPlot plot = new JavaPlot();
                 //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-                GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+                GNUPlotTerminal terminal = new FileTerminal("png", "Grafico " + tipo + " " + agregacao+ " " + title + ".png");
                 plot.setTerminal(terminal);
                 //Configuração dos labels
                 plot.set("xlabel", "\"Observações\"");
@@ -751,17 +869,17 @@ public class LAPR1_1DK_Mafia {
             }
 
             if (op == 2) {
-                csvWriteGrafico(grafico, size);
-                 System.out.println("Ficheiro guardado em CSV.");
+                csvWriteGrafico(grafico, size, agregacao,tipo);
+                System.out.println("Ficheiro guardado em CSV.");
             }
             if (op == 3) {
                 String title = "Consumo de energia";
                 //Genera um file em .png
-                File file = new File("statistics_" + title + ".png");
+                File file = new File("Grafico " + title + ".png");
                 //Cria um novo plot
                 JavaPlot plot = new JavaPlot();
                 //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-                GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+                GNUPlotTerminal terminal = new FileTerminal("png", "Grafico " + tipo + " " + agregacao + " " + title + ".png");
                 plot.setTerminal(terminal);
                 //Configuração dos labels
                 plot.set("xlabel", "\"Observações\"");
@@ -772,7 +890,7 @@ public class LAPR1_1DK_Mafia {
                 stl.setStyle(Style.LINES);
                 plot.setKey(JavaPlot.Key.OFF);
                 plot.plot();
-                csvWriteGrafico(grafico, size);
+                csvWriteGrafico(grafico, size,agregacao,tipo);
                 System.out.println("Ficheiros guardados em PNG e CSV.");
             }
 
@@ -782,11 +900,11 @@ public class LAPR1_1DK_Mafia {
 //        } else {
 //            String title = "Consumo de energia";
 //                //Genera um file em .png
-//                File file = new File("statistics_" + title + ".png");
+//                File file = new File("Grafico" + title + ".png");
 //                //Cria um novo plot
 //                JavaPlot plot = new JavaPlot();
 //                //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-//                GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+//                GNUPlotTerminal terminal = new FileTerminal("png", "Grafico " + tipo + " " + agregacao+ " " + title + ".png");
 //                plot.setTerminal(terminal);
 //                //Configuração dos labels
 //                plot.set("xlabel", "\"Observações\"");
@@ -859,13 +977,13 @@ public class LAPR1_1DK_Mafia {
         // ainda a desenvolver a parte de guardar em png.
         if (op == 1) {
 
-            String title = "Consumo de energia no grafico α = " + alpha;
+            String title = "Consumo de energia no grafico alpha = " + alpha;
             //Genera um file em .png
-            File file = new File("statistics_" + title + ".png");
+            File file = new File(title + " " + agregacao + ".png");
             //Cria um novo plot
             JavaPlot plot = new JavaPlot();
             //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            GNUPlotTerminal terminal = new FileTerminal("png", title + " " + agregacao + ".png");
             plot.setTerminal(terminal);
             //Configuração dos labels
             plot.set("xlabel", "\"Observações\"");
@@ -882,17 +1000,17 @@ public class LAPR1_1DK_Mafia {
         }
 
         if (op == 2) {
-            csvWriteMedias(grafico1, grafico2, size);
+            csvWriteMediaPesada(grafico1, grafico2, size,agregacao);
             System.out.println("Ficheiro guardado em CSV.");
         }
         if (op == 3) {
-            String title = "Consumo de energia no gráfico α = " + alpha;
+            String title = "Consumo de energia no grafico alpha = " + alpha;
             //Genera um file em .png
-            File file = new File("statistics_" + title + ".png");
+            File file = new File(title + " " + agregacao + ".png");
             //Cria um novo plot
             JavaPlot plot = new JavaPlot();
             //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            GNUPlotTerminal terminal = new FileTerminal("png", title + " " + agregacao + ".png");
             plot.setTerminal(terminal);
             //Configuração dos labels
             plot.set("xlabel", "\"Observações\"");
@@ -904,7 +1022,7 @@ public class LAPR1_1DK_Mafia {
             stl.setStyle(Style.LINES);
             plot.setKey(JavaPlot.Key.OFF);
             plot.plot();
-            csvWriteMedias(grafico1, grafico2, size);
+            csvWriteMediaPesada(grafico1, grafico2, size,agregacao);
             System.out.println("Ficheiros guardados em PNG e CSV.");
 
         }
@@ -913,13 +1031,13 @@ public class LAPR1_1DK_Mafia {
             System.out.println("Nenhum ficheiro guardado.");
         }
 //        }
-//        else{String title = "Consumo de energia no gráfico α = " + alpha;
+//        else{String title = "Consumo de energia no gráfico alpha = " + alpha;
 //            //Genera um file em .png
-//            File file = new File("statistics_" + title + ".png");
+//            File file = new File(title + " " + agregacao + ".png");
 //            //Cria um novo plot
 //            JavaPlot plot = new JavaPlot();
 //            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-//            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+//            GNUPlotTerminal terminal = new FileTerminal("png", title + " " + agregacao + ".png");
 //            plot.setTerminal(terminal);
 //            //Configuração dos labels
 //            plot.set("xlabel", "\"Observações\"");
@@ -937,7 +1055,7 @@ public class LAPR1_1DK_Mafia {
 
     }
 
-    public static void criarGraficoMediaSimples(int[] grafico1, double[] grafico2, int length, int n, PrintWriter out, String[] args) throws FileNotFoundException {
+    public static void criarGraficoMediaSimples(int[] grafico1, double[] grafico2, int length, int n, PrintWriter out, String[] args, String agregacao) throws FileNotFoundException {
         JavaPlot p = new JavaPlot();
 
         PlotStyle myPlotStyle = new PlotStyle();
@@ -993,11 +1111,11 @@ public class LAPR1_1DK_Mafia {
 
             String title = "Consumo de energia no gráfico n = " + n;
             //Genera um file em .png
-            File file = new File("statistics_" + title + ".png");
+            File file = new File(title + " " + agregacao  + ".png");
             //Cria um novo plot
             JavaPlot plot = new JavaPlot();
             //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            GNUPlotTerminal terminal = new FileTerminal("png", title + " " + agregacao + ".png");
             plot.setTerminal(terminal);
             //Configuração dos labels
             plot.set("xlabel", "\"Observações\"");
@@ -1014,17 +1132,17 @@ public class LAPR1_1DK_Mafia {
         }
 
         if (op == 2) {
-            csvWriteMedias(grafico1, grafico2, length);
+            csvWriteMediaSimples(grafico1, grafico2, length, agregacao);
             System.out.println("Ficheiro guardado em CSV.");
         }
         if (op == 3) {
-            String title = "Consumo de energia no gráfico n = " + n;
+            String title = "Consumo de energia no grafico n = " + n;
             //Genera um file em .png
-            File file = new File("statistics_" + title + ".png");
+            File file = new File(title + " " + agregacao + ".png");
             //Cria um novo plot
             JavaPlot plot = new JavaPlot();
             //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            GNUPlotTerminal terminal = new FileTerminal("png", title + " " + agregacao + ".png");
             plot.setTerminal(terminal);
             //Configuração dos labels
             plot.set("xlabel", "\"Observações\"");
@@ -1036,6 +1154,7 @@ public class LAPR1_1DK_Mafia {
             stl.setStyle(Style.LINES);
             plot.setKey(JavaPlot.Key.OFF);
             plot.plot();
+            csvWriteMediaSimples(grafico1, grafico2, length, agregacao);
 
             System.out.println("Ficheiros guardados em CSV e PNG.");
         }
@@ -1046,11 +1165,11 @@ public class LAPR1_1DK_Mafia {
 //    }else {
 //            String title = "Grafico de Barras";
 //            //Gera um file em .png
-//            File file = new File("statistics_" + title + ".png");
+//            File file = new File(title + " " + agregacao + ".png");
 //            //Cria um novo plot
 //            JavaPlot plot = new JavaPlot();
 //            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-//            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+//            GNUPlotTerminal terminal = new FileTerminal("png", title + " " + agregacao + ".png");
 //            plot.setTerminal(terminal);
 //            //Configuração dos labels
 //            plot.set("xlabel", "\"Observações\"");
@@ -1074,10 +1193,10 @@ public class LAPR1_1DK_Mafia {
             case "11":
                 dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
                 size = exchangeInfoDayPeriods(consumptionMW, size, 0, dateTime);
-                criarGrafico(consumptionMW, size, args, out);
-                averages(consumptionMW, size, args, out);
+                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                averages(consumptionMW, size, args, out,agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out,agregacao);
 
                 //falta previsão
                 break;
@@ -1085,57 +1204,57 @@ public class LAPR1_1DK_Mafia {
             case "12":
                 dayPeriod(consumptionMW, size, 6);
                 size = exchangeInfoDayPeriods(consumptionMW, size, 6, dateTime);
-                criarGrafico(consumptionMW, size, args, out);
-                averages(consumptionMW, size, args, out);
+                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out,agregacao);
 
                 //falta previsão
                 break;
             case "13":
                 dayPeriod(consumptionMW, size, 12);
                 size = exchangeInfoDayPeriods(consumptionMW, size, 12, dateTime);
-                criarGrafico(consumptionMW, size, args, out);
-                averages(consumptionMW, size, args, out);
+                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out,agregacao);
 
                 //falta previsão
                 break;
             case "14":
                 dayPeriod(consumptionMW, size, 18);
                 size = exchangeInfoDayPeriods(consumptionMW, size, 18, dateTime);
-                criarGrafico(consumptionMW, size, args, out);
-                averages(consumptionMW, size, args, out);
+                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out,agregacao);
 
                 //falta previsão
                 break;
             case "2":
                 size = dailyPeriod(consumptionMW, size, dateTime);
-                criarGrafico(consumptionMW, size, args, out);
-                averages(consumptionMW, size, args, out);
+                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out,agregacao);
 
                 //falta previsão
                 break;
             case "3":
                 size = monthlyPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW, size, args, out);
-                averages(consumptionMW, size, args, out);
+                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out,agregacao);
 
                 //falta previsão
                 break;
             case "4":
                 size = annualPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW, size, args, out);
-                averages(consumptionMW, size, args, out);
+                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out,agregacao);
 
                 //falta previsão
                 break;
@@ -1146,10 +1265,10 @@ public class LAPR1_1DK_Mafia {
     public static void DefineModel(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
         switch (args[5]) {
             case "1":
-                MediaMovelSimples(consumptionMW, size, args, out);
+                MediaMovelSimples(consumptionMW, size, args, out,agregacao);
                 break;
             case "2":
-                MediaMovelPesada(consumptionMW, size, args, out);
+                MediaMovelPesada(consumptionMW, size, args, out,agregacao);
                 break;
             default:
                 System.out.println("Parâmetro de modelo inválido.");
@@ -1194,7 +1313,7 @@ public class LAPR1_1DK_Mafia {
         return x;
     }
 
-    public static void imprimirGraficoBarras(int belowAverageValues, int averageValues, int aboveAverageValues, String[] args, PrintWriter out) throws FileNotFoundException {
+    public static void imprimirGraficoBarras(int belowAverageValues, int averageValues, int aboveAverageValues, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
         JavaPlot p = new JavaPlot();
         PlotStyle myPlotStyle = new PlotStyle();
         myPlotStyle.setStyle(Style.BOXES);
@@ -1214,7 +1333,7 @@ public class LAPR1_1DK_Mafia {
         //tab[6][0] = 0;
 
         DataSetPlot s = new DataSetPlot(tab);
-        s.setTitle("Consumo de Energia");
+        s.setTitle("Número de Observações");
         s.setPlotStyle(myPlotStyle);
 
         p.addPlot(s);
@@ -1236,11 +1355,11 @@ public class LAPR1_1DK_Mafia {
 
             String title = "Grafico de Barras";
             //Gera um file em .png
-            File file = new File("statistics_" + title + ".png");
+            File file = new File(title + " " + agregacao + ".png");
             //Cria um novo plot
             JavaPlot plot = new JavaPlot();
             //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            GNUPlotTerminal terminal = new FileTerminal("png", title + " " + agregacao + ".png");
             plot.setTerminal(terminal);
             //Configuração dos labels
             plot.set("xlabel", "\"Observações\"");
@@ -1256,17 +1375,17 @@ public class LAPR1_1DK_Mafia {
         }
 
         if (op == 2) {
-            csvWriteBarras(belowAverageValues, averageValues, aboveAverageValues);
+            csvWriteBarras(belowAverageValues, averageValues, aboveAverageValues,agregacao);
             System.out.println("Ficheiro guardado em CSV");
         }
         if (op == 3) {
             String title = "Grafico de Barras";
             //Gera um file em .png
-            File file = new File("statistics_" + title + ".png");
+            File file = new File(title + " " + agregacao + ".png");
             //Cria um novo plot
             JavaPlot plot = new JavaPlot();
             //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+            GNUPlotTerminal terminal = new FileTerminal("png", title + " " + agregacao + ".png");
             plot.setTerminal(terminal);
             //Configuração dos labels
             plot.set("xlabel", "\"Observações\"");
@@ -1277,7 +1396,7 @@ public class LAPR1_1DK_Mafia {
             stl.setStyle(Style.BOXES);
             plot.setKey(JavaPlot.Key.OFF);
             plot.plot();
-            csvWriteBarras(belowAverageValues, averageValues, aboveAverageValues);
+            csvWriteBarras(belowAverageValues, averageValues, aboveAverageValues, agregacao);
             System.out.println("Ficheiros guardados em PNG e CSV");
         }
 
@@ -1287,11 +1406,11 @@ public class LAPR1_1DK_Mafia {
 //        } else {
 //            String title = "Grafico de Barras";
 //            //Gera um file em .png
-//            File file = new File("statistics_" + title + ".png");
+//            File file = new File(title + " " + agregacao + ".png");
 //            //Cria um novo plot
 //            JavaPlot plot = new JavaPlot();
 //            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-//            GNUPlotTerminal terminal = new FileTerminal("png", "statistics_" + title + ".png");
+//            GNUPlotTerminal terminal = new FileTerminal("png", title + " " + agregacao + ".png");
 //            plot.setTerminal(terminal);
 //            //Configuração dos labels
 //            plot.set("xlabel", "\"Observações\"");
@@ -1315,11 +1434,24 @@ public class LAPR1_1DK_Mafia {
         return dateFormat.format(date);
     }
 
-    public static void csvWriteMedias(int consumptionMW[], double consumptionNewMW[], int size) throws FileNotFoundException {
+    public static void csvWriteMediaSimples(int consumptionMW[], double consumptionNewMW[], int size, String agregacao) throws FileNotFoundException {
         String hora;
         hora = getDateTime();
 
-        PrintWriter out = new PrintWriter(new File(nome + "," + hora + ".csv"));
+        PrintWriter out = new PrintWriter(new File(nome + "Media Simples" + " " + agregacao + "," + hora + ".csv"));
+        for (int i = 0; i < size; i++) {
+            out.println(consumptionMW[i] + " (original)");
+            out.printf("%.1f(filtrada)\n", consumptionNewMW[i]);
+        }
+
+        out.close();
+    }
+    
+    public static void csvWriteMediaPesada(int consumptionMW[], double consumptionNewMW[], int size, String agregacao) throws FileNotFoundException {
+        String hora;
+        hora = getDateTime();
+
+        PrintWriter out = new PrintWriter(new File(nome + "Media Pesada" + " " + agregacao + "," + hora + ".csv"));
         for (int i = 0; i < size; i++) {
             out.println(consumptionMW[i] + " (original)");
             out.printf("%.1f(filtrada)\n", consumptionNewMW[i]);
@@ -1328,11 +1460,11 @@ public class LAPR1_1DK_Mafia {
         out.close();
     }
 
-    public static void csvWriteGrafico(int consumptionMW[], int size) throws FileNotFoundException {
+    public static void csvWriteGrafico(int consumptionMW[], int size, String agregacao, String tipo) throws FileNotFoundException {
         String hora;
         hora = getDateTime();
 
-        PrintWriter out = new PrintWriter(new File(nome + "," + hora + ".csv"));
+        PrintWriter out = new PrintWriter(new File(nome + tipo + " " + agregacao + "," + hora + ".csv"));
         for (int i = 0; i < size; i++) {
             out.println(consumptionMW[i]);
         }
@@ -1340,11 +1472,11 @@ public class LAPR1_1DK_Mafia {
         out.close();
     }
 
-    public static void csvWriteBarras(int belowAverageValues, int averageValues, int aboveAverageValues) throws FileNotFoundException {
+    public static void csvWriteBarras(int belowAverageValues, int averageValues, int aboveAverageValues, String agregacao) throws FileNotFoundException {
         String hora;
         hora = getDateTime();
 
-        PrintWriter out = new PrintWriter(new File(nome + "," + hora + ".csv"));
+        PrintWriter out = new PrintWriter(new File(nome + agregacao + " " + "," + hora + ".csv"));
         out.println("Quantidade de valores dentro da média: " + averageValues);
         out.println("Quantidade de valores acima da média: " + aboveAverageValues);
         out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
