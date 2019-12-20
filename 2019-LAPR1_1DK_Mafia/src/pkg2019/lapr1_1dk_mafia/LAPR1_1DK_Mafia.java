@@ -653,7 +653,7 @@ public class LAPR1_1DK_Mafia {
         if (nonInteractiveInvalidInput == false) {
             for (i = n - 1; i <= size; i++) {
                 for (int j = i - n + 1; j <= i; j++) {
-                    total += consumptionMW[i];
+                    total += consumptionMW[j];
                 }
                 mediaMovelSimples[i] = (total / n);
                 total = 0;
