@@ -699,12 +699,12 @@ public class LAPR1_1DK_Mafia {
     }
 
     public static double absoluteError(int[] consumptionMW, double[] arrayY, int size) {
-        double sum = 0;
+        double sum = 0.00;
         for (int i = 0; i < size; i++) {
             sum = sum + Math.abs(arrayY[i] - consumptionMW[i]);
         }
         double absoluteError = sum / size;
-        System.out.println("Erro absoluto: " + absoluteError);
+        System.out.printf("Erro absoluto: %.2f \n" , absoluteError);
         return absoluteError;
     }
 
