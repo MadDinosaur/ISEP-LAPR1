@@ -39,6 +39,8 @@ public class LAPR1_1DK_Mafia {
     static final int NUM_DAYS_IN_YEAR = 365;
     static final String OUTPUT_FILE = "Output.txt";
     static final String nome = "Consumos.csv";
+    final String agregacao = "";
+    
 
     public static void main(String[] args) throws FileNotFoundException {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
@@ -636,8 +638,9 @@ public class LAPR1_1DK_Mafia {
                 n = sc.nextInt();
             }
         }
-        double[] mediaMovelSimples = new double[size - n];
-        int total = 0, i;
+        double[] mediaMovelSimples = new double[size+1];
+        double total = 0.00;
+        int i;
         if (nonInteractiveInvalidInput == false) {
             for (i = n - 1; i <= size; i++) {
                 for (int j = i - n + 1; j <= i; j++) {
@@ -964,7 +967,7 @@ public class LAPR1_1DK_Mafia {
             tab1[i][0] = i;
             tab1[i][1] = grafico1[i];
         }
-        for (int i = 0; i < length - n + 1; i++) {
+        for (int i = n-1; i < length; i++) {
             tab2[i - n + 1][0] = i;
             tab2[i - n + 1][1] = grafico2[i];
         }
@@ -985,7 +988,7 @@ public class LAPR1_1DK_Mafia {
 
         System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
         int op = sc.nextInt();
-//if(args.length==2){
+        //if(args.length==2){
         if (op != 1 && op != 2 && op != 3 && op != 4) {
             do {
                 System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
