@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 public class LAPR1_1DK_Mafia {
@@ -140,18 +142,22 @@ public class LAPR1_1DK_Mafia {
         return option;
     }
 
-    public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
+   public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
         switch (option) {
             case 1:
+                dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
                 size = exchangeInfoDayPeriods(consumptionMW, size, 0, dateTime);
                 break;
             case 2:
+                dayPeriod(consumptionMW, size, 6);
                 size = exchangeInfoDayPeriods(consumptionMW, size, 6, dateTime);
                 break;
             case 3:
+                dayPeriod(consumptionMW, size, 12);
                 size = exchangeInfoDayPeriods(consumptionMW, size, 12, dateTime);
                 break;
             case 4:
+                dayPeriod(consumptionMW, size, 18);
                 size = exchangeInfoDayPeriods(consumptionMW, size, 18, dateTime);
                 break;
             case 5:
@@ -178,151 +184,124 @@ public class LAPR1_1DK_Mafia {
                 + "6. Mensal; %n"
                 + "7. Anual; %n");
         int option = sc.nextInt();
-        switch (option) {
-            case 1:
-                dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
-                break;
-            case 2:
-                dayPeriod(consumptionMW, size, 6);
-                break;
-            case 3:
-                dayPeriod(consumptionMW, size, 12);
-                break;
-            case 4:
-                dayPeriod(consumptionMW, size, 18);
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
-                break;
-            default:
-                System.out.println("Opção inválida. ");
-                break;
+        if (option < 1 || option > 7) {
+            System.out.println("Opção inválida. ");
         }
         return option;
     }
 
+    //menu para escolher a previsão
     public static void definePrevision(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
-        boolean flag, mark;
+        sc.nextLine();
+        String inputDate = "";
         switch (option) {
             case 1:
-                //madrugadas
-                flag = true; //esta flag serve para dizer aos métodos se hão-de chamar a previsão ou verificar o critério mensal
-                mark = true;   //este mark serve para dizer aos métodos se hão-de chamar a previsão ou verificar o critério diário
-                verifyYear(consumptionMW, dateTime, size, flag, mark);
-                break;
             case 2:
-                //manhãs
-                flag = true;
-                mark = true;
-                verifyYear(consumptionMW, dateTime, size, flag, mark);
-                break;
             case 3:
-                //tardes
-                flag = true;
-                mark = true;
-                verifyYear(consumptionMW, dateTime, size, flag, mark);
-                break;
             case 4:
-                //noites
-                flag = true;
-                mark = true;
-                verifyYear(consumptionMW, dateTime, size, flag, mark);
-                break;
             case 5:
-                //dias
-                flag = true;
-                mark = true;
-                verifyYear(consumptionMW, dateTime, size, flag, mark);
+                System.out.println("Insira a data pretendida no formato YYYY-MM-DD:");
+                inputDate = sc.nextLine() + " 00:00";
                 break;
             case 6:
-                //meses
-                flag = true;
-                mark = false;
-                verifyYear(consumptionMW, dateTime, size, flag, mark);
+                System.out.println("Insira a data pretendida no formato YYYY-MM:");
+                inputDate = sc.nextLine() + "-01 00:00";
                 break;
             case 7:
-                //anos
-                flag = false;
-                mark = false;
-                verifyYear(consumptionMW, dateTime, size, flag, mark);
-                break;
-            default:
-                System.out.println("Opção inválida. ");
+                System.out.println("Insira a data pretendida no formato YYYY:");
+                inputDate = sc.nextLine() + "-01-01 00:00";
                 break;
         }
-    }
-
-    //método de verificação do dia
-    public static void verifyDay(int[] consumption, LocalDateTime[] dateTime, int size, int year, int monthsNumber, int daysNumber) throws FileNotFoundException {
-        System.out.println("Insira o dia pretendido. ");
-        int day = sc.nextInt();
-        if (day > 0 && day <= daysNumber) {
-            previsionType(consumption, dateTime, size, year);
-        } else {
-            System.out.println("O dia introduzido não existe nos registos. ");
-        }
-    }
-
-    //método de verificação do mês
-    public static void verifyMonth(int[] consumption, LocalDateTime[] dateTime, int size, int year, int monthsNumber, boolean mark) throws FileNotFoundException {
-        System.out.println("Insira o mês pretendido. ");
-        int month = sc.nextInt();
-        if (month < 01 || month > monthsNumber) {
-            System.out.println("O mês introduzido não existe nos registos. ");
-        } else {
-            if (mark == true) { //caso de ser necessária a verificação dos dias
-                int daysNumber = YearMonth.of(year, month).lengthOfMonth(); //achar o número de dias que o mês inserido tem
-                verifyDay(consumption, dateTime, size, year, monthsNumber, daysNumber);
+        LocalDateTime date = verifyDate(inputDate, dateTime, size, option);
+        if (date != null) {
+            if (date.isAfter(dateTime[size - 1])) {
+                //chamar previsionType
+                //ir buscar última posição do array
             } else {
-                if (mark == false) {
-                    previsionType(consumption, dateTime, size, year);
-                }
+                long index = searchForDateIndex(dateTime, date, option);
+                //chamar previsionType
+                //ir buscar posição do array em "index + n"
+                //validar últimas e primeiras posições do array
             }
         }
     }
+    //valida a data introduzida pelo utilizador e converte para LocalDateTime
+    public static LocalDateTime verifyDate(String inputDate, LocalDateTime[] dateTime, int size, int option) {
+        LocalDateTime date = null;
 
-    //método de verificação do ano  //Os anos já estão a funcionar bem!
-    public static void verifyYear(int[] consumption, LocalDateTime[] dateTime, int size, boolean flag, boolean mark) throws FileNotFoundException {
-        System.out.println("Insira o ano. ");
-        int year = sc.nextInt();
-        if (year < dateTime[0].getYear() || year > dateTime[size - 1].getYear()) {
-            System.out.println("O ano introduzido não existe nos registos. ");
-        } else {
-            if (year == dateTime[size - 1].getYear()) { //caso de ser o último ano
-                if (flag == true) {
-                    int monthsNumber = dateTime[size - 1].getMonthValue(); //ver quantos meses tem o úlimo ano
-                    verifyMonth(consumption, dateTime, size, year, monthsNumber, mark);
-                } else {
-                    if (flag == false) {
-                        previsionType(consumption, dateTime, size, year);
-                    }
-                }
-            } else {
-                if (flag == true) {
-                    int monthsNumber = 12;
-                    verifyMonth(consumption, dateTime, size, year, monthsNumber, mark);
-                } else {
-                    previsionType(consumption, dateTime, size, year);
-                }
+        //valida a data introduzida de modo a ser aceite pelo DateTimeFormatter
+        boolean dateExists = true;
+        String[] splitDate = inputDate.split("-");
+        int year = Integer.parseInt(splitDate[0]);
+        int month = Integer.parseInt(splitDate[1]);
+        int day = Integer.parseInt(splitDate[2].split(" ")[0]);
+        if (year < 1000 || year > 9999 || month < 1 || month > 12 || day < 1 || day > YearMonth.of(year, month).lengthOfMonth()) {
+            System.out.println("Data inválida");
+            dateExists = false;
+        }
+        //conversão da data para LocalDateTime
+        if (dateExists) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            date = LocalDateTime.parse(inputDate, formatter);
+
+            //calcula a previsão mais recente que é possível obter
+            LocalDateTime latestDate = null;
+            switch (option) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    latestDate = dateTime[size - 1].plusDays(1);
+                    break;
+                case 6:
+                    latestDate = dateTime[size - 1].plusMonths(1);
+                    break;
+                case 7:
+                    latestDate = dateTime[size - 1].plusYears(1);
+                    break;
+            }
+            //valida se a data está dentro do array dateTime ou é imediatamente a seguir
+            if (date.isBefore(dateTime[0]) || date.isAfter(latestDate)) {
+                System.out.println("Data inválida.");
+                date = null;
             }
         }
+        return date;
     }
 
-    public static void previsionType(int[] consumption, LocalDateTime[] dateTime, int size, int year) throws FileNotFoundException {
-        System.out.printf("Que tipo de previsão pretende? %n"
+    //retorna o índice no array dateTime da data introduzida
+    public static long searchForDateIndex(LocalDateTime[] dateTime, LocalDateTime date, int option) {
+        long index = 0;
+        switch (option) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                index = Duration.between(dateTime[0], date).toDays();
+                break;
+            case 6:
+                index = ChronoUnit.MONTHS.between(dateTime[0], date);
+                break;
+            case 7:
+                index = Math.abs(dateTime[0].getYear() - date.getYear());
+        }
+        return index;
+    }
+
+    public static void previsionType(int[] consumption, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+        System.out.printf("Que tipo de previsão pretende?%n"
                 + "1. Previsão a partir da média móvel simples;%n"
                 + "2. Previsão a partir da média exponencialmente pesada.%n");
         int option = sc.nextInt();
         switch (option) {
             case 1:
-                previsionMediaSimples(consumption, size, dateTime, year);
+                //previsionMediaSimples(consumption, size);
                 break;
             case 2: {
                 double[] consumptionNewMW = null;
-                previsionMediaMovelPesada(consumption, size);
+                //previsionMediaMovelPesada(consumption, size);
             }
             break;
             default:
