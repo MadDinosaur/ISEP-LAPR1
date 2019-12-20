@@ -39,29 +39,36 @@ public class LAPR1_1DK_Mafia {
     public static void main(String[] args) throws FileNotFoundException {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
-        int size = readFile(consumptionMW, dateTime, args);
-        //if (args.length == 2) {
+        String file = args[1];
+        int size = readFile(consumptionMW, dateTime, file);
+
+//        if (args.length == 2) {
         PrintWriter out = null;
         //menu interativo
-        int option;
+        int option = 0;
         do {
+//                if (option == 6) {
+//                    file = changeFile();
+//                    size = readFile(consumptionMW, dateTime, file);
+//                }
             int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
             option = menu(auxConsumptionMW, dateTime, size, args, out);
         } while (option != 0);
 //        } else {
-//         PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
-//        if (args.length == 12) {
-//          int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-//        DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, args, out);
-//        } else {
-//          System.out.println("Parâmetros inválidos");
+//            PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
+//            if (args.length == 12) {
+//                int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
+//                DefinePeriodNonInteractive(auxConsumptionMW, dateTime, size, args, out);
+//            } else {
+//                System.out.println("Parâmetros inválidos");
+//            }
+//            out.close();
 //        }
-//       out.close();
     }
 
     //lê ficheiro .csv
-    public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime, String[] args) throws FileNotFoundException {
-        Scanner fileScan = new Scanner(new File("DAYTON (2).csv"));
+    public static int readFile(int[] consumptionMW, LocalDateTime[] dateTime, String file) throws FileNotFoundException {
+        Scanner fileScan = new Scanner(new File("DAYTON (2).csv"));//trocar Dayton(2) pelo file
         fileScan.nextLine(); //descarta a linha do cabeçalho
         int numLines = 0; //conta as linhas do documento
         while (fileScan.hasNextLine()) {
@@ -93,12 +100,12 @@ public class LAPR1_1DK_Mafia {
             case 1:
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
-                switch(option){
+                switch (option) {
                     case 1:
                         agregacao = "Madrugadas";
                         break;
-                    case 2: 
-                        agregacao = "Manhãs";
+                    case 2:
+                        agregacao = "Manhas";
                         break;
                     case 3:
                         agregacao = "Tardes";
@@ -116,20 +123,19 @@ public class LAPR1_1DK_Mafia {
                         agregacao = "Anual";
                         break;
                 }
-                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
                 break;
             case 2:
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
-                switch(option)
-                {
-                    case 1: 
+                switch (option) {
+                    case 1:
                         agregacao = "Madrugadas";
                         break;
                     case 2:
-                        agregacao = "Manhãs";
+                        agregacao = "Manhas";
                         break;
-                     case 3:
+                    case 3:
                         agregacao = "Tardes";
                         break;
                     case 4:
@@ -149,8 +155,8 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 3:
                 System.out.printf("Que tipo de filtragem pretende?%n "
-                +"1. A partir da média móvel simples;%n "
-                +"2. A partir da média exponencialmente pesada. %n");
+                        + "1. A partir da média móvel simples;%n "
+                        + "2. A partir da média exponencialmente pesada. %n");
                 int op = sc.nextInt();
                 while (op != 1 && op != 2) {
                     System.out.println("Introduza uma opção válida. ");
@@ -160,70 +166,70 @@ public class LAPR1_1DK_Mafia {
                 size = exchange(consumptionMW, dateTime, size, option);
                 switch (op) {
                     case 1:
-                        switch(option){
-                            case 1: 
-                        agregacao = "Madrugadas";
-                        break;
-                    case 2:
-                        agregacao = "Manhãs";
-                        break;
-                     case 3:
-                        agregacao = "Tardes";
-                        break;
-                    case 4:
-                        agregacao = "Noites";
-                        break;
-                    case 5:
-                        agregacao = "Diario";
-                        break;
-                    case 6:
-                        agregacao = "Mensal";
-                        break;
-                    case 7:
-                        agregacao = "Anual";
-                        break;       
+                        switch (option) {
+                            case 1:
+                                agregacao = "Madrugadas";
+                                break;
+                            case 2:
+                                agregacao = "Manhas";
+                                break;
+                            case 3:
+                                agregacao = "Tardes";
+                                break;
+                            case 4:
+                                agregacao = "Noites";
+                                break;
+                            case 5:
+                                agregacao = "Diario";
+                                break;
+                            case 6:
+                                agregacao = "Mensal";
+                                break;
+                            case 7:
+                                agregacao = "Anual";
+                                break;
                         }
                         MediaMovelSimples(consumptionMW, size, args, out, agregacao);
                         break;
                     case 2:
-                        switch(option){
-                            case 1: 
-                        agregacao = "Madrugadas";
-                        break;
-                    case 2:
-                        agregacao = "Manhãs";
-                        break;
-                     case 3:
-                        agregacao = "Tardes";
-                        break;
-                    case 4:
-                        agregacao = "Noites";
-                        break;
-                    case 5:
-                        agregacao = "Diario";
-                        break;
-                    case 6:
-                        agregacao = "Mensal";
-                        break;
-                    case 7:
-                        agregacao = "Anual";
-                        break;       
+                        switch (option) {
+                            case 1:
+                                agregacao = "Madrugadas";
+                                break;
+                            case 2:
+                                agregacao = "Manhas";
+                                break;
+                            case 3:
+                                agregacao = "Tardes";
+                                break;
+                            case 4:
+                                agregacao = "Noites";
+                                break;
+                            case 5:
+                                agregacao = "Diario";
+                                break;
+                            case 6:
+                                agregacao = "Mensal";
+                                break;
+                            case 7:
+                                agregacao = "Anual";
+                                break;
                         }
-                        MediaMovelPesada(consumptionMW, size, args, out,agregacao);
-                        break;     
+                        MediaMovelPesada(consumptionMW, size, args, out, agregacao);
+                        break;
                 }
                 break;
             case 4:
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
-                switch(option){
-                    case 1: 
+                switch (option) {
+                    case 1:
                         agregacao = "Madrugadas";
                         break;
                     case 2:
-                        agregacao = "Manhãs";
+                        agregacao = "Manhas";
                         break;
-                     case 3:
+                    case 3:
                         agregacao = "Tardes";
                         break;
                     case 4:
@@ -237,9 +243,9 @@ public class LAPR1_1DK_Mafia {
                         break;
                     case 7:
                         agregacao = "Anual";
-                        break;       
-                        }
-                defineOrder(consumptionMW, size, args, out,agregacao);
+                        break;
+                }
+                defineOrder(consumptionMW, size, args, out, agregacao);
                 break;
             case 5:
                 option = definePeriod(consumptionMW, dateTime, size);
@@ -247,18 +253,18 @@ public class LAPR1_1DK_Mafia {
                 definePrevision(consumptionMW, dateTime, size, option);
                 break;
             case 6:
-                changeFile (args);
-                readFile(consumptionMW, dateTime, args);
+                String file = changeFile();
+                size = readFile(consumptionMW, dateTime, file);
                 break;
             case 0:
                 break;
-                default:
-                    System.out.println("Opção inválida. ");
+            default:
+                System.out.println("Opção inválida. ");
         }
         return option;
     }
 
-   public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
+    public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
         switch (option) {
             case 1:
                 dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
@@ -341,6 +347,7 @@ public class LAPR1_1DK_Mafia {
             }
         }
     }
+
     //valida a data introduzida pelo utilizador e converte para LocalDateTime
     public static LocalDateTime verifyDate(String inputDate, LocalDateTime[] dateTime, int size, int option) {
         LocalDateTime date = null;
@@ -442,12 +449,12 @@ public class LAPR1_1DK_Mafia {
             case 1:
                 mergeSort(consumptionMW, start, size - 1);
                 tipo = "Crescente";
-                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
                 break;
             case 2:
                 inverseMergeSort(consumptionMW, start, size - 1);
                 tipo = "Decrescente";
-                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
                 break;
             default:
                 System.out.println("Parâmentro de ordenação inválido.");
@@ -504,7 +511,7 @@ public class LAPR1_1DK_Mafia {
 
         }
 
-        imprimirGraficoBarras(belowAverageValues, averageValues, aboveAverageValues, args, out,agregacao);
+        imprimirGraficoBarras(belowAverageValues, averageValues, aboveAverageValues, args, out, agregacao);
 
         System.out.println("Média : " + (consumptionSum / size) + " " + "MW");
         System.out.println("Quantidade de valores próximos da média: " + averageValues);
@@ -756,12 +763,12 @@ public class LAPR1_1DK_Mafia {
                 total = 0;
             }
             criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n, out, args, agregacao);
-            absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length,out,args);
+            absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, out, args);
         }
         return mediaMovelSimples;
     }
 
-    public static double[] MediaMovelPesada(int[] consumptionMW, int size, String[] args, PrintWriter out,String agregacao) throws FileNotFoundException {
+    public static double[] MediaMovelPesada(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
         double alpha;
         double[] consumptionNewMW = new double[size];
         boolean nonInteractiveInvalidInput = false;
@@ -790,24 +797,23 @@ public class LAPR1_1DK_Mafia {
             }
             // criar 1 gráfico com os valores inicias e o valor de α
             criarGraficoMediaPesada(consumptionMW, consumptionNewMW, size, alpha, args, out);
-            absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length,out,args);
+            absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length, out, args);
         }
         return consumptionNewMW;
     }
 
-    public static double absoluteError(int[] consumptionMW, double[] arrayY, int size,PrintWriter out, String[]args) {
+    public static double absoluteError(int[] consumptionMW, double[] arrayY, int size, PrintWriter out, String[] args) {
         double sum = 0.00;
         for (int i = 0; i < size; i++) {
             sum = sum + Math.abs(arrayY[i] - consumptionMW[i]);
         }
         double absoluteError = sum / size;
-        System.out.printf("Erro absoluto: %.2f \n" , absoluteError);
-        if (args.length==12){
-            out.printf("Erro absoluto: %.2f \n" , absoluteError);
+        System.out.printf("Erro absoluto: %.2f \n", absoluteError);
+        if (args.length == 12) {
+            out.printf("Erro absoluto: %.2f \n", absoluteError);
         }
         return absoluteError;
     }
-
 
     public static void criarGrafico(int[] grafico, int size, String[] args, PrintWriter out, String agregacao, String tipo) throws FileNotFoundException {
 
@@ -842,61 +848,61 @@ public class LAPR1_1DK_Mafia {
                 System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
                 op = sc.nextInt();
             } while (op != 1 && op != 2 && op != 3 && op != 4);
-            }
+        }
 
-            // ainda a desenvolver a parte de guardar em png.
-            if (op == 1) {
+        // ainda a desenvolver a parte de guardar em png.
+        if (op == 1) {
 
-                String title = "Consumo de energia";
-                //Genera um file em .png
-                File file = new File("Grafico " + title + ".png");
-                //Cria um novo plot
-                JavaPlot plot = new JavaPlot();
-                //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-                GNUPlotTerminal terminal = new FileTerminal("png", "Grafico " + tipo + " " + agregacao+ " " + title + ".png");
-                plot.setTerminal(terminal);
-                //Configuração dos labels
-                plot.set("xlabel", "\"Observações\"");
-                plot.set("ylabel", "\"" + title + "\"");
-                plot.addPlot(s);
-                //Define o estilo do gráfico
-                PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
-                stl.setStyle(Style.LINES);
-                plot.setKey(JavaPlot.Key.OFF);
-                plot.plot();
+            String title = "Consumo de energia";
+            //Genera um file em .png
+            File file = new File("Grafico " + title + ".png");
+            //Cria um novo plot
+            JavaPlot plot = new JavaPlot();
+            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+            GNUPlotTerminal terminal = new FileTerminal("png", "Grafico " + tipo + " " + agregacao + " " + title + ".png");
+            plot.setTerminal(terminal);
+            //Configuração dos labels
+            plot.set("xlabel", "\"Observações\"");
+            plot.set("ylabel", "\"" + title + "\"");
+            plot.addPlot(s);
+            //Define o estilo do gráfico
+            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+            stl.setStyle(Style.LINES);
+            plot.setKey(JavaPlot.Key.OFF);
+            plot.plot();
 
-                System.out.println("Ficheiro guardado em PNG.");
-            }
+            System.out.println("Ficheiro guardado em PNG.");
+        }
 
-            if (op == 2) {
-                csvWriteGrafico(grafico, size, agregacao,tipo);
-                System.out.println("Ficheiro guardado em CSV.");
-            }
-            if (op == 3) {
-                String title = "Consumo de energia";
-                //Genera um file em .png
-                File file = new File("Grafico " + title + ".png");
-                //Cria um novo plot
-                JavaPlot plot = new JavaPlot();
-                //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
-                GNUPlotTerminal terminal = new FileTerminal("png", "Grafico " + tipo + " " + agregacao + " " + title + ".png");
-                plot.setTerminal(terminal);
-                //Configuração dos labels
-                plot.set("xlabel", "\"Observações\"");
-                plot.set("ylabel", "\"" + title + "\"");
-                plot.addPlot(s);
-                //Define o estilo do gráfico
-                PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
-                stl.setStyle(Style.LINES);
-                plot.setKey(JavaPlot.Key.OFF);
-                plot.plot();
-                csvWriteGrafico(grafico, size,agregacao,tipo);
-                System.out.println("Ficheiros guardados em PNG e CSV.");
-            }
+        if (op == 2) {
+            csvWriteGrafico(grafico, size, agregacao, tipo);
+            System.out.println("Ficheiro guardado em CSV.");
+        }
+        if (op == 3) {
+            String title = "Consumo de energia";
+            //Genera um file em .png
+            File file = new File("Grafico " + title + ".png");
+            //Cria um novo plot
+            JavaPlot plot = new JavaPlot();
+            //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
+            GNUPlotTerminal terminal = new FileTerminal("png", "Grafico " + tipo + " " + agregacao + " " + title + ".png");
+            plot.setTerminal(terminal);
+            //Configuração dos labels
+            plot.set("xlabel", "\"Observações\"");
+            plot.set("ylabel", "\"" + title + "\"");
+            plot.addPlot(s);
+            //Define o estilo do gráfico
+            PlotStyle stl = ((AbstractPlot) plot.getPlots().get(0)).getPlotStyle();
+            stl.setStyle(Style.LINES);
+            plot.setKey(JavaPlot.Key.OFF);
+            plot.plot();
+            csvWriteGrafico(grafico, size, agregacao, tipo);
+            System.out.println("Ficheiros guardados em PNG e CSV.");
+        }
 
-            if (op == 4) {
-                System.out.println("Nenhum ficheiro guardado.");
-            }
+        if (op == 4) {
+            System.out.println("Nenhum ficheiro guardado.");
+        }
 //        } else {
 //            String title = "Consumo de energia";
 //                //Genera um file em .png
@@ -920,8 +926,7 @@ public class LAPR1_1DK_Mafia {
 //            out.println("Ficheiro guardado em PNG.");
 //
 //        }
-        }
-    
+    }
 
     public static void criarGraficoMediaPesada(int[] grafico1, double[] grafico2, int size, double alpha, String[] args, PrintWriter out) throws FileNotFoundException {
         JavaPlot p = new JavaPlot();
@@ -1000,7 +1005,7 @@ public class LAPR1_1DK_Mafia {
         }
 
         if (op == 2) {
-            csvWriteMediaPesada(grafico1, grafico2, size,agregacao);
+            csvWriteMediaPesada(grafico1, grafico2, size, agregacao);
             System.out.println("Ficheiro guardado em CSV.");
         }
         if (op == 3) {
@@ -1022,7 +1027,7 @@ public class LAPR1_1DK_Mafia {
             stl.setStyle(Style.LINES);
             plot.setKey(JavaPlot.Key.OFF);
             plot.plot();
-            csvWriteMediaPesada(grafico1, grafico2, size,agregacao);
+            csvWriteMediaPesada(grafico1, grafico2, size, agregacao);
             System.out.println("Ficheiros guardados em PNG e CSV.");
 
         }
@@ -1111,7 +1116,7 @@ public class LAPR1_1DK_Mafia {
 
             String title = "Consumo de energia no gráfico n = " + n;
             //Genera um file em .png
-            File file = new File(title + " " + agregacao  + ".png");
+            File file = new File(title + " " + agregacao + ".png");
             //Cria um novo plot
             JavaPlot plot = new JavaPlot();
             //Cria uma classe no terminal que interage com o Gnuplot sem mostrar o gráfico
@@ -1193,10 +1198,10 @@ public class LAPR1_1DK_Mafia {
             case "11":
                 dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
                 size = exchangeInfoDayPeriods(consumptionMW, size, 0, dateTime);
-                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
-                averages(consumptionMW, size, args, out,agregacao);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
+                averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out,agregacao);
+                defineOrder(consumptionMW, size, args, out, agregacao);
 
                 //falta previsão
                 break;
@@ -1204,57 +1209,57 @@ public class LAPR1_1DK_Mafia {
             case "12":
                 dayPeriod(consumptionMW, size, 6);
                 size = exchangeInfoDayPeriods(consumptionMW, size, 6, dateTime);
-                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
                 averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out,agregacao);
+                defineOrder(consumptionMW, size, args, out, agregacao);
 
                 //falta previsão
                 break;
             case "13":
                 dayPeriod(consumptionMW, size, 12);
                 size = exchangeInfoDayPeriods(consumptionMW, size, 12, dateTime);
-                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
                 averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out,agregacao);
+                defineOrder(consumptionMW, size, args, out, agregacao);
 
                 //falta previsão
                 break;
             case "14":
                 dayPeriod(consumptionMW, size, 18);
                 size = exchangeInfoDayPeriods(consumptionMW, size, 18, dateTime);
-                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
                 averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out,agregacao);
+                defineOrder(consumptionMW, size, args, out, agregacao);
 
                 //falta previsão
                 break;
             case "2":
                 size = dailyPeriod(consumptionMW, size, dateTime);
-                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
                 averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out,agregacao);
+                defineOrder(consumptionMW, size, args, out, agregacao);
 
                 //falta previsão
                 break;
             case "3":
                 size = monthlyPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
                 averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out,agregacao);
+                defineOrder(consumptionMW, size, args, out, agregacao);
 
                 //falta previsão
                 break;
             case "4":
                 size = annualPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW, size, args, out,agregacao,tipo);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
                 averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out,agregacao);
+                defineOrder(consumptionMW, size, args, out, agregacao);
 
                 //falta previsão
                 break;
@@ -1265,10 +1270,10 @@ public class LAPR1_1DK_Mafia {
     public static void DefineModel(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
         switch (args[5]) {
             case "1":
-                MediaMovelSimples(consumptionMW, size, args, out,agregacao);
+                MediaMovelSimples(consumptionMW, size, args, out, agregacao);
                 break;
             case "2":
-                MediaMovelPesada(consumptionMW, size, args, out,agregacao);
+                MediaMovelPesada(consumptionMW, size, args, out, agregacao);
                 break;
             default:
                 System.out.println("Parâmetro de modelo inválido.");
@@ -1375,7 +1380,7 @@ public class LAPR1_1DK_Mafia {
         }
 
         if (op == 2) {
-            csvWriteBarras(belowAverageValues, averageValues, aboveAverageValues,agregacao);
+            csvWriteBarras(belowAverageValues, averageValues, aboveAverageValues, agregacao);
             System.out.println("Ficheiro guardado em CSV");
         }
         if (op == 3) {
@@ -1446,7 +1451,7 @@ public class LAPR1_1DK_Mafia {
 
         out.close();
     }
-    
+
     public static void csvWriteMediaPesada(int consumptionMW[], double consumptionNewMW[], int size, String agregacao) throws FileNotFoundException {
         String hora;
         hora = getDateTime();
@@ -1482,10 +1487,11 @@ public class LAPR1_1DK_Mafia {
         out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
         out.close();
     }
-    
-    public static void changeFile (String [] args){
+
+    public static String changeFile() {
+        Scanner novo = new Scanner(System.in);
         System.out.println("Introduza o nome do novo ficheiro com a respetiva extensão. ");
-        String file = sc.nextLine();
-        args[1]=file;
+        String file = novo.nextLine();
+        return file;
     }
 }
