@@ -638,7 +638,7 @@ public class LAPR1_1DK_Mafia {
                 total = 0;
             }
             criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n, out, args);
-            absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length);
+            absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length,out,args);
         }
         return mediaMovelSimples;
     }
@@ -672,20 +672,24 @@ public class LAPR1_1DK_Mafia {
             }
             // criar 1 gráfico com os valores inicias e o valor de α
             criarGraficoMediaPesada(consumptionMW, consumptionNewMW, size, alpha, args, out);
-            absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length);
+            absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length,out,args);
         }
         return consumptionNewMW;
     }
 
-    public static double absoluteError(int[] consumptionMW, double[] arrayY, int size) {
+    public static double absoluteError(int[] consumptionMW, double[] arrayY, int size,PrintWriter out, String[]args) {
         double sum = 0.00;
         for (int i = 0; i < size; i++) {
             sum = sum + Math.abs(arrayY[i] - consumptionMW[i]);
         }
         double absoluteError = sum / size;
         System.out.printf("Erro absoluto: %.2f \n" , absoluteError);
+        if (args.length==12){
+            out.printf("Erro absoluto: %.2f \n" , absoluteError);
+        }
         return absoluteError;
     }
+
 
     public static void criarGrafico(int[] grafico, int size, String[] args, PrintWriter out) throws FileNotFoundException {
 
@@ -748,6 +752,7 @@ public class LAPR1_1DK_Mafia {
 
             if (op == 2) {
                 csvWriteGrafico(grafico, size);
+                 System.out.println("Ficheiro guardado em CSV.");
             }
             if (op == 3) {
                 String title = "Consumo de energia";
