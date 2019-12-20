@@ -44,7 +44,7 @@ public class LAPR1_1DK_Mafia {
         do {
             int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
             option = menu(auxConsumptionMW, dateTime, size, args, out);
-        } while (option != 7);
+        } while (option != 0);
 //        } else {
 //         PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
 //        if (args.length == 12) {
@@ -84,7 +84,7 @@ public class LAPR1_1DK_Mafia {
                 + "4. Ordenar valores;%n"
                 + "5. Efetuar uma previsão;%n"
                 + "6. Alterar o ficheiro;%n"
-                + "7. Sair.%n");
+                + "0. Sair.%n");
         int option = sc.nextInt();
         switch (option) {
             case 1:
@@ -132,6 +132,10 @@ public class LAPR1_1DK_Mafia {
                 changeFile (args);
                 readFile(consumptionMW, dateTime, args);
                 break;
+            case 0:
+                break;
+                default:
+                    System.out.println("Opção inválida. ");
         }
         return option;
     }
