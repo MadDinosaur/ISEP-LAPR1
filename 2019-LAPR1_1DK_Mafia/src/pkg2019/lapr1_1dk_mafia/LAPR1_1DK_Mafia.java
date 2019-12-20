@@ -39,7 +39,8 @@ public class LAPR1_1DK_Mafia {
     public static void main(String[] args) throws FileNotFoundException {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
-        String file = args[1];
+        //String file = args[1];
+        String file="";//só para os testes
         int size = readFile(consumptionMW, dateTime, file);
 
 //        if (args.length == 2) {
