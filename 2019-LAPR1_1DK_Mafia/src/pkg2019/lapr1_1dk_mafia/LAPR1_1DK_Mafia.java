@@ -459,39 +459,64 @@ public class LAPR1_1DK_Mafia {
     public static void definePrevision(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option, String[] args, PrintWriter out) throws FileNotFoundException {
         sc.nextLine();
         String inputDate = "";
-        switch (option) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                System.out.println("Insira a data pretendida no formato YYYYMMDD:");
-                inputDate = sc.nextLine() + " 00:00";
-                break;
-            case 6:
-                System.out.println("Insira a data pretendida no formato YYYYMM:");
-                inputDate = sc.nextLine() + "01 00:00";
-                break;
-            case 7:
-                System.out.println("Insira a data pretendida no formato YYYY:");
-                inputDate = sc.nextLine() + "0101 00:00";
-                break;
-        }
-        LocalDateTime date = verifyDate(inputDate, dateTime, size, option);
-        if (date != null) {
-            if (date.isAfter(dateTime[size - 1])) {
-                double media = previsionType(consumptionMW, dateTime, size, size - 1, args, out);
-                System.out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
-            } else {
-                long index = searchForDateIndex(dateTime, date, option);
-                double media = previsionType(consumptionMW, dateTime, size, (int) index, args, out);
-                System.out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
+        if (args.length == 2) {
+            switch (option) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    System.out.println("Insira a data pretendida no formato YYYYMMDD:");
+                    inputDate = sc.nextLine() + " 00:00";
+                    break;
+                case 6:
+                    System.out.println("Insira a data pretendida no formato YYYYMM:");
+                    inputDate = sc.nextLine() + "01 00:00";
+                    break;
+                case 7:
+                    System.out.println("Insira a data pretendida no formato YYYY:");
+                    inputDate = sc.nextLine() + "0101 00:00";
+                    break;
+            }
+        } else {
+            int option2 = Integer.parseInt(args[3]);
+            switch (option2) {
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 2:
+                    inputDate = args[11];
+                    break;
+                case 3:
+                    inputDate = args[11];
+                    break;
+                case 4:
+                    inputDate = args[11];
+                    break;
+
             }
         }
-    }
-
-    //valida a data introduzida pelo utilizador e converte para LocalDateTime
-    public static LocalDateTime verifyDate(String inputDate, LocalDateTime[] dateTime, int size, int option) {
+            LocalDateTime date = verifyDate(inputDate, dateTime, size, option,args, out);
+            if (date != null) {
+                if (date.isAfter(dateTime[size - 1])) {
+                    double media = previsionType(consumptionMW, dateTime, size, size - 1, args, out);
+                    System.out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
+                    if(args.length==12){
+                        out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
+                    }
+                } else {
+                    long index = searchForDateIndex(dateTime, date, option);
+                    double media = previsionType(consumptionMW, dateTime, size, (int) index, args, out);
+                    System.out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
+                    if(args.length==12){
+                        out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
+                    }
+                }
+            }
+        
+    }    //valida a data introduzida pelo utilizador e converte para LocalDateTime
+    public static LocalDateTime verifyDate(String inputDate, LocalDateTime[] dateTime, int size, int option,String[]args,PrintWriter out) {
         LocalDateTime date = null;
 
         //valida a data introduzida de modo a ser aceite pelo DateTimeFormatter
@@ -501,6 +526,9 @@ public class LAPR1_1DK_Mafia {
         int day = Integer.parseInt(inputDate.substring(6, 8));
         if (year < 1000 || year > 9999 || month < 1 || month > 12 || day < 1 || day > YearMonth.of(year, month).lengthOfMonth()) {
             System.out.println("Data inválida");
+            if(args.length==12){
+                        out.println("Data inválida");
+                    }
             dateExists = false;
         }
         //conversão da data para LocalDateTime
@@ -528,6 +556,9 @@ public class LAPR1_1DK_Mafia {
             //valida se a data está dentro do array dateTime ou é imediatamente a seguir
             if (date.isBefore(dateTime[0]) || date.isAfter(latestDate)) {
                 System.out.println("Data inválida.");
+                if(args.length==12){
+                        out.println("Data inválida");
+                    }
                 date = null;
             }
         }
@@ -559,7 +590,12 @@ public class LAPR1_1DK_Mafia {
         System.out.printf("Que tipo de previsão pretende?%n"
                 + "1. Previsão a partir da média móvel simples;%n"
                 + "2. Previsão a partir da média exponencialmente pesada.%n");
-        int option = sc.nextInt();
+        int option=0;
+        if (args.length==2){
+        option = sc.nextInt();}
+        else{
+            option=Integer.parseInt(args[5]);
+        } 
         switch (option) {
             case 1:
                 //validar últimas e primeiras posições do array
@@ -571,8 +607,8 @@ public class LAPR1_1DK_Mafia {
             }
             default:
                 System.out.println("Opção inválida. ");
-                break;
-        }
+                break;     
+    }
         return 0;
     }
     //--------------------------------------------ORDENACAO--------------------------------------------------------
@@ -1119,10 +1155,10 @@ public class LAPR1_1DK_Mafia {
 
         p.newGraph();
         p.plot();
-
+        //if(args.length==2){
         System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
         int op = sc.nextInt();
-        //if(args.length==2){
+        
         if (op != 1 && op != 2 && op != 3 && op != 4) {
             do {
                 System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
