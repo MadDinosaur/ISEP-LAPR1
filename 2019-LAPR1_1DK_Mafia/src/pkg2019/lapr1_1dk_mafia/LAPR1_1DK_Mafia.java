@@ -40,7 +40,7 @@ public class LAPR1_1DK_Mafia {
         int[] consumptionMW = new int[MAX_OBSERVATIONS];
         LocalDateTime[] dateTime = new LocalDateTime[MAX_OBSERVATIONS];
         //String file = args[1];
-        String file="";//só para os testes
+        String file = "";//só para os testes
         int size = readFile(consumptionMW, dateTime, file);
 
 //        if (args.length == 2) {
@@ -84,6 +84,14 @@ public class LAPR1_1DK_Mafia {
         fileScan.close();
         //retorna para entrar como comprimento do array
         return numLines;
+    }
+
+    //muda o ficheiro .csv
+    public static String changeFile() {
+        Scanner novo = new Scanner(System.in);
+        System.out.println("Introduza o nome do novo ficheiro com a respetiva extensão. ");
+        String file = novo.nextLine();
+        return file;
     }
 
     //menu interativo geral
@@ -251,7 +259,7 @@ public class LAPR1_1DK_Mafia {
             case 5:
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
-                definePrevision(consumptionMW, dateTime, size, option);
+                definePrevision(consumptionMW, dateTime, size, option, args, out);
                 break;
             case 6:
                 String file = changeFile();
@@ -265,6 +273,25 @@ public class LAPR1_1DK_Mafia {
         return option;
     }
 
+    //--------------------------------------------PERIODICIDADE--------------------------------------------------------
+    //menu para escolher a resolução temporal
+    public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+        System.out.printf("Que resolução temporal deseja %n"
+                + "1. Madrugadas;%n"
+                + "2. Manhãs;%n"
+                + "3. Tardes;%n"
+                + "4. Noites;%n"
+                + "5. Diário; %n"
+                + "6. Mensal; %n"
+                + "7. Anual; %n");
+        int option = sc.nextInt();
+        if (option < 1 || option > 7) {
+            System.out.println("Opção inválida. ");
+        }
+        return option;
+    }
+
+    //chama os métodos de conversão de arrays de acordo com a resolução temporal
     public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
         switch (option) {
             case 1:
@@ -299,177 +326,6 @@ public class LAPR1_1DK_Mafia {
         return size;
     }
 
-    //menu para escolher a resolução temporal
-    public static int definePeriod(int[] consumptionMW, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
-        System.out.printf("Que resolução temporal deseja %n"
-                + "1. Madrugadas;%n"
-                + "2. Manhãs;%n"
-                + "3. Tardes;%n"
-                + "4. Noites;%n"
-                + "5. Diário; %n"
-                + "6. Mensal; %n"
-                + "7. Anual; %n");
-        int option = sc.nextInt();
-        if (option < 1 || option > 7) {
-            System.out.println("Opção inválida. ");
-        }
-        return option;
-    }
-
-    //menu para escolher a previsão
-    public static void definePrevision(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
-        sc.nextLine();
-        String inputDate = "";
-        switch (option) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                System.out.println("Insira a data pretendida no formato YYYY-MM-DD:");
-                inputDate = sc.nextLine() + " 00:00";
-                break;
-            case 6:
-                System.out.println("Insira a data pretendida no formato YYYY-MM:");
-                inputDate = sc.nextLine() + "-01 00:00";
-                break;
-            case 7:
-                System.out.println("Insira a data pretendida no formato YYYY:");
-                inputDate = sc.nextLine() + "-01-01 00:00";
-                break;
-        }
-        LocalDateTime date = verifyDate(inputDate, dateTime, size, option);
-        if (date != null) {
-            if (date.isAfter(dateTime[size - 1])) {
-                //chamar previsionType
-                //ir buscar última posição do array
-            } else {
-                long index = searchForDateIndex(dateTime, date, option);
-                //chamar previsionType
-                //ir buscar posição do array em "index + n"
-                //validar últimas e primeiras posições do array
-            }
-        }
-    }
-
-    //valida a data introduzida pelo utilizador e converte para LocalDateTime
-    public static LocalDateTime verifyDate(String inputDate, LocalDateTime[] dateTime, int size, int option) {
-        LocalDateTime date = null;
-
-        //valida a data introduzida de modo a ser aceite pelo DateTimeFormatter
-        boolean dateExists = true;
-        String[] splitDate = inputDate.split("-");
-        int year = Integer.parseInt(splitDate[0]);
-        int month = Integer.parseInt(splitDate[1]);
-        int day = Integer.parseInt(splitDate[2].split(" ")[0]);
-        if (year < 1000 || year > 9999 || month < 1 || month > 12 || day < 1 || day > YearMonth.of(year, month).lengthOfMonth()) {
-            System.out.println("Data inválida");
-            dateExists = false;
-        }
-        //conversão da data para LocalDateTime
-        if (dateExists) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            date = LocalDateTime.parse(inputDate, formatter);
-
-            //calcula a previsão mais recente que é possível obter
-            LocalDateTime latestDate = null;
-            switch (option) {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                    latestDate = dateTime[size - 1].plusDays(1);
-                    break;
-                case 6:
-                    latestDate = dateTime[size - 1].plusMonths(1);
-                    break;
-                case 7:
-                    latestDate = dateTime[size - 1].plusYears(1);
-                    break;
-            }
-            //valida se a data está dentro do array dateTime ou é imediatamente a seguir
-            if (date.isBefore(dateTime[0]) || date.isAfter(latestDate)) {
-                System.out.println("Data inválida.");
-                date = null;
-            }
-        }
-        return date;
-    }
-
-    //retorna o índice no array dateTime da data introduzida
-    public static long searchForDateIndex(LocalDateTime[] dateTime, LocalDateTime date, int option) {
-        long index = 0;
-        switch (option) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-                index = Duration.between(dateTime[0], date).toDays();
-                break;
-            case 6:
-                index = ChronoUnit.MONTHS.between(dateTime[0], date);
-                break;
-            case 7:
-                index = Math.abs(dateTime[0].getYear() - date.getYear());
-        }
-        return index;
-    }
-
-    public static void previsionType(int[] consumption, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
-        System.out.printf("Que tipo de previsão pretende?%n"
-                + "1. Previsão a partir da média móvel simples;%n"
-                + "2. Previsão a partir da média exponencialmente pesada.%n");
-        int option = sc.nextInt();
-        switch (option) {
-            case 1:
-                //previsionMediaSimples(consumption, size);
-                break;
-            case 2: {
-                double[] consumptionNewMW = null;
-                //previsionMediaMovelPesada(consumption, size);
-            }
-            break;
-            default:
-                System.out.println("Opção inválida. ");
-                break;
-        }
-    }
-
-    //ordena de forma crescente ou decrescente conforme escolha do utilizador
-    public static void defineOrder(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
-        int start = 0, order;
-        if (args.length == 12) {
-            order = Integer.parseInt(args[7]);
-        } else {
-            System.out.printf("De que forma pretende ordenar? %n"
-                    + "1. Crescente; %n"
-                    + "2. Decrescente. %n");
-            order = sc.nextInt();
-        }
-
-        switch (order) {
-            case 1:
-                mergeSort(consumptionMW, start, size - 1);
-                tipo = "Crescente";
-                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
-                break;
-            case 2:
-                inverseMergeSort(consumptionMW, start, size - 1);
-                tipo = "Decrescente";
-                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
-                break;
-            default:
-                System.out.println("Parâmentro de ordenação inválido.");
-                if (args.length == 12) {
-                    out.println("Parâmetro de ordenação inválido.");
-                    out.close();
-                }
-                break;
-        }
-    }
-
     //calcula consumos de um dado periodo do dia - manhã, tarde, noite ou madrugada
     public static void dayPeriod(int[] consuptionMW, int size, int startPeriod) throws FileNotFoundException {
         int endPeriod = startPeriod + NUM_HOURS_IN_STAGE;
@@ -486,42 +342,6 @@ public class LAPR1_1DK_Mafia {
                 consuptionMW[startPeriod] += consuptionMW[i];
             }
         }
-    }
-
-    public static int averages(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
-        int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
-        for (int i = 0; i < size; i++) {
-            consumptionSum += consumptionMW[i];
-        }
-        double averageConsumption = consumptionSum / size;
-        double upperLimit = averageConsumption + (averageConsumption * 0.2);
-        double lowerLimit = averageConsumption - (averageConsumption * 0.2);
-        for (int i = 0; i < size; i++) {
-            if (consumptionMW[i] >= lowerLimit && consumptionMW[i] < upperLimit) {
-                averageValues++;
-            }
-            if (consumptionMW[i] < lowerLimit) {
-                belowAverageValues++;
-            }
-            if (consumptionMW[i] >= upperLimit) {
-                aboveAverageValues++;
-            }
-        }
-        if (args.length == 12) {
-            out.println("Média : " + (consumptionSum / size) + " " + "MW");
-            out.println("Quantidade de valores dentro da média: " + averageValues);
-            out.println("Quantidade de valores acima da média: " + aboveAverageValues);
-            out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
-
-        }
-
-        imprimirGraficoBarras(belowAverageValues, averageValues, aboveAverageValues, args, out, agregacao);
-
-        System.out.println("Média : " + (consumptionSum / size) + " " + "MW");
-        System.out.println("Quantidade de valores próximos da média: " + averageValues);
-        System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
-        System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
-        return consumptionSum / size;
     }
 
     //calcula consumos diários
@@ -635,44 +455,169 @@ public class LAPR1_1DK_Mafia {
         return size;
     }
 
-    public static void merge(int consumption[], int start, int middle, int end) {
-
-        // create a temp array
-        int temp[] = new int[end - start + 1];
-
-        // crawlers for both intervals and for temp
-        int i = start, j = middle + 1, k = 0;
-
-        // traverse both arrays and in each iteration add smaller of both elements in temp 
-        while (i <= middle && j <= end) {
-            if (consumption[i] <= consumption[j]) {                           //trocar o sinal para decrescente
-                temp[k] = consumption[i];
-                k += 1;
-                i += 1;
+    //--------------------------------------------PREVISAO--------------------------------------------------------
+    ///menu para escolher a previsão
+    public static void definePrevision(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option, String[] args, PrintWriter out) throws FileNotFoundException {
+        sc.nextLine();
+        String inputDate = "";
+        switch (option) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                System.out.println("Insira a data pretendida no formato YYYYMMDD:");
+                inputDate = sc.nextLine() + " 00:00";
+                break;
+            case 6:
+                System.out.println("Insira a data pretendida no formato YYYYMM:");
+                inputDate = sc.nextLine() + "-01 00:00";
+                break;
+            case 7:
+                System.out.println("Insira a data pretendida no formato YYYY:");
+                inputDate = sc.nextLine() + "-01-01 00:00";
+                break;
+        }
+        LocalDateTime date = verifyDate(inputDate, dateTime, size, option);
+        if (date != null) {
+            if (date.isAfter(dateTime[size - 1])) {
+                double media = previsionType(consumptionMW, dateTime, size, size - 1, args, out);
+                System.out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
             } else {
-                temp[k] = consumption[j];
-                k += 1;
-                j += 1;
+                long index = searchForDateIndex(dateTime, date, option);
+                double media = previsionType(consumptionMW, dateTime, size, (int) index, args, out);
+                System.out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
             }
         }
+    }
 
-        // add elements left in the first interval 
-        while (i <= middle) {
-            temp[k] = consumption[i];
-            k += 1;
-            i += 1;
+    //valida a data introduzida pelo utilizador e converte para LocalDateTime
+    public static LocalDateTime verifyDate(String inputDate, LocalDateTime[] dateTime, int size, int option) {
+        LocalDateTime date = null;
+
+        //valida a data introduzida de modo a ser aceite pelo DateTimeFormatter
+        boolean dateExists = true;
+        int year = Integer.parseInt(inputDate.substring(0, 4));
+        int month = Integer.parseInt(inputDate.substring(4, 6));
+        int day = Integer.parseInt(inputDate.substring(6, 8));
+        if (year < 1000 || year > 9999 || month < 1 || month > 12 || day < 1 || day > YearMonth.of(year, month).lengthOfMonth()) {
+            System.out.println("Data inválida");
+            dateExists = false;
+        }
+        //conversão da data para LocalDateTime
+        if (dateExists) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm");
+            date = LocalDateTime.parse(inputDate, formatter);
+
+            //calcula a previsão mais recente que é possível obter
+            LocalDateTime latestDate = null;
+            switch (option) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    latestDate = dateTime[size - 1].plusDays(1);
+                    break;
+                case 6:
+                    latestDate = dateTime[size - 1].plusMonths(1);
+                    break;
+                case 7:
+                    latestDate = dateTime[size - 1].plusYears(1);
+                    break;
+            }
+            //valida se a data está dentro do array dateTime ou é imediatamente a seguir
+            if (date.isBefore(dateTime[0]) || date.isAfter(latestDate)) {
+                System.out.println("Data inválida.");
+                date = null;
+            }
+        }
+        return date;
+    }
+
+    //retorna o índice no array dateTime da data introduzida
+    public static long searchForDateIndex(LocalDateTime[] dateTime, LocalDateTime date, int option) {
+        long index = 0;
+        switch (option) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                index = Duration.between(dateTime[0], date).toDays();
+                break;
+            case 6:
+                index = ChronoUnit.MONTHS.between(dateTime[0], date);
+                break;
+            case 7:
+                index = Math.abs(dateTime[0].getYear() - date.getYear());
+        }
+        return index;
+    }
+
+    //seleciona previsão por média móvel simples ou pesada
+    public static double previsionType(int[] consumptionMW, LocalDateTime[] dateTime, int size, int index, String[] args, PrintWriter out) throws FileNotFoundException {
+        System.out.printf("Que tipo de previsão pretende?%n"
+                + "1. Previsão a partir da média móvel simples;%n"
+                + "2. Previsão a partir da média exponencialmente pesada.%n");
+        int option = sc.nextInt();
+        switch (option) {
+            case 1:
+                //validar últimas e primeiras posições do array
+                double[] mediaMovelSimples = MediaMovelSimples(consumptionMW, size, args, out, agregacao);
+                return mediaMovelSimples[index];
+            case 2: {
+                double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, args, out, agregacao);
+                return mediaMovelPesada[index];
+            }
+            default:
+                System.out.println("Opção inválida. ");
+                break;
+        }
+        return 0;
+    }
+    //--------------------------------------------ORDENACAO--------------------------------------------------------
+
+    //ordena de forma crescente ou decrescente conforme escolha do utilizador
+    public static void defineOrder(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
+        int start = 0, order;
+        if (args.length == 12) {
+            order = Integer.parseInt(args[7]);
+        } else {
+            System.out.printf("De que forma pretende ordenar? %n"
+                    + "1. Crescente; %n"
+                    + "2. Decrescente. %n");
+            order = sc.nextInt();
         }
 
-        // add elements left in the second interval 
-        while (j <= end) {
-            temp[k] = consumption[j];
-            k += 1;
-            j += 1;
+        switch (order) {
+            case 1:
+                mergeSort(consumptionMW, start, size - 1);
+                tipo = "Crescente";
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
+                break;
+            case 2:
+                inverseMergeSort(consumptionMW, start, size - 1);
+                tipo = "Decrescente";
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
+                break;
+            default:
+                System.out.println("Parâmentro de ordenação inválido.");
+                if (args.length == 12) {
+                    out.println("Parâmetro de ordenação inválido.");
+                    out.close();
+                }
+                break;
         }
+    }
 
-        // copy temp to original interval
-        for (i = start; i <= end; i += 1) {
-            consumption[i] = temp[i - start];
+    //método de ordenação decrescente
+    public static void inverseMergeSort(int consumption[], int start, int end) {
+        if (start < end) {
+            int mid = (start + end) / 2;
+            inverseMergeSort(consumption, start, mid);
+            inverseMergeSort(consumption, mid + 1, end);
+            inverseMerge(consumption, start, mid, end);
         }
     }
 
@@ -716,15 +661,7 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
-    public static void inverseMergeSort(int consumption[], int start, int end) {
-        if (start < end) {
-            int mid = (start + end) / 2;
-            inverseMergeSort(consumption, start, mid);
-            inverseMergeSort(consumption, mid + 1, end);
-            inverseMerge(consumption, start, mid, end);
-        }
-    }
-
+    //método de ordenação crescente
     public static void mergeSort(int consumption[], int start, int end) {
 
         if (start < end) {
@@ -734,6 +671,84 @@ public class LAPR1_1DK_Mafia {
             merge(consumption, start, mid, end);
         }
     }
+
+    public static void merge(int consumption[], int start, int middle, int end) {
+
+        // create a temp array
+        int temp[] = new int[end - start + 1];
+
+        // crawlers for both intervals and for temp
+        int i = start, j = middle + 1, k = 0;
+
+        // traverse both arrays and in each iteration add smaller of both elements in temp 
+        while (i <= middle && j <= end) {
+            if (consumption[i] <= consumption[j]) {                           //trocar o sinal para decrescente
+                temp[k] = consumption[i];
+                k += 1;
+                i += 1;
+            } else {
+                temp[k] = consumption[j];
+                k += 1;
+                j += 1;
+            }
+        }
+
+        // add elements left in the first interval 
+        while (i <= middle) {
+            temp[k] = consumption[i];
+            k += 1;
+            i += 1;
+        }
+
+        // add elements left in the second interval 
+        while (j <= end) {
+            temp[k] = consumption[j];
+            k += 1;
+            j += 1;
+        }
+
+        // copy temp to original interval
+        for (i = start; i <= end; i += 1) {
+            consumption[i] = temp[i - start];
+        }
+    }
+    //--------------------------------------------MEDIA E DISTRUBUIÇÃO--------------------------------------------------------
+    public static int averages(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
+        int consumptionSum = 0, averageValues = 0, aboveAverageValues = 0, belowAverageValues = 0;
+        for (int i = 0; i < size; i++) {
+            consumptionSum += consumptionMW[i];
+        }
+        double averageConsumption = consumptionSum / size;
+        double upperLimit = averageConsumption + (averageConsumption * 0.2);
+        double lowerLimit = averageConsumption - (averageConsumption * 0.2);
+        for (int i = 0; i < size; i++) {
+            if (consumptionMW[i] >= lowerLimit && consumptionMW[i] < upperLimit) {
+                averageValues++;
+            }
+            if (consumptionMW[i] < lowerLimit) {
+                belowAverageValues++;
+            }
+            if (consumptionMW[i] >= upperLimit) {
+                aboveAverageValues++;
+            }
+        }
+        if (args.length == 12) {
+            out.println("Média : " + (consumptionSum / size) + " " + "MW");
+            out.println("Quantidade de valores dentro da média: " + averageValues);
+            out.println("Quantidade de valores acima da média: " + aboveAverageValues);
+            out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+
+        }
+
+        imprimirGraficoBarras(belowAverageValues, averageValues, aboveAverageValues, args, out, agregacao);
+
+        System.out.println("Média : " + (consumptionSum / size) + " " + "MW");
+        System.out.println("Quantidade de valores próximos da média: " + averageValues);
+        System.out.println("Quantidade de valores acima da média: " + aboveAverageValues);
+        System.out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
+        return consumptionSum / size;
+    }
+    //--------------------------------------------FILTRAGEM--------------------------------------------------------
 
     public static double[] MediaMovelSimples(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
         int n;
@@ -755,19 +770,19 @@ public class LAPR1_1DK_Mafia {
                 n = sc.nextInt();
             }
         }
-        double[] mediaMovelSimples = new double[size + 1];
-        double total = 0.00;
+        double[] mediaMovelSimples = new double[size];
         int i;
         if (nonInteractiveInvalidInput == false) {
-            for (i = n - 1; i <= size; i++) {
-                for (int j = i - n + 1; j <= i; j++) {
-                    total += consumptionMW[j];
+            for (i = n - 1; i < size; i++) {
+                for (int k = 0; k < n; k++) {
+                    mediaMovelSimples[i] += consumptionMW[i - k];
                 }
-                mediaMovelSimples[i] = (total / n);
-                total = 0;
+                mediaMovelSimples[i] /= n;
             }
+
             criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n, out, args, agregacao);
             absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, out, args);
+            //System.out.println(Arrays.toString(mediaMovelSimples));
         }
         return mediaMovelSimples;
     }
@@ -818,6 +833,7 @@ public class LAPR1_1DK_Mafia {
         }
         return absoluteError;
     }
+    //--------------------------------------------GRAFICOS--------------------------------------------------------
 
     public static void criarGrafico(int[] grafico, int size, String[] args, PrintWriter out, String agregacao, String tipo) throws FileNotFoundException {
 
@@ -1197,131 +1213,6 @@ public class LAPR1_1DK_Mafia {
 
     }
 
-    private static void DefinePeriodNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size, String[] args, PrintWriter out) throws FileNotFoundException {
-        switch (args[3]) {
-            case "11":
-                dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
-                size = exchangeInfoDayPeriods(consumptionMW, size, 0, dateTime);
-                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
-                averages(consumptionMW, size, args, out, agregacao);
-                DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out, agregacao);
-
-                //falta previsão
-                break;
-
-            case "12":
-                dayPeriod(consumptionMW, size, 6);
-                size = exchangeInfoDayPeriods(consumptionMW, size, 6, dateTime);
-                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
-                averages(consumptionMW, size, args, out, agregacao);
-                DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out, agregacao);
-
-                //falta previsão
-                break;
-            case "13":
-                dayPeriod(consumptionMW, size, 12);
-                size = exchangeInfoDayPeriods(consumptionMW, size, 12, dateTime);
-                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
-                averages(consumptionMW, size, args, out, agregacao);
-                DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out, agregacao);
-
-                //falta previsão
-                break;
-            case "14":
-                dayPeriod(consumptionMW, size, 18);
-                size = exchangeInfoDayPeriods(consumptionMW, size, 18, dateTime);
-                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
-                averages(consumptionMW, size, args, out, agregacao);
-                DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out, agregacao);
-
-                //falta previsão
-                break;
-            case "2":
-                size = dailyPeriod(consumptionMW, size, dateTime);
-                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
-                averages(consumptionMW, size, args, out, agregacao);
-                DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out, agregacao);
-
-                //falta previsão
-                break;
-            case "3":
-                size = monthlyPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
-                averages(consumptionMW, size, args, out, agregacao);
-                DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out, agregacao);
-
-                //falta previsão
-                break;
-            case "4":
-                size = annualPeriod(consumptionMW, dateTime, size);
-                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
-                averages(consumptionMW, size, args, out, agregacao);
-                DefineModel(consumptionMW, size, args, out);
-                defineOrder(consumptionMW, size, args, out, agregacao);
-
-                //falta previsão
-                break;
-
-        }
-    }
-
-    public static void DefineModel(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
-        switch (args[5]) {
-            case "1":
-                MediaMovelSimples(consumptionMW, size, args, out, agregacao);
-                break;
-            case "2":
-                MediaMovelPesada(consumptionMW, size, args, out, agregacao);
-                break;
-            default:
-                System.out.println("Parâmetro de modelo inválido.");
-                out.println("Parâmetro de modelo inválido.");
-                break;
-        }
-    }
-
-    public static void previsionMediaSimples(int[] consumptionMW, int size, LocalDateTime[] dateTime, int year) throws FileNotFoundException {
-        System.out.println("Introduza o valor da ordem. ");
-        int n = sc.nextInt();
-        if (n < 0 || n > year - dateTime[0].getYear()) {
-            System.out.println("Introduza outro valor de ordem. ");
-            n = sc.nextInt();
-        }
-        double sum = 0;
-        for (int k = year - dateTime[0].getYear() - 1; k <= year - dateTime[0].getYear() - n; k++) {
-            sum = consumptionMW[k] + sum;
-        }
-        System.out.print(sum * (1) / (n) + " MW. ");
-    }
-
-    public static double previsionMediaMovelPesada(int[] consumptionMW, int size) {
-        double[] consumptionNewMW = new double[size];
-        System.out.println("Insira o alfa. ");
-        double alpha = sc.nextDouble();
-        while (alpha <= 0 || alpha >= 1) {
-            System.out.println("Valor errado. Insira novo valor de α entre 0 e 1: ");
-            alpha = sc.nextFloat();
-        }
-        for (int i = size - 1; i < 0; i--) {
-            consumptionNewMW[0] = consumptionMW[0];
-            consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
-            System.out.print(consumptionNewMW[0]);
-        }
-        double sum = 0;
-        for (int k = 0; k < size - 1; k++) {
-            sum = sum + consumptionNewMW[k];
-        }
-        double x = (sum) / (size - 2);
-        System.out.print(x + " MW. %n ");
-        return x;
-    }
-
     public static void imprimirGraficoBarras(int belowAverageValues, int averageValues, int aboveAverageValues, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
         JavaPlot p = new JavaPlot();
         PlotStyle myPlotStyle = new PlotStyle();
@@ -1492,10 +1383,94 @@ public class LAPR1_1DK_Mafia {
         out.close();
     }
 
-    public static String changeFile() {
-        Scanner novo = new Scanner(System.in);
-        System.out.println("Introduza o nome do novo ficheiro com a respetiva extensão. ");
-        String file = novo.nextLine();
-        return file;
+    //--------------------------------------------NAO INTERATIVO--------------------------------------------------------
+    private static void DefinePeriodNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+        switch (args[3]) {
+            case "11":
+                dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
+                size = exchangeInfoDayPeriods(consumptionMW, size, 0, dateTime);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
+                averages(consumptionMW, size, args, out, agregacao);
+                DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out, agregacao);
+
+                //falta previsão
+                break;
+
+            case "12":
+                dayPeriod(consumptionMW, size, 6);
+                size = exchangeInfoDayPeriods(consumptionMW, size, 6, dateTime);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
+                averages(consumptionMW, size, args, out, agregacao);
+                DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out, agregacao);
+
+                //falta previsão
+                break;
+            case "13":
+                dayPeriod(consumptionMW, size, 12);
+                size = exchangeInfoDayPeriods(consumptionMW, size, 12, dateTime);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
+                averages(consumptionMW, size, args, out, agregacao);
+                DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out, agregacao);
+
+                //falta previsão
+                break;
+            case "14":
+                dayPeriod(consumptionMW, size, 18);
+                size = exchangeInfoDayPeriods(consumptionMW, size, 18, dateTime);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
+                averages(consumptionMW, size, args, out, agregacao);
+                DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out, agregacao);
+
+                //falta previsão
+                break;
+            case "2":
+                size = dailyPeriod(consumptionMW, size, dateTime);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
+                averages(consumptionMW, size, args, out, agregacao);
+                DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out, agregacao);
+
+                //falta previsão
+                break;
+            case "3":
+                size = monthlyPeriod(consumptionMW, dateTime, size);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
+                averages(consumptionMW, size, args, out, agregacao);
+                DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out, agregacao);
+
+                //falta previsão
+                break;
+            case "4":
+                size = annualPeriod(consumptionMW, dateTime, size);
+                criarGrafico(consumptionMW, size, args, out, agregacao, tipo);
+                averages(consumptionMW, size, args, out, agregacao);
+                DefineModel(consumptionMW, size, args, out);
+                defineOrder(consumptionMW, size, args, out, agregacao);
+
+                //falta previsão
+                break;
+
+        }
     }
+
+    public static void DefineModel(int[] consumptionMW, int size, String[] args, PrintWriter out) throws FileNotFoundException {
+        switch (args[5]) {
+            case "1":
+                MediaMovelSimples(consumptionMW, size, args, out, agregacao);
+                break;
+            case "2":
+                MediaMovelPesada(consumptionMW, size, args, out, agregacao);
+                break;
+            default:
+                System.out.println("Parâmetro de modelo inválido.");
+                out.println("Parâmetro de modelo inválido.");
+                break;
+        }
+    }
+
 }
