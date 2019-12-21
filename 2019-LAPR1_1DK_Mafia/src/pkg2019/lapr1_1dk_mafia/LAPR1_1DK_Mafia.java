@@ -251,7 +251,7 @@ public class LAPR1_1DK_Mafia {
             case 5:
                 option = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option);
-                definePrevision(consumptionMW, dateTime, size, option);
+                definePrevision(consumptionMW, dateTime, size, option, args, out);
                 break;
             case 6:
                 String file = changeFile();
@@ -313,8 +313,8 @@ public class LAPR1_1DK_Mafia {
         return option;
     }
 
-    //menu para escolher a previsão
-    public static void definePrevision(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
+    ///menu para escolher a previsão
+    public static void definePrevision(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option, String[] args, PrintWriter out) throws FileNotFoundException {
         sc.nextLine();
         String inputDate = "";
         switch (option) {
@@ -338,13 +338,12 @@ public class LAPR1_1DK_Mafia {
         LocalDateTime date = verifyDate(inputDate, dateTime, size, option);
         if (date != null) {
             if (date.isAfter(dateTime[size - 1])) {
-                //chamar previsionType
-                //ir buscar última posição do array
+                double media = previsionType(consumptionMW, dateTime, size, size - 1, args, out);
+                System.out.println("A previsão de consumo para a data "+date.format(DateTimeFormatter.ISO_DATE)+" é de "+media+" MW.");
             } else {
                 long index = searchForDateIndex(dateTime, date, option);
-                //chamar previsionType
-                //ir buscar posição do array em "index + n"
-                //validar últimas e primeiras posições do array
+                double media = previsionType(consumptionMW, dateTime, size, (int)index, args, out);
+                System.out.println("A previsão de consumo para a data "+date.format(DateTimeFormatter.ISO_DATE)+" é de "+media+" MW.");
             }
         }
     }
@@ -414,24 +413,25 @@ public class LAPR1_1DK_Mafia {
         return index;
     }
 
-    public static void previsionType(int[] consumption, LocalDateTime[] dateTime, int size) throws FileNotFoundException {
+    public static double previsionType(int[] consumptionMW, LocalDateTime[] dateTime, int size, int index, String[] args, PrintWriter out) throws FileNotFoundException {
         System.out.printf("Que tipo de previsão pretende?%n"
                 + "1. Previsão a partir da média móvel simples;%n"
                 + "2. Previsão a partir da média exponencialmente pesada.%n");
         int option = sc.nextInt();
         switch (option) {
             case 1:
-                //previsionMediaSimples(consumption, size);
-                break;
+                //validar últimas e primeiras posições do array
+                double[] mediaMovelSimples = MediaMovelSimples(consumptionMW, size, args, out, agregacao);
+                return mediaMovelSimples[index];
             case 2: {
-                double[] consumptionNewMW = null;
-                //previsionMediaMovelPesada(consumption, size);
+                double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, args, out, agregacao);
+                return mediaMovelPesada[index];
             }
-            break;
             default:
                 System.out.println("Opção inválida. ");
                 break;
         }
+        return 0;
     }
 
     //ordena de forma crescente ou decrescente conforme escolha do utilizador
@@ -732,7 +732,7 @@ public class LAPR1_1DK_Mafia {
         }
     }
 
-    public static double[] MediaMovelSimples(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
+   public static double[] MediaMovelSimples(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao) throws FileNotFoundException {
         int n;
         boolean nonInteractiveInvalidInput = false;
         if (args.length == 12) {
@@ -752,19 +752,19 @@ public class LAPR1_1DK_Mafia {
                 n = sc.nextInt();
             }
         }
-        double[] mediaMovelSimples = new double[size + 1];
-        double total = 0.00;
+        double[] mediaMovelSimples = new double[size];
         int i;
         if (nonInteractiveInvalidInput == false) {
-            for (i = n - 1; i <= size; i++) {
-                for (int j = i - n + 1; j <= i; j++) {
-                    total += consumptionMW[j];
+            for (i = n - 1; i < size; i++) {
+                for (int k = 0; k < n; k++){
+                    mediaMovelSimples[i] += consumptionMW[i-k];
                 }
-                mediaMovelSimples[i] = (total / n);
-                total = 0;
+                mediaMovelSimples[i] /= n;
             }
+            
             criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n, out, args, agregacao);
             absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, out, args);
+            //System.out.println(Arrays.toString(mediaMovelSimples));
         }
         return mediaMovelSimples;
     }
@@ -778,7 +778,7 @@ public class LAPR1_1DK_Mafia {
         } else {
             System.out.println("Insira o valor de α (entre 0 e 1): ");
             alpha = sc.nextDouble();
-        }
+                    }
 
         while (alpha < 0 || alpha > 1) {
             if (args.length == 12) {
@@ -797,7 +797,7 @@ public class LAPR1_1DK_Mafia {
                 consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
             }
             // criar 1 gráfico com os valores inicias e o valor de α
-            criarGraficoMediaPesada(consumptionMW, consumptionNewMW, size, alpha, args, out);
+            criarGraficoMediaPesada(consumptionMW, consumptionNewMW, size, alpha,args,out);
             absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length, out, args);
         }
         return consumptionNewMW;
