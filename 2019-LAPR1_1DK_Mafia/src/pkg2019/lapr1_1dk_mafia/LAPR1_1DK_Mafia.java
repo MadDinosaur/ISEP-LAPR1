@@ -497,26 +497,27 @@ public class LAPR1_1DK_Mafia {
 
             }
         }
-            LocalDateTime date = verifyDate(inputDate, dateTime, size, option,args, out);
-            if (date != null) {
-                if (date.isAfter(dateTime[size - 1])) {
-                    double media = previsionType(consumptionMW, dateTime, size, size - 1, args, out);
-                    System.out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
-                    if(args.length==12){
-                        out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
-                    }
-                } else {
-                    long index = searchForDateIndex(dateTime, date, option);
-                    double media = previsionType(consumptionMW, dateTime, size, (int) index, args, out);
-                    System.out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
-                    if(args.length==12){
-                        out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
-                    }
+        LocalDateTime date = verifyDate(inputDate, dateTime, size, option, args, out);
+        if (date != null) {
+            if (date.isAfter(dateTime[size - 1])) {
+                double media = previsionType(consumptionMW, dateTime, size, size - 1, args, out);
+                System.out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
+                if (args.length == 12) {
+                    out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
+                }
+            } else {
+                long index = searchForDateIndex(dateTime, date, option,args);
+                double media = previsionType(consumptionMW, dateTime, size, (int) index, args, out);
+                System.out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
+                if (args.length == 12) {
+                    out.println("A previsão de consumo para a data " + inputDate + " é de " + media + " MW.");
                 }
             }
-        
+        }
+
     }    //valida a data introduzida pelo utilizador e converte para LocalDateTime
-    public static LocalDateTime verifyDate(String inputDate, LocalDateTime[] dateTime, int size, int option,String[]args,PrintWriter out) {
+
+    public static LocalDateTime verifyDate(String inputDate, LocalDateTime[] dateTime, int size, int option, String[] args, PrintWriter out) {
         LocalDateTime date = null;
 
         //valida a data introduzida de modo a ser aceite pelo DateTimeFormatter
@@ -526,9 +527,9 @@ public class LAPR1_1DK_Mafia {
         int day = Integer.parseInt(inputDate.substring(6, 8));
         if (year < 1000 || year > 9999 || month < 1 || month > 12 || day < 1 || day > YearMonth.of(year, month).lengthOfMonth()) {
             System.out.println("Data inválida");
-            if(args.length==12){
-                        out.println("Data inválida");
-                    }
+            if (args.length == 12) {
+                out.println("Data inválida");
+            }
             dateExists = false;
         }
         //conversão da data para LocalDateTime
@@ -556,9 +557,9 @@ public class LAPR1_1DK_Mafia {
             //valida se a data está dentro do array dateTime ou é imediatamente a seguir
             if (date.isBefore(dateTime[0]) || date.isAfter(latestDate)) {
                 System.out.println("Data inválida.");
-                if(args.length==12){
-                        out.println("Data inválida");
-                    }
+                if (args.length == 12) {
+                    out.println("Data inválida");
+                }
                 date = null;
             }
         }
@@ -566,8 +567,9 @@ public class LAPR1_1DK_Mafia {
     }
 
     //retorna o índice no array dateTime da data introduzida
-    public static long searchForDateIndex(LocalDateTime[] dateTime, LocalDateTime date, int option) {
+    public static long searchForDateIndex(LocalDateTime[] dateTime, LocalDateTime date, int option,String[]args) {
         long index = 0;
+        if(args.length==2){
         switch (option) {
             case 1:
             case 2:
@@ -582,20 +584,42 @@ public class LAPR1_1DK_Mafia {
             case 7:
                 index = Math.abs(dateTime[0].getYear() - date.getYear());
         }
+        }
+        else {
+            int option2 = Integer.parseInt(args[3]);
+            switch (option2) {
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 2:
+                    index = Duration.between(dateTime[0], date).toDays();
+                    break;
+                case 3:
+                    index = ChronoUnit.MONTHS.between(dateTime[0], date);
+
+                    break;
+                case 4:
+                    index = Math.abs(dateTime[0].getYear() - date.getYear());
+                    break;
+
+            }
+        }
         return index;
     }
-
+    
     //seleciona previsão por média móvel simples ou pesada
     public static double previsionType(int[] consumptionMW, LocalDateTime[] dateTime, int size, int index, String[] args, PrintWriter out) throws FileNotFoundException {
-        System.out.printf("Que tipo de previsão pretende?%n"
-                + "1. Previsão a partir da média móvel simples;%n"
-                + "2. Previsão a partir da média exponencialmente pesada.%n");
-        int option=0;
-        if (args.length==2){
-        option = sc.nextInt();}
-        else{
-            option=Integer.parseInt(args[5]);
-        } 
+        int option = 0;
+        if (args.length == 2) {
+            System.out.printf("Que tipo de previsão pretende?%n"
+                    + "1. Previsão a partir da média móvel simples;%n"
+                    + "2. Previsão a partir da média exponencialmente pesada.%n");
+
+            option = sc.nextInt();
+        } else {
+            option = Integer.parseInt(args[5]);
+        }
         switch (option) {
             case 1:
                 //validar últimas e primeiras posições do array
@@ -607,8 +631,8 @@ public class LAPR1_1DK_Mafia {
             }
             default:
                 System.out.println("Opção inválida. ");
-                break;     
-    }
+                break;
+        }
         return 0;
     }
     //--------------------------------------------ORDENACAO--------------------------------------------------------
