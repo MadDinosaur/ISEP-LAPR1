@@ -31,6 +31,10 @@ public class LAPR1_1DK_Mafia {
     static final int NUM_STAGES = 4;
     static final int NUM_HOURS = 24;
     static final int NUM_DAYS_IN_YEAR = 365;
+    static final int START=0;
+    static final int END_DAWN=6;
+    static final int END_MORNING=12;
+    static final int END_AFTERNOON=18;
     static final String OUTPUT_FILE = "Output.txt";
     static final String nome = "Consumos ";
     static String agregacao = "";
@@ -294,20 +298,20 @@ public class LAPR1_1DK_Mafia {
     public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
         switch (option) {
             case 1:
-                dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
-                size = exchangeInfoDayPeriods(consumptionMW, size, 0, dateTime);
+                dayPeriod(consumptionMW, size, START); 
+                size = exchangeInfoDayPeriods(consumptionMW, size, START, dateTime);
                 break;
             case 2:
-                dayPeriod(consumptionMW, size, 6);
-                size = exchangeInfoDayPeriods(consumptionMW, size, 6, dateTime);
+                dayPeriod(consumptionMW, size, END_DAWN);
+                size = exchangeInfoDayPeriods(consumptionMW, size, END_DAWN, dateTime);
                 break;
             case 3:
-                dayPeriod(consumptionMW, size, 12);
-                size = exchangeInfoDayPeriods(consumptionMW, size, 12, dateTime);
+                dayPeriod(consumptionMW, size, END_MORNING);
+                size = exchangeInfoDayPeriods(consumptionMW, size, END_MORNING, dateTime);
                 break;
             case 4:
-                dayPeriod(consumptionMW, size, 18);
-                size = exchangeInfoDayPeriods(consumptionMW, size, 18, dateTime);
+                dayPeriod(consumptionMW, size, END_AFTERNOON);
+                size = exchangeInfoDayPeriods(consumptionMW, size, END_AFTERNOON, dateTime);
                 break;
             case 5:
                 size = dailyPeriod(consumptionMW, size, dateTime);
@@ -681,15 +685,12 @@ public class LAPR1_1DK_Mafia {
     }
 
     public static void inverseMerge(int consumption[], int start, int middle, int end) {
-        // create a temp array
         int temp[] = new int[end - start + 1];
 
-        // crawlers for both intervals and for temp
         int i = start, j = middle + 1, k = 0;
 
-        // traverse both arrays and in each iteration add smaller of both elements in temp 
         while (i <= middle && j <= end) {
-            if (consumption[i] >= consumption[j]) {                           //trocar o sinal para decrescente
+            if (consumption[i] >= consumption[j]) {                          
                 temp[k] = consumption[i];
                 k += 1;
                 i += 1;
@@ -700,21 +701,18 @@ public class LAPR1_1DK_Mafia {
             }
         }
 
-        // add elements left in the first interval 
         while (i <= middle) {
             temp[k] = consumption[i];
             k += 1;
             i += 1;
         }
 
-        // add elements left in the second interval 
         while (j <= end) {
             temp[k] = consumption[j];
             k += 1;
             j += 1;
         }
 
-        // copy temp to original interval
         for (i = start; i <= end; i += 1) {
             consumption[i] = temp[i - start];
         }
@@ -733,15 +731,12 @@ public class LAPR1_1DK_Mafia {
 
     public static void merge(int consumption[], int start, int middle, int end) {
 
-        // create a temp array
         int temp[] = new int[end - start + 1];
 
-        // crawlers for both intervals and for temp
         int i = start, j = middle + 1, k = 0;
 
-        // traverse both arrays and in each iteration add smaller of both elements in temp 
         while (i <= middle && j <= end) {
-            if (consumption[i] <= consumption[j]) {                           //trocar o sinal para decrescente
+            if (consumption[i] <= consumption[j]) {                           
                 temp[k] = consumption[i];
                 k += 1;
                 i += 1;
@@ -752,21 +747,18 @@ public class LAPR1_1DK_Mafia {
             }
         }
 
-        // add elements left in the first interval 
         while (i <= middle) {
             temp[k] = consumption[i];
             k += 1;
             i += 1;
         }
 
-        // add elements left in the second interval 
         while (j <= end) {
             temp[k] = consumption[j];
             k += 1;
             j += 1;
         }
 
-        // copy temp to original interval
         for (i = start; i <= end; i += 1) {
             consumption[i] = temp[i - start];
         }
@@ -1446,8 +1438,8 @@ public class LAPR1_1DK_Mafia {
     private static void DefinePeriodNonInteractive(int[] consumptionMW, LocalDateTime[] dateTime, int size, String[] args, PrintWriter out) throws FileNotFoundException {
         switch (args[3]) {
             case "11":
-                dayPeriod(consumptionMW, size, 0); //TODO: alterar números para constantes
-                size = exchangeInfoDayPeriods(consumptionMW, size, 0, dateTime);
+                dayPeriod(consumptionMW, size, START); 
+                size = exchangeInfoDayPeriods(consumptionMW, size, START, dateTime);
                 criarGrafico(consumptionMW, size, args, out, agregacao, tipo,file);
                 averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
@@ -1457,8 +1449,8 @@ public class LAPR1_1DK_Mafia {
                 break;
 
             case "12":
-                dayPeriod(consumptionMW, size, 6);
-                size = exchangeInfoDayPeriods(consumptionMW, size, 6, dateTime);
+                dayPeriod(consumptionMW, size, END_DAWN);
+                size = exchangeInfoDayPeriods(consumptionMW, size, END_DAWN, dateTime);
                 criarGrafico(consumptionMW, size, args, out, agregacao, tipo,file);
                 averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
@@ -1467,8 +1459,8 @@ public class LAPR1_1DK_Mafia {
                 //falta previsão
                 break;
             case "13":
-                dayPeriod(consumptionMW, size, 12);
-                size = exchangeInfoDayPeriods(consumptionMW, size, 12, dateTime);
+                dayPeriod(consumptionMW, size, END_MORNING);
+                size = exchangeInfoDayPeriods(consumptionMW, size, END_MORNING, dateTime);
                 criarGrafico(consumptionMW, size, args, out, agregacao, tipo,file);
                 averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
@@ -1477,8 +1469,8 @@ public class LAPR1_1DK_Mafia {
                 //falta previsão
                 break;
             case "14":
-                dayPeriod(consumptionMW, size, 18);
-                size = exchangeInfoDayPeriods(consumptionMW, size, 18, dateTime);
+                dayPeriod(consumptionMW, size, END_AFTERNOON);
+                size = exchangeInfoDayPeriods(consumptionMW, size, END_AFTERNOON, dateTime);
                 criarGrafico(consumptionMW, size, args, out, agregacao, tipo,file);
                 averages(consumptionMW, size, args, out, agregacao);
                 DefineModel(consumptionMW, size, args, out);
