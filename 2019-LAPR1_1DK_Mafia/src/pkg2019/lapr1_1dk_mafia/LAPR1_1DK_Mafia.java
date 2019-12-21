@@ -292,6 +292,9 @@ public class LAPR1_1DK_Mafia {
             case 7:
                 size = annualPeriod(consumptionMW, dateTime, size);
                 break;
+                default:
+                    System.out.println("Opção inválida. ");
+                    break;
         }
         return size;
     }
