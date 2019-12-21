@@ -471,11 +471,11 @@ public class LAPR1_1DK_Mafia {
                 break;
             case 6:
                 System.out.println("Insira a data pretendida no formato YYYYMM:");
-                inputDate = sc.nextLine() + "-01 00:00";
+                inputDate = sc.nextLine() + "01 00:00";
                 break;
             case 7:
                 System.out.println("Insira a data pretendida no formato YYYY:");
-                inputDate = sc.nextLine() + "-01-01 00:00";
+                inputDate = sc.nextLine() + "0101 00:00";
                 break;
         }
         LocalDateTime date = verifyDate(inputDate, dateTime, size, option);
