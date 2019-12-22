@@ -12,7 +12,7 @@ public class LAPR1_1DK_MafiaTest {
     public LAPR1_1DK_MafiaTest() {
     }
     String[] args = new String[2];
-    String file = "";
+    String file = "DAYTON (2).csv";
     String agregacao = "";
     PrintWriter out = null;
 
@@ -99,8 +99,6 @@ public class LAPR1_1DK_MafiaTest {
         size = LAPR1_1DK_Mafia.exchangeInfoDayPeriods(consuptionMW, size, startPeriod, dateTime);
         int[] expResult = {12097, 11734, 12607, 14637, 14516, 13911, 13242, 12285, 10834, 14204, 15597, 16216, 15653, 13151, 12736, 12664, 14823, 16737, 15818, 15609, 15027, 14841, 13124, 12870, 13354, 14183, 14522, 13249, 13020, 10442, 10634};
         int[] result = Arrays.copyOf(consuptionMW, size);
-        System.out.println(Arrays.toString(expResult));
-        System.out.println(Arrays.toString(result));
         assertTrue(Arrays.equals(expResult, result));
     }
 
@@ -122,8 +120,6 @@ public class LAPR1_1DK_MafiaTest {
         LAPR1_1DK_Mafia.monthlyPeriod(consumptionMW, dateTime, size);
         int[] expResult = {1618977, 776076};
         int[] result = Arrays.copyOf(consumptionMW, 2);
-        System.out.println(Arrays.toString(expResult));
-        System.out.println(Arrays.toString(result));
         assertTrue(Arrays.equals(expResult, result));
     }
 
@@ -186,8 +182,6 @@ public class LAPR1_1DK_MafiaTest {
         LAPR1_1DK_Mafia.annualPeriod(consumptionMW, dateTime, size);
         int[] expResult = {17825259, 1492234};
         int[] result = Arrays.copyOf(consumptionMW, 2);
-        System.out.println(Arrays.toString(expResult));
-        System.out.println(Arrays.toString(result));
         assertTrue(Arrays.equals(expResult, result));
     }
 
@@ -241,22 +235,21 @@ public class LAPR1_1DK_MafiaTest {
         boolean isMonth = true;
         int expResult = 2;
         int result = LAPR1_1DK_Mafia.exchangeInfoMonthsYears(consumptionMW, dateTime, size, numOccorrences, isMonth);
-        System.out.println(result);
         assertEquals(expResult, result);
     }
 
     /**
      * Test of averages method, of class LAPR1_1DK_Mafia.
      */
-    @Test
-    //Working
+     @Test
+    //Conflito com Scanner
     public void testAverages() throws Exception {
         System.out.println("averages");
         int[] consumptionMW = {1793, 1741, 1694, 1659, 1630, 1643, 1677, 1719, 1780, 1793, 1854, 1883, 1906, 1904, 1890, 1886, 1890, 1924, 2039, 2079, 2058, 2029, 1982, 1910};
         LocalDateTime[] dateTime = null;
         int size = consumptionMW.length;
         int expResult = 1848;
-        int result = LAPR1_1DK_Mafia.averages(consumptionMW, size, args, out, agregacao);
+        int result = LAPR1_1DK_Mafia.averages(consumptionMW, size, args, out, agregacao, file);
         assertEquals(expResult, result);
     }
 
@@ -296,14 +289,13 @@ public class LAPR1_1DK_MafiaTest {
      * Test of MediaMovelSimples method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not working - verificar
+    //Working
     public void testMediaMovelSimplesAnual() throws Exception {
         System.out.println("MediaMovelSimplesAnual, n = 2");
         int[] consumptionMW = {17825259, 17295849, 10604815};
         int n = 2;
-        double[] result = LAPR1_1DK_Mafia.MediaMovelSimples(consumptionMW, consumptionMW.length, args, out, agregacao);
-        double[] expResult = {17560554, 13950332};
-        System.out.println(Arrays.toString(result));
+        double[] result = LAPR1_1DK_Mafia.MediaMovelSimples(consumptionMW, consumptionMW.length, n, args, out, agregacao, file);
+        double[] expResult = {0, 17560554, 13950332};
         assertTrue(Arrays.equals(expResult, result));
     }
 
@@ -311,13 +303,13 @@ public class LAPR1_1DK_MafiaTest {
      * Test of MediaMovelSimples method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not working - verificar
+    //Working - diferença de casas decimais apenas
     public void testMediaMovelSimplesMensal() throws Exception {
-        System.out.println("MediaMovelSimplesAnual, n = 7");
+        System.out.println("MediaMovelSimplesMensal, n = 7");
         int[] consumptionMW = {1618977, 1451230, 1370286, 1292096, 1331203, 1548289, 1688546, 1786800, 1498560, 1618665, 1330469, 1324010, 1584793, 1554634, 1320715, 1446791, 1245887, 1347428, 1493743, 1613713, 1577000, 1371512, 1340220, 1389034, 1595172, 1713149, 1392390, 1479604, 1327017, 1464981, 1524912, 1599236, 103526};
         int n = 7;
-        double[] result = LAPR1_1DK_Mafia.MediaMovelSimples(consumptionMW, consumptionMW.length, args, out, agregacao);
-        double[] expResult = {1471518, 1495493, 1502254, 1537737, 1543219, 1542191, 1547406, 1528276, 1461692, 1454297, 1401043, 1403465, 1427713, 1431844, 1435040, 1442296, 1427072, 1447521, 1482913, 1514257, 1482640, 1468726, 1462369, 1480192, 1499604, 1500184, 1270238};
+        double[] result = LAPR1_1DK_Mafia.MediaMovelSimples(consumptionMW, consumptionMW.length, n, args, out, agregacao, file);
+        double[] expResult = {0, 0, 0, 0, 0, 0, 1471518.143, 1495492.857, 1502254.286, 1537737, 1543218.857, 1542191.286, 1547406.143, 1528275.857, 1461692.286, 1454296.714, 1401042.714, 1403465.429, 1427713, 1431844.429, 1435039.571, 1442296.286, 1427071.857, 1447521.429, 1482913.429, 1514257.143, 1482639.571, 1468725.857, 1462369.429, 1480192.429, 1499603.571, 150018.143, 1270238};
         System.out.println(Arrays.toString(result));
         assertTrue(Arrays.equals(expResult, result));
     }
@@ -331,9 +323,9 @@ public class LAPR1_1DK_MafiaTest {
         System.out.println("MediaMovelPesada - anual");
         int[] consumptionMW = {17825259, 17295849, 10604815};
         int size = consumptionMW.length;
-        double[] result = LAPR1_1DK_Mafia.MediaMovelPesada(consumptionMW, size, args, out, agregacao);
+        double alpha = 0.3;
+        double[] result = LAPR1_1DK_Mafia.MediaMovelPesada(consumptionMW, size, alpha, args, out, agregacao, file);
         double[] expResult = {17825259, 17666436, 15547949.7};
-        System.out.println(Arrays.toString(result));
         assertTrue(Arrays.equals(expResult, result));
     }
 
@@ -357,7 +349,7 @@ public class LAPR1_1DK_MafiaTest {
      * Test of absoluteError method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Working - almost
+    //Working - O teste dá erro por uma diferença de 0,000000000003
     public void testAbsoluteErrorPesada() throws Exception {
         System.out.println("absoluteErrorPesada");
         int[] consumptionMW = {17825259, 17295849, 10604815};
@@ -369,28 +361,30 @@ public class LAPR1_1DK_MafiaTest {
         System.out.println(result);
         assertTrue(result == expResult);
     }
-    
+
     /**
      * Test of previsonType method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Conflito com Scanner
     public void previsionType2019Simples() throws Exception {
         System.out.println("previsionType - 2019 - MMS");
         int[] consumptionMW = {17825259, 17295849, 10604815};
         LocalDateTime[] dateTime = {LocalDateTime.of(2016, 01, 01, 0, 0), LocalDateTime.of(2017, 01, 01, 0, 0), LocalDateTime.of(2018, 01, 01, 0, 0)};
         int size = consumptionMW.length;
         int index = 5;
+        int model = 1;
         //n = 3
-        double result = LAPR1_1DK_Mafia.previsionType(consumptionMW, dateTime, size, index, args,  out);
+        double result = LAPR1_1DK_Mafia.previsionType(consumptionMW, dateTime, size, model, index, args, out, file);
         double expResult = 1331195;
-        assertTrue(expResult==result);
+        assertTrue(expResult == result);
     }
-     /**
+
+    /**
      * Test of previsonType method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Conflito com Scanner
     public void previsionType20Jan2016Pesada() throws Exception {
         System.out.println("previsionType - 20.01.2016 - MMP");
         int[] auxConsumptionMW = new int[26280];
@@ -400,26 +394,29 @@ public class LAPR1_1DK_MafiaTest {
         LocalDateTime[] dateTime = Arrays.copyOf(auxDateTime, 744);
         int size = consumptionMW.length;
         int index = 19;
+        int model = 2;
         //alpha = 0.3
-        double result = LAPR1_1DK_Mafia.previsionType(consumptionMW, dateTime, size, index, args,  out);
+        double result = LAPR1_1DK_Mafia.previsionType(consumptionMW, dateTime, size, model, index, args, out, file);
         double expResult = 58398.234457;
-        assertTrue(expResult==result);
+        assertTrue(expResult == result);
     }
+
     /**
      * Test of previsonType method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Conflito com Scanner
     public void previsionType2016Simples() throws Exception {
         System.out.println("previsionType - 2019 - MMS");
         int[] consumptionMW = {17825259, 17295849, 10604815};
         LocalDateTime[] dateTime = {LocalDateTime.of(2016, 01, 01, 0, 0), LocalDateTime.of(2017, 01, 01, 0, 0), LocalDateTime.of(2018, 01, 01, 0, 0)};
         int size = consumptionMW.length;
         int index = 1;
+        int model = 1;
         //n = 3
-        double result = LAPR1_1DK_Mafia.previsionType(consumptionMW, dateTime, size, index, args,  out);
+        double result = LAPR1_1DK_Mafia.previsionType(consumptionMW, dateTime, size, model, index, args, out, file);
         double expResult = 0;
-        assertTrue(expResult==result);
+        assertTrue(expResult == result);
     }
 
     /**
@@ -429,7 +426,7 @@ public class LAPR1_1DK_MafiaTest {
     //Working
     public void testExchange() throws Exception {
         System.out.println("exchange");
-         int[] auxConsumptionMW = new int[26280];
+        int[] auxConsumptionMW = new int[26280];
         LocalDateTime[] auxDateTime = new LocalDateTime[26280];
         int size = LAPR1_1DK_Mafia.readFile(auxConsumptionMW, auxDateTime, file);
         int option = 5;
@@ -442,17 +439,18 @@ public class LAPR1_1DK_MafiaTest {
      * Test of verifyDate method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Working
     public void testVerifyDateOutOfBounds() {
         System.out.println("verifyDateOutOfBounds");
-        String inputDate = "20151231";
-        LocalDateTime[] dateTime = {LocalDateTime.of(2016,1,1,0,0), LocalDateTime.of(2017,1,1,0,0)};
+        String inputDate = "20151231 00:00";
+        LocalDateTime[] dateTime = {LocalDateTime.of(2016, 1, 1, 0, 0), LocalDateTime.of(2017, 1, 1, 0, 0)};
         int size = dateTime.length;
         int option = 5;
         LocalDateTime expResult = null;
-        LocalDateTime result = LAPR1_1DK_Mafia.verifyDate(inputDate, dateTime, size, option);
+        LocalDateTime result = LAPR1_1DK_Mafia.verifyDate(inputDate, dateTime, size, option, args, out);
         assertEquals(expResult, result);
     }
+
     /**
      * Test of verifyDate method, of class LAPR1_1DK_Mafia.
      */
@@ -461,26 +459,27 @@ public class LAPR1_1DK_MafiaTest {
     public void testVerifyDateInvalid() {
         System.out.println("verifyDateInvalid");
         String inputDate = "20160230";
-        LocalDateTime[] dateTime = {LocalDateTime.of(2016,1,1,0,0), LocalDateTime.of(2017,1,1,0,0)};
+        LocalDateTime[] dateTime = {LocalDateTime.of(2016, 1, 1, 0, 0), LocalDateTime.of(2017, 1, 1, 0, 0)};
         int size = dateTime.length;
         int option = 5;
         LocalDateTime expResult = null;
-        LocalDateTime result = LAPR1_1DK_Mafia.verifyDate(inputDate, dateTime, size, option);
+        LocalDateTime result = LAPR1_1DK_Mafia.verifyDate(inputDate, dateTime, size, option, args, out);
         assertEquals(expResult, result);
     }
+
     /**
      * Test of verifyDate method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Working
     public void testVerifyDateValid() {
         System.out.println("verifyDateValid");
-        String inputDate = "20161231";
-        LocalDateTime[] dateTime = {LocalDateTime.of(2016,1,1,0,0), LocalDateTime.of(2017,1,1,0,0)};
+        String inputDate = "20161231 00:00";
+        LocalDateTime[] dateTime = {LocalDateTime.of(2016, 1, 1, 0, 0), LocalDateTime.of(2017, 1, 1, 0, 0)};
         int size = dateTime.length;
         int option = 5;
         LocalDateTime expResult = LocalDateTime.of(2016, 12, 31, 0, 0);
-        LocalDateTime result = LAPR1_1DK_Mafia.verifyDate(inputDate, dateTime, size, option);
+        LocalDateTime result = LAPR1_1DK_Mafia.verifyDate(inputDate, dateTime, size, option, args, out);
         assertEquals(expResult, result);
     }
 
@@ -488,30 +487,15 @@ public class LAPR1_1DK_MafiaTest {
      * Test of searchForDateIndex method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Working
     public void testSearchForDateIndex() {
         System.out.println("searchForDateIndex");
         LocalDateTime[] dateTime = {LocalDateTime.of(2016, 01, 01, 0, 0), LocalDateTime.of(2017, 01, 01, 0, 0), LocalDateTime.of(2018, 01, 01, 0, 0)};;
         LocalDateTime date = LocalDateTime.of(2018, 01, 01, 0, 0);
         int option = 7;
         long expResult = 2;
-        long result = LAPR1_1DK_Mafia.searchForDateIndex(dateTime, date, option);
+        long result = LAPR1_1DK_Mafia.searchForDateIndex(dateTime, date, option, args);
         assertEquals(expResult, result);
-    }
-    
-     /**
-     * Test of MediaMovelSimples method, of class LAPR1_1DK_Mafia.
-     */
-    @Test
-    //Not tested
-    public void testMediaMovelSimples() throws Exception {
-        System.out.println("MediaMovelSimples");
-        int[] consumptionMW = {1618977,1451230,1370286,1292096,1331203,1548289,1688546,1786800,1498560,1618665,1330469,1324010,1584793,1554634,1320715,1446791,1245887,1347428,1493743,1613713,1577000,1371512,1340220,1389034,1595172,1713149,1392390,1479604,1327017,1464981,1524912,1599236,103526};
-        int size = 0;
-        String agregacao = "";
-        double[] expResult = {0,0,0,0,1412758.4,1398620.8,1446084,1529386.8,1570679.6,1628172,1584608,1511700.8,1471299.4,1482514.2,1422924.2,1446188.6,1430564,1383091,1370912.8,1429512.4,1455554.2,1480679.2,1479237.6,1458295.8,1454587.6,1481817.4,1485993,1513869.8,1501466.4,1475428.2,1437780.8,1479150,1203934.4};
-        double[] result = LAPR1_1DK_Mafia.MediaMovelSimples(consumptionMW, size, args, out, agregacao);
-        assertTrue(Arrays.equals(expResult, result));
     }
 
     /**
@@ -527,4 +511,4 @@ public class LAPR1_1DK_MafiaTest {
         assertEquals(expResult, result);
     }
 
-   }
+}
