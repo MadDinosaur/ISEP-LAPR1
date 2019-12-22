@@ -439,7 +439,17 @@ public class LAPR1_1DK_Mafia {
             if (date.isAfter(dateTime[size - 1])) {
                 int op = (int) askUser("PREVISAO");
                 double media = previsionType(consumptionMW, dateTime, size, op, size - 1, args, out, file);
-                System.out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
+                if (media != 0) {
+                    System.out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
+                    if (args.length == 12) {
+                        out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
+                    }
+                } else {
+                    System.out.println("Os registos anteriores à data inserida são insuficentes para efetuar uma previsão.");
+                    if (args.length == 12) {
+                        out.println("Os registos anteriores à data inserida são insuficentes para efetuar uma previsão.");
+                    }
+                }
                 if (args.length == 12) {
                     out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
                 }
