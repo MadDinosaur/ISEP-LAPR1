@@ -110,16 +110,16 @@ public class LAPR1_1DK_Mafia {
                 + "0. Sair.%n");
         int option = sc.nextInt();
         switch (option) {
-            case 1:
-                option = definePeriod(consumptionMW, dateTime, size);
-                size = exchange(consumptionMW, dateTime, size, option);
-                defineAgregacao(option, args);
+             case 1:
+                int option2 = definePeriod(consumptionMW, dateTime, size);
+                size = exchange(consumptionMW, dateTime, size, option2);
+                defineAgregacao(option2, args);
                 criarGrafico(consumptionMW, size, args, out, agregacao, tipo, file);
                 break;
             case 2:
-                option = definePeriod(consumptionMW, dateTime, size);
-                size = exchange(consumptionMW, dateTime, size, option);
-                defineAgregacao(option, args);
+                option2 = definePeriod(consumptionMW, dateTime, size);
+                size = exchange(consumptionMW, dateTime, size, option2);
+                defineAgregacao(option2, args);
                 averages(consumptionMW, size, args, out, agregacao, file);
                 break;
             case 3:
@@ -131,8 +131,8 @@ public class LAPR1_1DK_Mafia {
                     System.out.println("Introduza uma opção válida. ");
                     op = sc.nextInt();
                 }
-                option = definePeriod(consumptionMW, dateTime, size);
-                size = exchange(consumptionMW, dateTime, size, option);
+                option2 = definePeriod(consumptionMW, dateTime, size);
+                size = exchange(consumptionMW, dateTime, size, option2);
                 switch (op) {
                     case 1:
                         defineAgregacao(option, args);
@@ -151,15 +151,15 @@ public class LAPR1_1DK_Mafia {
                 }
                 break;
             case 4:
-                option = definePeriod(consumptionMW, dateTime, size);
-                size = exchange(consumptionMW, dateTime, size, option);
-                defineAgregacao(option, args);
+                option2 = definePeriod(consumptionMW, dateTime, size);
+                size = exchange(consumptionMW, dateTime, size, option2);
+                defineAgregacao(option2, args);
                 defineOrder(consumptionMW, size, args, out, agregacao, file);
                 break;
             case 5:
-                option = definePeriod(consumptionMW, dateTime, size);
-                size = exchange(consumptionMW, dateTime, size, option);
-                definePrevision(consumptionMW, dateTime, size, option, args, out, file);
+                option2 = definePeriod(consumptionMW, dateTime, size);
+                size = exchange(consumptionMW, dateTime, size, option2);
+                definePrevision(consumptionMW, dateTime, size, option2, args, out, file);
                 break;
             case 6:
                 break;
@@ -170,7 +170,6 @@ public class LAPR1_1DK_Mafia {
         }
         return option;
     }
-
     //agrega todos os pedidos de informação ao utilizador (exceto menus) - serve para conduzir testes unitários
     public static double askUser(String methodRequest) {
         switch (methodRequest) {
