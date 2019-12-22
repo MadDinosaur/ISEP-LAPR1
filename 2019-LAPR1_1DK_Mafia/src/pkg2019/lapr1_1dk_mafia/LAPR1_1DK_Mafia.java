@@ -31,10 +31,10 @@ public class LAPR1_1DK_Mafia {
     static final int NUM_STAGES = 4;
     static final int NUM_HOURS = 24;
     static final int NUM_DAYS_IN_YEAR = 365;
-    static final int START = 0;
-    static final int END_DAWN = 6;
-    static final int END_MORNING = 12;
-    static final int END_AFTERNOON = 18;
+    static final int START = 0;                //hora que marca o início do dia
+    static final int END_DAWN = 6;            //hora que marca o final da madrugada
+    static final int END_MORNING = 12;        //hora que marca o final da manhã
+    static final int END_AFTERNOON = 18;      //hora que marca o final da tarde
     static final String OUTPUT_FILE = "Output.txt";
     static final String nome = "Consumos ";
     static String agregacao = "";
