@@ -26,7 +26,7 @@ import java.util.Date;
 public class LAPR1_1DK_Mafia {
 
     static Scanner sc = new Scanner(System.in);
-    static final int MAX_OBSERVATIONS = 26280;
+    static final int MAX_OBSERVATIONS = 26304;
     static final int NUM_HOURS_IN_STAGE = 6;
     static final int NUM_STAGES = 4;
     static final int NUM_HOURS = 24;
