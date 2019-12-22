@@ -1,0 +1,10 @@
+Ficheiro guardado em PNG e CSV.
+Média : 15241389 MW
+Quantidade de valores dentro da média: 2
+Quantidade de valores acima da média: 0
+Quantidade de valores abaixo da média: 1
+Ficheiro guardado em PNG e CSV.
+Ficheiro guardado em PNG e CSV.
+Erro absoluto: 1247817,50 
+Ficheiro guardado em PNG e CSV.
+A previsão de consumo para a data inserida é de 1.3949454E7 MW.

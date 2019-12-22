@@ -419,24 +419,26 @@ public class LAPR1_1DK_Mafia {
                 case 13:
                 case 14:
                 case 2:
-                    Data = args[11];
                     inputDate = args[11] + " 00:00";
                     break;
-                case 3:
-                    Data = args[11];
+                case 3:               
                     inputDate = args[11] + "01 00:00";
                     break;
                 case 4:
-                    Data = args[11];
                     inputDate = args[11] + "0101 00:00";
 
                     break;
             }
         }
         LocalDateTime date = verifyDate(inputDate, dateTime, size, option, args, out);
+        int op=0;
         if (date != null) {
             if (date.isAfter(dateTime[size - 1])) {
-                int op = (int) askUser("PREVISAO");
+                if(args.length==2){
+                  op = (int) askUser("PREVISAO");
+                }else{
+                  op=Integer.parseInt(args[5]);
+                }
                 double media = previsionType(consumptionMW, dateTime, size, op, size - 1, args, out, file);
                 if (media != 0) {
                     System.out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
@@ -449,12 +451,14 @@ public class LAPR1_1DK_Mafia {
                         out.println("Os registos anteriores à data inserida são insuficentes para efetuar uma previsão.");
                     }
                 }
-                if (args.length == 12) {
-                    out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
-                }
             } else {
                 long index = searchForDateIndex(dateTime, date, option, args);
-                int op = (int) askUser("PREVISAO");
+                if(args.length==2){
+                  op = (int) askUser("PREVISAO");
+                }else{
+                  op=Integer.parseInt(args[5]);
+                }
+
                 double media = previsionType(consumptionMW, dateTime, size, op, (int) index, args, out, file);
                 System.out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
                 if (args.length == 12) {
@@ -593,8 +597,7 @@ public class LAPR1_1DK_Mafia {
                     break;
             }
         } else {
-            int option2 = Integer.parseInt(args[5]);
-            switch (option2) {
+            switch (option) {
                 case 1:
                     int n = Integer.parseInt(args[9]);
                     double[] mediaMovelSimples = MediaMovelSimples(consumptionMW, size, n, args, out, agregacao, file);
