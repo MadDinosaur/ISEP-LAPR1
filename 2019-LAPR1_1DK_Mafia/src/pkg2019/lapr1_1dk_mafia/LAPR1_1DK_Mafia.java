@@ -111,15 +111,15 @@ static Scanner sc = new Scanner(System.in);
         int option = sc.nextInt();
         switch (option) {
             case 1:
-                option = definePeriod(consumptionMW, dateTime, size);
-                size = exchange(consumptionMW, dateTime, size, option);
-                defineAgregacao(option, args);
+                int option2 = definePeriod(consumptionMW, dateTime, size);
+                size = exchange(consumptionMW, dateTime, size, option2);
+                defineAgregacao(option2, args);
                 criarGrafico(consumptionMW, size, args, out, agregacao, tipo, file);
                 break;
             case 2:
-                option = definePeriod(consumptionMW, dateTime, size);
-                size = exchange(consumptionMW, dateTime, size, option);
-                defineAgregacao(option, args);
+                option2 = definePeriod(consumptionMW, dateTime, size);
+                size = exchange(consumptionMW, dateTime, size, option2);
+                defineAgregacao(option2, args);
                 averages(consumptionMW, size, args, out, agregacao, file);
                 break;
             case 3:
@@ -145,15 +145,15 @@ static Scanner sc = new Scanner(System.in);
                 }
                 break;
             case 4:
-                option = definePeriod(consumptionMW, dateTime, size);
-                size = exchange(consumptionMW, dateTime, size, option);
-                defineAgregacao(option, args);
+                option2 = definePeriod(consumptionMW, dateTime, size);
+                size = exchange(consumptionMW, dateTime, size, option2);
+                defineAgregacao(option2, args);
                 defineOrder(consumptionMW, size, args, out, agregacao, file);
                 break;
             case 5:
-                option = definePeriod(consumptionMW, dateTime, size);
-                size = exchange(consumptionMW, dateTime, size, option);
-                definePrevision(consumptionMW, dateTime, size, option, args, out, file);
+                option2 = definePeriod(consumptionMW, dateTime, size);
+                size = exchange(consumptionMW, dateTime, size, option2);
+                definePrevision(consumptionMW, dateTime, size, option2, args, out, file);
                 break;
             case 6:
                 break;
@@ -176,12 +176,13 @@ static Scanner sc = new Scanner(System.in);
                 + "5. Diário; %n"
                 + "6. Mensal; %n"
                 + "7. Anual; %n");
-        int option = sc.nextInt();
-        if (option < 1 || option > 7) {
+        int option2 = sc.nextInt();
+        if (option2 < 1 || option2 > 7) {
             System.out.println("Opção inválida. ");
         }
-        return option;
+        return option2;
     }
+
 
     //chama os métodos de conversão de arrays de acordo com a resolução temporal
     public static int exchange(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option) throws FileNotFoundException {
