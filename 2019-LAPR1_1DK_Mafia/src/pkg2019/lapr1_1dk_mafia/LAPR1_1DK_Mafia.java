@@ -144,7 +144,7 @@ public class LAPR1_1DK_Mafia {
                     case 2:
                         defineAgregacao(option, args);
                         double alpha = askUser("MMP");
-                        double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, args, out, agregacao, file);
+                        double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, false, args, out, agregacao, file);
                         criarGraficoMediaPesada(consumptionMW, mediaMovelPesada, size, alpha, args, out, agregacao, file);
                         absoluteError(consumptionMW, mediaMovelPesada, mediaMovelPesada.length, out, args);
                         break;
@@ -442,11 +442,11 @@ public class LAPR1_1DK_Mafia {
                 }
                 double media = previsionType(consumptionMW, dateTime, size, op, size - 1, args, out, file);
                 if (media != 0) {
-                    System.out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media );
-                    
+                    System.out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media);
+
                     if (args.length == 12) {
-                       out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media );
-                        
+                        out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media);
+
                     }
                 } else {
                     System.out.println("Os registos anteriores à data inserida são insuficentes para efetuar uma previsão.");
@@ -463,10 +463,10 @@ public class LAPR1_1DK_Mafia {
                 }
 
                 double media = previsionType(consumptionMW, dateTime, size, op, (int) index, args, out, file);
-                System.out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media );        
+                System.out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media);
                 if (args.length == 12) {
-                    out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media );
-                    
+                    out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media);
+
                 }
             }
         }
@@ -593,7 +593,7 @@ public class LAPR1_1DK_Mafia {
                     return mediaMovelSimples[index];
                 case 2:
                     double alpha = askUser("MMP");
-                    double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, args, out, agregacao, file);
+                    double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, true, args, out, agregacao, file);
                     return mediaMovelPesada[index];
 
                 default:
@@ -608,7 +608,7 @@ public class LAPR1_1DK_Mafia {
                     return mediaMovelSimples[index];
                 case 2:
                     double alpha = Double.parseDouble(args[9]);
-                    double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, args, out, agregacao, file);
+                    double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, true, args, out, agregacao, file);
                     return mediaMovelPesada[index];
 
                 default:
@@ -819,8 +819,8 @@ public class LAPR1_1DK_Mafia {
         return mediaMovelSimples;
     }
 
-    public static double[] MediaMovelPesada(int[] consumptionMW, int size, double alpha, String[] args, PrintWriter out, String agregacao, String file) throws FileNotFoundException {
-        double[] mediaMovelPesada = new double[size];
+    public static double[] MediaMovelPesada(int[] consumptionMW, int size, double alpha, boolean isPrevision, String[] args, PrintWriter out, String agregacao, String file) throws FileNotFoundException {
+        double[] mediaMovelPesada = null;
         boolean nonInteractiveInvalidInput = false;
 
         while (alpha < 0 || alpha > 1) {
@@ -835,20 +835,35 @@ public class LAPR1_1DK_Mafia {
             }
         }
         if (nonInteractiveInvalidInput == false) {
-            for (int i = 1; i < size; i++) {
-                mediaMovelPesada[0] = consumptionMW[0];
-                mediaMovelPesada[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * mediaMovelPesada[i - 1]);
+            if (isPrevision) {
+                mediaMovelPesada = new double[size + 1];
+                for (int i = 0; i < size; i++) {
+                    mediaMovelPesada[0] = consumptionMW[0];
+                    mediaMovelPesada[i + 1] = (alpha * consumptionMW[i]) + ((1 - alpha) * mediaMovelPesada[i]);
+                }
+            } else {
+                mediaMovelPesada = new double[size];
+                for (int k = 1; k < size; k++) {
+                    mediaMovelPesada[0] = consumptionMW[0];
+                    mediaMovelPesada[k] = (alpha * consumptionMW[k]) + ((1 - alpha) * mediaMovelPesada[k - 1]);
+                }
             }
         }
+
         return mediaMovelPesada;
     }
 
     public static double absoluteError(int[] consumptionMW, double[] arrayY, int size, PrintWriter out, String[] args) {
         double sum = 0.00;
+        int nObs = size;
         for (int i = 0; i < size; i++) {
-            sum = sum + Math.abs(arrayY[i] - consumptionMW[i]);
+            if (arrayY[i] != 0) {
+                sum = sum + Math.abs(arrayY[i] - consumptionMW[i]);
+            } else {
+                nObs--;
+            }
         }
-        double absoluteError = sum / size;
+        double absoluteError = sum / nObs;
         System.out.printf("Erro absoluto: %.2f \n", absoluteError);
         if (args.length == 12) {
             out.printf("Erro absoluto: %.2f \n", absoluteError);
@@ -1544,7 +1559,7 @@ public class LAPR1_1DK_Mafia {
                 break;
             case "2":
                 double alpha = Double.parseDouble(args[9]);
-                double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, args, out, agregacao, file);
+                double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, false, args, out, agregacao, file);
                 criarGraficoMediaPesada(consumptionMW, mediaMovelPesada, size, alpha, args, out, agregacao, file);
                 absoluteError(consumptionMW, mediaMovelPesada, mediaMovelPesada.length, out, args);
                 break;
