@@ -110,7 +110,7 @@ public class LAPR1_1DK_Mafia {
                 + "0. Sair.%n");
         int option = sc.nextInt();
         switch (option) {
-             case 1:
+            case 1:
                 int option2 = definePeriod(consumptionMW, dateTime, size);
                 size = exchange(consumptionMW, dateTime, size, option2);
                 defineAgregacao(option2, args);
@@ -170,6 +170,7 @@ public class LAPR1_1DK_Mafia {
         }
         return option;
     }
+
     //agrega todos os pedidos de informação ao utilizador (exceto menus) - serve para conduzir testes unitários
     public static double askUser(String methodRequest) {
         switch (methodRequest) {
@@ -421,7 +422,7 @@ public class LAPR1_1DK_Mafia {
                 case 2:
                     inputDate = args[11] + " 00:00";
                     break;
-                case 3:               
+                case 3:
                     inputDate = args[11] + "01 00:00";
                     break;
                 case 4:
@@ -431,19 +432,21 @@ public class LAPR1_1DK_Mafia {
             }
         }
         LocalDateTime date = verifyDate(inputDate, dateTime, size, option, args, out);
-        int op=0;
+        int op = 0;
         if (date != null) {
             if (date.isAfter(dateTime[size - 1])) {
-                if(args.length==2){
-                  op = (int) askUser("PREVISAO");
-                }else{
-                  op=Integer.parseInt(args[5]);
+                if (args.length == 2) {
+                    op = (int) askUser("PREVISAO");
+                } else {
+                    op = Integer.parseInt(args[5]);
                 }
                 double media = previsionType(consumptionMW, dateTime, size, op, size - 1, args, out, file);
                 if (media != 0) {
-                    System.out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
+                    System.out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media );
+                    
                     if (args.length == 12) {
-                        out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
+                       out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media );
+                        
                     }
                 } else {
                     System.out.println("Os registos anteriores à data inserida são insuficentes para efetuar uma previsão.");
@@ -453,16 +456,17 @@ public class LAPR1_1DK_Mafia {
                 }
             } else {
                 long index = searchForDateIndex(dateTime, date, option, args);
-                if(args.length==2){
-                  op = (int) askUser("PREVISAO");
-                }else{
-                  op=Integer.parseInt(args[5]);
+                if (args.length == 2) {
+                    op = (int) askUser("PREVISAO");
+                } else {
+                    op = Integer.parseInt(args[5]);
                 }
 
                 double media = previsionType(consumptionMW, dateTime, size, op, (int) index, args, out, file);
-                System.out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
+                System.out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media );        
                 if (args.length == 12) {
-                    out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
+                    out.printf("A previsão de consumo para a data inserida é de %.2f MW %n", media );
+                    
                 }
             }
         }
