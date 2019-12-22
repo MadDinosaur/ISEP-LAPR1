@@ -241,8 +241,8 @@ public class LAPR1_1DK_MafiaTest {
     /**
      * Test of averages method, of class LAPR1_1DK_Mafia.
      */
-    // @Test
-    //Working
+     @Test
+    //Conflito com Scanner
     public void testAverages() throws Exception {
         System.out.println("averages");
         int[] consumptionMW = {1793, 1741, 1694, 1659, 1630, 1643, 1677, 1719, 1780, 1793, 1854, 1883, 1906, 1904, 1890, 1886, 1890, 1924, 2039, 2079, 2058, 2029, 1982, 1910};
@@ -366,7 +366,7 @@ public class LAPR1_1DK_MafiaTest {
      * Test of previsonType method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Conflito com Scanner
     public void previsionType2019Simples() throws Exception {
         System.out.println("previsionType - 2019 - MMS");
         int[] consumptionMW = {17825259, 17295849, 10604815};
@@ -384,7 +384,7 @@ public class LAPR1_1DK_MafiaTest {
      * Test of previsonType method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Conflito com Scanner
     public void previsionType20Jan2016Pesada() throws Exception {
         System.out.println("previsionType - 20.01.2016 - MMP");
         int[] auxConsumptionMW = new int[26280];
@@ -405,7 +405,7 @@ public class LAPR1_1DK_MafiaTest {
      * Test of previsonType method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Conflito com Scanner
     public void previsionType2016Simples() throws Exception {
         System.out.println("previsionType - 2019 - MMS");
         int[] consumptionMW = {17825259, 17295849, 10604815};
@@ -439,10 +439,10 @@ public class LAPR1_1DK_MafiaTest {
      * Test of verifyDate method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Working
     public void testVerifyDateOutOfBounds() {
         System.out.println("verifyDateOutOfBounds");
-        String inputDate = "20151231";
+        String inputDate = "20151231 00:00";
         LocalDateTime[] dateTime = {LocalDateTime.of(2016, 1, 1, 0, 0), LocalDateTime.of(2017, 1, 1, 0, 0)};
         int size = dateTime.length;
         int option = 5;
@@ -471,10 +471,10 @@ public class LAPR1_1DK_MafiaTest {
      * Test of verifyDate method, of class LAPR1_1DK_Mafia.
      */
     @Test
-    //Not tested
+    //Working
     public void testVerifyDateValid() {
         System.out.println("verifyDateValid");
-        String inputDate = "20161231";
+        String inputDate = "20161231 00:00";
         LocalDateTime[] dateTime = {LocalDateTime.of(2016, 1, 1, 0, 0), LocalDateTime.of(2017, 1, 1, 0, 0)};
         int size = dateTime.length;
         int option = 5;

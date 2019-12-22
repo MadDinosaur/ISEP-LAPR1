@@ -1240,11 +1240,11 @@ public class LAPR1_1DK_Mafia {
         p.newGraph();
         p.plot();
         if (args.length == 2) {
-            int op = (int) askUser("Grafico");
+            int op = (int) askUser("GRAFICO");
 
             if (op != 1 && op != 2 && op != 3 && op != 4) {
                 do {
-                    op = (int) askUser("Grafico");
+                    op = (int) askUser("GRAFICO");
                 } while (op != 1 && op != 2 && op != 3 && op != 4);
             }
 
