@@ -25,16 +25,16 @@ import java.util.Date;
 
 public class LAPR1_1DK_Mafia {
 
-static Scanner sc = new Scanner(System.in);
+    static Scanner sc = new Scanner(System.in);
     static final int MAX_OBSERVATIONS = 26280;
     static final int NUM_HOURS_IN_STAGE = 6;
     static final int NUM_STAGES = 4;
     static final int NUM_HOURS = 24;
     static final int NUM_DAYS_IN_YEAR = 365;
-    static final int START=0;
-    static final int END_DAWN=6;
-    static final int END_MORNING=12;
-    static final int END_AFTERNOON=18;
+    static final int START = 0;
+    static final int END_DAWN = 6;
+    static final int END_MORNING = 12;
+    static final int END_AFTERNOON = 18;
     static final String OUTPUT_FILE = "Output.txt";
     static final String nome = "Consumos ";
     static String agregacao = "";
@@ -53,7 +53,7 @@ static Scanner sc = new Scanner(System.in);
                 if (option == 6) {
                     file = changeFile();
                     size = readFile(consumptionMW, dateTime, file);
-                    System.out.println("Ficheiro Alterado");
+                    System.out.println("Ficheiro alterado");
                 }
                 int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
                 option = menu(auxConsumptionMW, dateTime, size, args, out, file);
@@ -136,11 +136,17 @@ static Scanner sc = new Scanner(System.in);
                 switch (op) {
                     case 1:
                         defineAgregacao(option, args);
-                        MediaMovelSimples(consumptionMW, size, args, out, agregacao, file);
+                        int n = (int) askUser("MMS");
+                        double[] mediaMovelSimples = MediaMovelSimples(consumptionMW, size, n, args, out, agregacao, file);
+                        criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n, out, args, agregacao, file);
+                        absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, out, args);
                         break;
                     case 2:
                         defineAgregacao(option, args);
-                        MediaMovelPesada(consumptionMW, size, args, out, agregacao, file);
+                        double alpha = askUser("MMP");
+                        double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, args, out, agregacao, file);
+                        criarGraficoMediaPesada(consumptionMW, mediaMovelPesada, size, alpha, args, out, agregacao, file);
+                        absoluteError(consumptionMW, mediaMovelPesada, mediaMovelPesada.length, out, args);
                         break;
                 }
                 break;
@@ -163,6 +169,35 @@ static Scanner sc = new Scanner(System.in);
                 System.out.println("Opção inválida. ");
         }
         return option;
+    }
+
+    //agrega todos os pedidos de informação ao utilizador (exceto menus) - serve para conduzir testes unitários
+    public static double askUser(String methodRequest) {
+        switch (methodRequest) {
+            case "MMS":
+                //Media Movel Simples
+                System.out.println("Defina o parâmetro n: ");
+                int n = sc.nextInt();
+                return n;
+            case "MMP":
+                //Media Movel Pesada
+                System.out.println("Insira o valor de α (entre 0 e 1): ");
+                double alpha = sc.nextDouble();
+                return alpha;
+            case "GRAFICO":
+                //Gravar gráficos
+                System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
+                int saveOption = sc.nextInt();
+                return saveOption;
+            case "PREVISAO":
+                //Modelos de previsão
+                System.out.printf("Que tipo de previsão pretende?%n"
+                        + "1. Previsão a partir da média móvel simples;%n"
+                        + "2. Previsão a partir da média exponencialmente pesada.%n");
+                int previsionModel = sc.nextInt();
+                return previsionModel;
+        }
+        return 0;
     }
 
     //--------------------------------------------PERIODICIDADE--------------------------------------------------------
@@ -350,7 +385,7 @@ static Scanner sc = new Scanner(System.in);
     //--------------------------------------------PREVISAO--------------------------------------------------------
     ///menu para escolher a previsão
     public static void definePrevision(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option, String[] args, PrintWriter out, String file) throws FileNotFoundException {
-        if (args.length==2){
+        if (args.length == 2) {
             sc.nextLine();
         }
         String inputDate = "";
@@ -386,39 +421,52 @@ static Scanner sc = new Scanner(System.in);
                 case 14:
                 case 2:
                     Data = args[11];
-                    inputDate = args[11]+ " 00:00";
+                    inputDate = args[11] + " 00:00";
                     break;
                 case 3:
                     Data = args[11];
-                    inputDate = args[11]+ "01 00:00";
+                    inputDate = args[11] + "01 00:00";
                     break;
                 case 4:
                     Data = args[11];
-                    inputDate = args[11]+ "0101 00:00";
-                    
+                    inputDate = args[11] + "0101 00:00";
+
                     break;
             }
         }
         LocalDateTime date = verifyDate(inputDate, dateTime, size, option, args, out);
         if (date != null) {
             if (date.isAfter(dateTime[size - 1])) {
-                double media = previsionType(consumptionMW, dateTime, size, size - 1, args, out, file);
-                System.out.println("A previsão de consumo para a data " + Data + " é de " + media + " MW.");
+                int op = (int) askUser("PREVISAO");
+                double media = previsionType(consumptionMW, dateTime, size, op, size - 1, args, out, file);
+                if (media != 0) {
+                    System.out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
+                    if (args.length == 12) {
+                        out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
+                    }
+                } else {
+                    System.out.println("Os registos anteriores à data inserida são insuficentes para efetuar uma previsão.");
+                    if (args.length == 12) {
+                        out.println("Os registos anteriores à data inserida são insuficentes para efetuar uma previsão.");
+                    }
+                }
                 if (args.length == 12) {
-                    out.println("A previsão de consumo para a data " + Data + " é de " + media + " MW.");
+                    out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
                 }
             } else {
                 long index = searchForDateIndex(dateTime, date, option, args);
-                double media = previsionType(consumptionMW, dateTime, size, (int) index, args, out, file);
-                System.out.println("A previsão de consumo para a data " + Data + " é de " + media + " MW.");
+                int op = (int) askUser("PREVISAO");
+                double media = previsionType(consumptionMW, dateTime, size, op, (int) index, args, out, file);
+                System.out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
                 if (args.length == 12) {
-                    out.println("A previsão de consumo para a data " + Data + " é de " + media + " MW.");
+                    out.println("A previsão de consumo para a data inserida é de " + media + " MW.");
                 }
             }
         }
 
-    }    //valida a data introduzida pelo utilizador e converte para LocalDateTime
+    }
 
+    //valida a data introduzida pelo utilizador e converte para LocalDateTime
     public static LocalDateTime verifyDate(String inputDate, LocalDateTime[] dateTime, int size, int option, String[] args, PrintWriter out) {
         LocalDateTime date = null;
 
@@ -529,23 +577,18 @@ static Scanner sc = new Scanner(System.in);
     }
 
     //seleciona previsão por média móvel simples ou pesada
-    public static double previsionType(int[] consumptionMW, LocalDateTime[] dateTime, int size, int index, String[] args, PrintWriter out, String file) throws FileNotFoundException {
-        int option = 0;
+    public static double previsionType(int[] consumptionMW, LocalDateTime[] dateTime, int size, int option, int index, String[] args, PrintWriter out, String file) throws FileNotFoundException {
         if (args.length == 2) {
-            System.out.printf("Que tipo de previsão pretende?%n"
-                    + "1. Previsão a partir da média móvel simples;%n"
-                    + "2. Previsão a partir da média exponencialmente pesada.%n");
-
-            option = sc.nextInt();
             switch (option) {
                 case 1:
-                    //validar últimas e primeiras posições do array
-                    double[] mediaMovelSimples = MediaMovelSimples(consumptionMW, size, args, out, agregacao, file);
+                    int n = (int) askUser("MMS");
+                    double[] mediaMovelSimples = MediaMovelSimples(consumptionMW, size, n, args, out, agregacao, file);
                     return mediaMovelSimples[index];
-                case 2: {
-                    double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, args, out, agregacao, file);
+                case 2:
+                    double alpha = askUser("MMP");
+                    double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, args, out, agregacao, file);
                     return mediaMovelPesada[index];
-                }
+
                 default:
                     System.out.println("Opção inválida. ");
                     break;
@@ -554,13 +597,14 @@ static Scanner sc = new Scanner(System.in);
             int option2 = Integer.parseInt(args[5]);
             switch (option2) {
                 case 1:
-                    //validar últimas e primeiras posições do array
-                    double[] mediaMovelSimples = MediaMovelSimples(consumptionMW, size, args, out, agregacao, file);
+                    int n = Integer.parseInt(args[9]);
+                    double[] mediaMovelSimples = MediaMovelSimples(consumptionMW, size, n, args, out, agregacao, file);
                     return mediaMovelSimples[index];
-                case 2: {
-                    double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, args, out, agregacao, file);
+                case 2:
+                    double alpha = Double.parseDouble(args[9]);
+                    double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, args, out, agregacao, file);
                     return mediaMovelPesada[index];
-                }
+
                 default:
                     break;
 
@@ -743,15 +787,8 @@ static Scanner sc = new Scanner(System.in);
     }
     //--------------------------------------------FILTRAGEM--------------------------------------------------------
 
-    public static double[] MediaMovelSimples(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao, String file) throws FileNotFoundException {
-        int n;
+    public static double[] MediaMovelSimples(int[] consumptionMW, int size, int n, String[] args, PrintWriter out, String agregacao, String file) throws FileNotFoundException {
         boolean nonInteractiveInvalidInput = false;
-        if (args.length == 12) {
-            n = Integer.parseInt(args[9]);
-        } else {
-            System.out.println("Defina o parâmetro n: ");
-            n = sc.nextInt();
-        }
         while (n <= 0 || n > consumptionMW.length) {
             if (args.length == 12) {
                 System.out.println("O parâmetro que toma o valor númerico n é inválido");
@@ -772,24 +809,13 @@ static Scanner sc = new Scanner(System.in);
                 }
                 mediaMovelSimples[i] /= n;
             }
-
-            criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n, out, args, agregacao, file);
-            absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, out, args);
-            //System.out.println(Arrays.toString(mediaMovelSimples));
         }
         return mediaMovelSimples;
     }
 
-    public static double[] MediaMovelPesada(int[] consumptionMW, int size, String[] args, PrintWriter out, String agregacao, String file) throws FileNotFoundException {
-        double alpha;
-        double[] consumptionNewMW = new double[size];
+    public static double[] MediaMovelPesada(int[] consumptionMW, int size, double alpha, String[] args, PrintWriter out, String agregacao, String file) throws FileNotFoundException {
+        double[] mediaMovelPesada = new double[size];
         boolean nonInteractiveInvalidInput = false;
-        if (args.length == 12) {
-            alpha = Double.parseDouble(args[9]);
-        } else {
-            System.out.println("Insira o valor de α (entre 0 e 1): ");
-            alpha = sc.nextDouble();
-        }
 
         while (alpha < 0 || alpha > 1) {
             if (args.length == 12) {
@@ -804,14 +830,11 @@ static Scanner sc = new Scanner(System.in);
         }
         if (nonInteractiveInvalidInput == false) {
             for (int i = 1; i < size; i++) {
-                consumptionNewMW[0] = consumptionMW[0];
-                consumptionNewMW[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * consumptionNewMW[i - 1]);
+                mediaMovelPesada[0] = consumptionMW[0];
+                mediaMovelPesada[i] = (alpha * consumptionMW[i]) + ((1 - alpha) * mediaMovelPesada[i - 1]);
             }
-            // criar 1 gráfico com os valores inicias e o valor de α
-            criarGraficoMediaPesada(consumptionMW, consumptionNewMW, size, alpha, args, out, agregacao, file);
-            absoluteError(consumptionMW, consumptionNewMW, consumptionNewMW.length, out, args);
         }
-        return consumptionNewMW;
+        return mediaMovelPesada;
     }
 
     public static double absoluteError(int[] consumptionMW, double[] arrayY, int size, PrintWriter out, String[] args) {
@@ -853,13 +876,11 @@ static Scanner sc = new Scanner(System.in);
         p.newGraph();
         p.plot();
         if (args.length == 2) {
-            System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
-            int op = sc.nextInt();
+            int op = (int) askUser("GRAFICO");
 
             if (op != 1 && op != 2 && op != 3 && op != 4) {
                 do {
-                    System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
-                    op = sc.nextInt();
+                    op = (int) askUser("GRAFICO");
                 } while (op != 1 && op != 2 && op != 3 && op != 4);
             }
 
@@ -982,13 +1003,11 @@ static Scanner sc = new Scanner(System.in);
         p.plot();
 
         if (args.length == 2) {
-            System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
-            int op = sc.nextInt();
+            int op = (int) askUser("GRAFICO");
 
             if (op != 1 && op != 2 && op != 3 && op != 4) {
                 do {
-                    System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
-                    op = sc.nextInt();
+                    op = (int) askUser("GRAFICO");
                 } while (op != 1 && op != 2 && op != 3 && op != 4);
             }
 
@@ -1114,13 +1133,11 @@ static Scanner sc = new Scanner(System.in);
         p.newGraph();
         p.plot();
         if (args.length == 2) {
-            System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
-            int op = sc.nextInt();
+            int op = (int) askUser("GRAFICO");
 
             if (op != 1 && op != 2 && op != 3 && op != 4) {
                 do {
-                    System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
-                    op = sc.nextInt();
+                    op = (int) askUser("GRAFICO");
                 } while (op != 1 && op != 2 && op != 3 && op != 4);
             }
 
@@ -1233,13 +1250,11 @@ static Scanner sc = new Scanner(System.in);
         p.newGraph();
         p.plot();
         if (args.length == 2) {
-            System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
-            int op = sc.nextInt();
+            int op = (int) askUser("GRAFICO");
 
             if (op != 1 && op != 2 && op != 3 && op != 4) {
                 do {
-                    System.out.println("Pretende gravar o gráfico? 1.PNG 2.CSV 3.PNG e CSV 4.Não");
-                    op = sc.nextInt();
+                    op = (int) askUser("GRAFICO");
                 } while (op != 1 && op != 2 && op != 3 && op != 4);
             }
 
@@ -1327,27 +1342,27 @@ static Scanner sc = new Scanner(System.in);
         return dateFormat.format(date);
     }
 
-    public static void csvWriteMediaSimples(int consumptionMW[], double consumptionNewMW[], int size, String agregacao, String cabecalho) throws FileNotFoundException {
+    public static void csvWriteMediaSimples(int consumptionMW[], double mediaMovelPesada[], int size, String agregacao, String cabecalho) throws FileNotFoundException {
         String hora;
         hora = getDateTime();
 
         PrintWriter out = new PrintWriter(new File(nome + "(" + cabecalho + ") " + "Media Simples" + " " + agregacao + "," + hora + ".csv"));
         for (int i = 0; i < size; i++) {
             out.println(consumptionMW[i] + " (original)");
-            out.printf("%.1f(filtrada)\n", consumptionNewMW[i]);
+            out.printf("%.1f(filtrada)\n", mediaMovelPesada[i]);
         }
 
         out.close();
     }
 
-    public static void csvWriteMediaPesada(int consumptionMW[], double consumptionNewMW[], int size, String agregacao, String cabecalho) throws FileNotFoundException {
+    public static void csvWriteMediaPesada(int consumptionMW[], double mediaMovelPesada[], int size, String agregacao, String cabecalho) throws FileNotFoundException {
         String hora;
         hora = getDateTime();
 
         PrintWriter out = new PrintWriter(new File(nome + "(" + cabecalho + ") " + "Media Pesada" + " " + agregacao + "," + hora + ".csv"));
         for (int i = 0; i < size; i++) {
             out.println(consumptionMW[i] + " (original)");
-            out.printf("%.1f(filtrada)\n", consumptionNewMW[i]);
+            out.printf("%.1f(filtrada)\n", mediaMovelPesada[i]);
         }
 
         out.close();
@@ -1374,6 +1389,60 @@ static Scanner sc = new Scanner(System.in);
         out.println("Quantidade de valores acima da média: " + aboveAverageValues);
         out.println("Quantidade de valores abaixo da média: " + belowAverageValues);
         out.close();
+    }
+
+    public static void defineAgregacao(int option, String[] args) {
+        if (args.length == 2) {
+            switch (option) {
+                case 1:
+                    agregacao = "Madrugadas";
+                    break;
+                case 2:
+                    agregacao = "Manhas";
+                    break;
+                case 3:
+                    agregacao = "Tardes";
+                    break;
+                case 4:
+                    agregacao = "Noites";
+                    break;
+                case 5:
+                    agregacao = "Diario";
+                    break;
+                case 6:
+                    agregacao = "Mensal";
+                    break;
+                case 7:
+                    agregacao = "Anual";
+                    break;
+            }
+        } else {
+            int option2 = Integer.parseInt(args[3]);
+            switch (option2) {
+                case 11:
+                    agregacao = "Madrugadas";
+                    break;
+                case 12:
+                    agregacao = "Manhas";
+                    break;
+                case 13:
+                    agregacao = "Tardes";
+                    break;
+                case 14:
+                    agregacao = "Noites";
+                    break;
+                case 2:
+                    agregacao = "Diario";
+                    break;
+                case 3:
+                    agregacao = "Mensal";
+                    break;
+                case 4:
+                    agregacao = "Anual";
+                    break;
+            }
+
+        }
     }
 
     //--------------------------------------------NAO INTERATIVO--------------------------------------------------------
@@ -1462,69 +1531,21 @@ static Scanner sc = new Scanner(System.in);
     public static void DefineModel(int[] consumptionMW, int size, String[] args, PrintWriter out, String file) throws FileNotFoundException {
         switch (args[5]) {
             case "1":
-                MediaMovelSimples(consumptionMW, size, args, out, agregacao, file);
+                int n = Integer.parseInt(args[9]);
+                double[] mediaMovelSimples = MediaMovelSimples(consumptionMW, size, n, args, out, agregacao, file);
+                criarGraficoMediaSimples(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, n, out, args, agregacao, file);
+                absoluteError(consumptionMW, mediaMovelSimples, mediaMovelSimples.length, out, args);
                 break;
             case "2":
-                MediaMovelPesada(consumptionMW, size, args, out, agregacao, file);
+                double alpha = Double.parseDouble(args[9]);
+                double[] mediaMovelPesada = MediaMovelPesada(consumptionMW, size, alpha, args, out, agregacao, file);
+                criarGraficoMediaPesada(consumptionMW, mediaMovelPesada, size, alpha, args, out, agregacao, file);
+                absoluteError(consumptionMW, mediaMovelPesada, mediaMovelPesada.length, out, args);
                 break;
             default:
                 System.out.println("Parâmetro de modelo inválido.");
                 out.println("Parâmetro de modelo inválido.");
                 break;
-        }
-    }
-
-    public static void defineAgregacao(int option, String[] args) {
-        if (args.length == 2) {
-            switch (option) {
-                case 1:
-                    agregacao = "Madrugadas";
-                    break;
-                case 2:
-                    agregacao = "Manhas";
-                    break;
-                case 3:
-                    agregacao = "Tardes";
-                    break;
-                case 4:
-                    agregacao = "Noites";
-                    break;
-                case 5:
-                    agregacao = "Diario";
-                    break;
-                case 6:
-                    agregacao = "Mensal";
-                    break;
-                case 7:
-                    agregacao = "Anual";
-                    break;
-            }
-        } else {
-            int option2 = Integer.parseInt(args[3]);
-            switch (option2) {
-                case 11:
-                    agregacao = "Madrugadas";
-                    break;
-                case 12:
-                    agregacao = "Manhas";
-                    break;
-                case 13:
-                    agregacao = "Tardes";
-                    break;
-                case 14:
-                    agregacao = "Noites";
-                    break;
-                case 2:
-                    agregacao = "Diario";
-                    break;
-                case 3:
-                    agregacao = "Mensal";
-                    break;
-                case 4:
-                    agregacao = "Anual";
-                    break;
-            }
-
         }
     }
 }
