@@ -56,7 +56,8 @@ public class LAPR1_1DK_Mafia {
                     System.out.println("Ficheiro alterado");
                 }
                 int[] auxConsumptionMW = Arrays.copyOf(consumptionMW, size);
-                option = menu(auxConsumptionMW, dateTime, size, args, out, file);
+                LocalDateTime[] auxDateTime = Arrays.copyOf(dateTime, size);
+                option = menu(auxConsumptionMW, auxDateTime, size, args, out, file);
             } while (option != 0);
         } else {
             PrintWriter out = new PrintWriter(new File(OUTPUT_FILE));
